@@ -1,0 +1,19 @@
+@import "../variables";
+
+.content-area {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 ($base);
+}
+
+.content-area__inner {
+  flex: 1 1 100%;
+  max-width: 1200px;
+}
+
+@include smartphones() {
+  .content-area__inner {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,48 @@
+@import "../variables";
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+
+  img {
+    display: block;
+    position: relative;
+    bottom: -3px;
+  }
+
+  &:hover .tooltip__content {
+    display: block;
+  }
+
+  &__content {
+    width: 200px;
+    text-align: left;
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    margin-left: -105px;
+    background: $black;
+    padding: $base;
+    border-radius: 3px;
+    color: white;
+    font-size: $base * 1.15;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    line-height: 1.2;
+    font-weight: normal;
+
+    &:before {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 8px 0 8px;
+      border-color: $black transparent transparent;
+      content: '';
+      display: block;
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      margin-left: -4px;
+    }
+  }
+}

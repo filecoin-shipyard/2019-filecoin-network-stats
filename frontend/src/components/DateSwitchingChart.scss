@@ -1,0 +1,16 @@
+.date-switching-chart {
+  &__loading {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      transform: scale(1.5, 1.5);
+    }
+  }
+
+  .switchable-content__header-link {
+    text-transform: uppercase;
+  }
+}

@@ -1,0 +1,44 @@
+@import "../../variables";
+
+.storage-cost-capacity-by-size-breakdown {
+  &__split {
+    display: flex;
+  }
+
+  &__split-child {
+    flex: 1 1 50%;
+
+    &:first-child {
+      border-right: 1px solid #e6e6e6;
+    }
+  }
+
+  &__split-header {
+    background: $light-grey;
+    padding: $base ($base * 1.5);
+    font-size: $base * 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__split-stats {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__stat {
+    flex: 0 0 50%;
+    padding: $base * 1.5;
+  }
+
+  &__stat-value {
+    font-size: $base * 3;
+    font-weight: bold;
+    margin-bottom: $base / 2;
+  }
+
+  &__stat-label {
+    font-size: $base * 1.25;
+    color: $dark-grey;
+  }
+}

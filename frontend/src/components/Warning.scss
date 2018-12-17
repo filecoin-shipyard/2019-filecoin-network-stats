@@ -1,0 +1,8 @@
+@import "../variables";
+
+.warning {
+  background: darken($body, 15%);
+  border-bottom: 1px solid darken($body, 20%);
+  padding: $base * 2;
+  font-size: $base * 1.2;
+}

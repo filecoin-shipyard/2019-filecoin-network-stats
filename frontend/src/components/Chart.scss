@@ -1,0 +1,62 @@
+@import "../variables";
+
+$height: 400px;
+
+.fc-chart__chart-wrap {
+  position: relative;
+  height: $height;
+}
+
+.fc-chart__chart {
+  height: $height;
+  position: relative;
+  z-index: 10;
+}
+
+.fc-chart__header {
+  margin-top: $base;
+  margin-bottom: $base;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  z-index: 15;
+}
+
+.fc-chart__chart--no-header {
+  height: $height;
+}
+
+.fc-chart__price {
+  font-weight: bold;
+  font-size: $base * 2;
+  margin-bottom: $base;
+
+  small {
+    font-size: $base * 1.4;
+  }
+}
+
+.fc-chart__label {
+  color: $dark-grey;
+  font-size: $base * 1.25;
+}
+
+.fc-chart__loading {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  left: 3px;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  z-index: 20;
+
+  img {
+    transform: scale(1.5, 1.5);
+  }
+}

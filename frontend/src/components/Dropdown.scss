@@ -1,0 +1,63 @@
+@import "../variables";
+
+.dropdown {
+  font-size: $base * 1.2;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  padding-right: $base * 2;
+
+  &:before {
+    $size: 12px;
+    background: url('/assets/chevron.svg') no-repeat right center;
+    width: $size;
+    height: $size;
+    background-size: contain;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -($size / 2);
+    right: 0;
+    transform: rotate(-180deg);
+    transition: transform linear 100ms;
+  }
+
+  &--open {
+    .dropdown__box {
+      display: block;
+    }
+
+    &:before {
+      transform: rotate(0deg);
+    }
+  }
+
+  &__box {
+    display: none;
+    position: absolute;
+    top: 100%;
+    margin-top: $base / 2;
+    z-index: 40;
+    right: 0;
+    background: white;
+    padding: $base;
+    @extend %box-shadow;
+  }
+
+  &__link {
+    white-space: nowrap;
+    font-weight: normal;
+    padding-bottom: $base;
+    font-size: $base * 1.2;
+    color: #828282;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &:hover, &--active {
+      color: black;
+    }
+  }
+}

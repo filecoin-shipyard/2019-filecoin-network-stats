@@ -1,0 +1,82 @@
+@import "../variables";
+
+$gutter: $base * 2;
+
+.grid {
+  display: flex;
+  width: 100%;
+  margin-left: ($gutter / -2);
+  margin-right: ($gutter / -2);
+  margin-bottom: $gutter * 2;
+}
+
+.grid--1 .grid__col {
+  flex: 0 1 100%;
+}
+
+.grid--2 .grid__col {
+  flex: 0 1 50%;
+}
+
+.grid--3 .grid__col {
+  flex: 0 1 33.3333333%;
+}
+
+.grid--4 .grid__col {
+  flex: 0 1 25%;
+}
+
+.grid__col {
+  margin: 0 ($gutter / 2);
+  display: flex;
+  flex-direction: column;
+}
+
+.grid__col-pad {
+  background: $white;
+  border-radius: 3px;
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid__col--transparent {
+  .grid__col-pad {
+    background: $white;
+    box-shadow: none;
+  }
+}
+
+.grid__col--unsupported {
+  opacity: 0.8;
+}
+
+.grid--no-margin {
+  margin-bottom: 0;
+}
+
+.grid--single-margin {
+  margin-bottom: $gutter;
+}
+
+.grid--uneven.grid--2 {
+  .grid__col:first-child {
+    flex: 0 1 70%;
+  }
+
+  .grid__col:last-child {
+    flex: 0 1 30%;
+  }
+}
+
+@include smartphones() {
+  .grid {
+    flex-direction: column;
+    margin: 0 0 $gutter 0;
+
+    .grid__col {
+      flex: 1 1 100%;
+      margin: 0 0 $gutter 0;
+    }
+  }
+}

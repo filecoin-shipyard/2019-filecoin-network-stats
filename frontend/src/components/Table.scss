@@ -1,0 +1,26 @@
+@import "../variables";
+
+.table__table {
+  width: 100%;
+  padding-bottom: $base * 1.5;
+}
+
+.table__header {
+  text-align: left;
+  padding: $base ($base * 1.5);
+  font-size: $base * 1.2;
+  vertical-align: top;
+  font-weight: normal;
+}
+
+.table__cell {
+  padding: $base ($base * 1.5) 0 ($base * 1.5);
+  font-size: $base * 1.2;
+  color: $dark-grey;
+}
+
+.table__body-row:last-of-type {
+  .table__cell {
+    border-bottom: 0;
+  }
+}

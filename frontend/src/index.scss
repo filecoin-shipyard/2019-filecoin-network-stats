@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+@import "variables";
+
+* {
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  color: $black;
+}
+
+#root {
+  min-height: 100vh;
+  background: $body;
+}
+
+a {
+  text-decoration: none;
+}

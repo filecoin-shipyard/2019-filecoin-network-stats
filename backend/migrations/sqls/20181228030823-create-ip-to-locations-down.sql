@@ -1,0 +1,1 @@
+DROP TABLE ip_to_locations;

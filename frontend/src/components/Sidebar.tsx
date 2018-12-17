@@ -1,0 +1,97 @@
+import * as React from 'react';
+import bemify from '../utils/bemify';
+import './Sidebar.scss';
+import {Link, NavLink} from 'react-router-dom';
+import c from 'classnames';
+
+const b = bemify('sidebar');
+
+export interface SidebarState {
+  isShowingMenu: boolean
+}
+
+export class Sidebar extends React.Component<{}, SidebarState> {
+  constructor (props: {}) {
+    super(props);
+
+    this.state = {
+      isShowingMenu: false,
+    };
+  }
+
+  toggleMenu = () => {
+    this.setState({
+      isShowingMenu: !this.state.isShowingMenu,
+    });
+  };
+
+  renderLinks () {
+    return (
+      <div className={b('links')}>
+        <NavLink exact to="/" className={c(b('link'), b('link', 'home'))}>
+          Home
+        </NavLink>
+        <NavLink to="/storage" className={c(b('link'), b('link', 'storage'))}>
+          Storage
+          <div className={b('sub-nav')}>
+            <NavLink to="/storage/mining" className={b('sub-link')}>
+              Mining
+            </NavLink>
+            <NavLink to="/storage/cost-capacity" className={b('sub-link')}>
+              Cost and Capacity
+            </NavLink>
+            <NavLink to="/storage/deals" className={b('sub-link')}>
+              Deal Stats
+            </NavLink>
+          </div>
+        </NavLink>
+        <NavLink to="/retrieval" className={c(b('link'), b('link', 'retrieval'))}>
+          Retrieval
+        </NavLink>
+        <NavLink to="/macroeconomics" className={c(b('link'), b('link', 'macroeconomics'))}>
+          Macroeconomics
+        </NavLink>
+      </div>
+    );
+  }
+
+  renderFullSize () {
+    return (
+      <nav className={c(b(), b(null, 'full-size'))}>
+        <div className={b('logo')}>
+          <Link to="/"><img src="/assets/logo-nopadding.svg" alt="FileCoin" /></Link>
+        </div>
+        {this.renderLinks()}
+      </nav>
+    );
+  }
+
+  renderCollapsed () {
+    const names = c(b(), b(null, 'collapsed'), {
+      [b(null, 'menu-open')]: this.state.isShowingMenu,
+    });
+
+    return (
+      <nav className={names}>
+        <div className={b('background-wrapper')}>
+          <div className={b('logo')}>
+            <Link to="/"><img src="/assets/logo-nopadding.svg" alt="FileCoin" /></Link>
+          </div>
+          <div className={b('hamburger')} onClick={this.toggleMenu}>
+            <img src="/assets/bars-solid.svg" alt="Show Menu" />
+          </div>
+        </div>
+        {this.renderLinks()}
+      </nav>
+    );
+  }
+
+  render () {
+    return (
+      <React.Fragment>
+        {this.renderFullSize()}
+        {this.renderCollapsed()}
+      </React.Fragment>
+    );
+  }
+}

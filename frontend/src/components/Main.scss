@@ -1,0 +1,27 @@
+@import "../variables";
+
+.main {
+  min-height: 100vh;
+  display: flex;
+}
+
+.main__sidebar {
+  background: $white;
+  flex: 0 0 64px;
+  position: relative;
+}
+
+.main__main {
+  flex: 1 1 100%;
+}
+
+@include smartphones() {
+  .main {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .main__sidebar {
+    flex: 1 1 auto;
+  }
+}

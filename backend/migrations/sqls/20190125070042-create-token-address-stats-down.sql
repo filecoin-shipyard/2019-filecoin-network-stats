@@ -1,0 +1,1 @@
+DROP TABLE token_address_stats;

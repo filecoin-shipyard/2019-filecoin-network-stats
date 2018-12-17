@@ -1,0 +1,49 @@
+$body: #f4f7fc;
+$white: #ffffff;
+$black: #333;
+$grey: #ccc;
+$dark-grey: #aaa;
+$light-grey: #f4f5f7;
+$border: darken($body, 3%);
+
+$base: 12px;
+
+$orange: #ffba76;
+$blue: #45b9e6;
+$green: #74e8be;
+$turquoise: #91a5e2;
+
+$teal-600: #0d8885;
+$teal-500: #13b7b3;
+$teal-400: #6ddfdf;
+$teal-300: #80eaeb;
+$teal-200: #b9f8f3;
+$teal-100: #e5fbf7;
+
+$orange-500: #fe6b57;
+$orange-400: #e27d0e;
+$orange-300: #f7931a;
+$orange-200: #f7a54b;
+$orange-100: #ffba76;
+
+$green-600: #12c4aa;
+$green-500: #17bf7b;
+$green-400: #20ce8b;
+$green-300: #2ee89c;
+$green-200: #74e8be;
+$green-100: #cef4e6;
+
+$blue-400: #748cf9;
+$blue-300: #91a5e2;
+$blue-200: #cccfe0;
+$blue-100: #45b9e6;
+
+%box-shadow {
+  box-shadow: 0 2px 8px rgba(black, 0.15);
+}
+
+@mixin smartphones() {
+  @media only screen and (max-width: 480px) {
+    @content;
+  }
+}

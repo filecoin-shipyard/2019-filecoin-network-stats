@@ -1,0 +1,178 @@
+@import "../variables";
+
+.sidebar--full-size {
+  width: 64px;
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: white;
+  transition: width ease-out 200ms;
+  border-right: 1px solid $border;
+  overflow: hidden;
+}
+
+.sidebar--full-size:hover {
+  width: 230px;
+
+  .sidebar__link.active .sidebar__sub-nav {
+    display: block;
+  }
+}
+
+.sidebar--collapsed {
+  display: none;
+}
+
+.sidebar__logo {
+  border-bottom: 1px solid $border;
+  padding: $base;
+
+  img {
+    display: block;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.sidebar__links {
+  margin-top: $base * 3;
+}
+
+.sidebar__link {
+  display: block;
+  padding: ($base) ($base * 2) ($base) ($base * 6);
+  background-repeat: no-repeat;
+  background-position: ($base * 2) $base;
+  margin-bottom: $base;
+  font-size: $base * 1.2;
+  color: #95a5a6;
+  white-space: nowrap;
+
+  &.active, &:hover {
+    border-left: 3px solid #42c2cb;
+    padding-left: ($base * 6) - 3px;
+    color: #3FC1CB;
+
+    &.sidebar__link--home {
+      background-image: url('/assets/home-on.svg');
+      background-position-x: ($base * 2) - 8px;
+    }
+
+    &.sidebar__link--storage {
+      background-image: url('/assets/storage-on.svg');
+      background-position-x: ($base * 2) - 6px;
+    }
+
+    &.sidebar__link--retrieval {
+      background-image: url('/assets/retrieval-on.svg');
+      background-position-x: ($base * 2) - 8px;
+    }
+
+    &.sidebar__link--macroeconomics {
+      background-image: url('/assets/macroeconomics-on.svg');
+      background-position-x: ($base * 2) - 8px;
+    }
+  }
+
+  &--home {
+    background-image: url('/assets/home-off.svg');
+    background-position-x: ($base * 2) - 5px;
+    background-position-y: $base - 3px;
+  }
+
+  &--storage {
+    background-image: url('/assets/storage-off.svg');
+    background-position-x: ($base * 2) - 3px;
+  }
+
+  &--retrieval {
+    background-image: url('/assets/retrieval-off.svg');
+    background-position-x: ($base * 2) - 5px;
+    background-position-y: $base - 5px;
+  }
+
+  &--macroeconomics {
+    background-image: url('/assets/macroeconomics-off.svg');
+    background-position-x: ($base * 2) - 5px;
+  }
+}
+
+.sidebar__sub-nav {
+  display: none;
+  font-size: $base * 1.2;
+  margin-top: $base;
+}
+
+.sidebar__sub-link {
+  display: block;
+  color: $dark-grey;
+  padding: ($base / 2) $base;
+
+  &.active, &:hover {
+    color: #3FC1CB;
+  }
+}
+
+.sidebar__hamburger {
+  display: none;
+  cursor: pointer;
+  margin-left: auto;
+
+  img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@include smartphones() {
+  .sidebar--full-size {
+    display: none;
+  }
+
+  .sidebar--collapsed {
+    display: block;
+    position: relative;
+  }
+
+  .sidebar--menu-open .sidebar__links {
+    display: block;
+    transform: translateY(0);
+  }
+
+  .sidebar__background-wrapper {
+    display: flex;
+    z-index: 20;
+    border-bottom: 1px solid $border;
+    align-items: center;
+    background: white;
+    position: relative;
+  }
+
+  .sidebar__hamburger {
+    display: block;
+    margin-right: $base;
+  }
+
+  .sidebar__links {
+    margin-top: 0;
+    position: absolute;
+    top: 100%;
+    transform: translateY(-100%);
+    transition: transform ease-out 100ms;
+    z-index: 10;
+    background: white;
+    border-bottom: 1px solid $border;
+    width: 100%;
+  }
+
+  .sidebar__sub-nav {
+    display: block;
+  }
+
+  .sidebar__logo {
+    border: 0;
+  }
+}

@@ -1,0 +1,35 @@
+@import "../variables";
+
+.mining-summary {
+  display: flex;
+  align-items: center;
+}
+
+.mining-summary__left {
+  width: 30%;
+  padding: 0 ($base * 4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mining-summary__right {
+  width: 70%;
+  padding: ($base * 4) ($base * 6);
+  border-left: 1px solid $border;
+}
+
+.mining-summary__main-stat {
+  font-size: $base * 4;
+  margin-bottom: $base;
+}
+
+.mining-summary__sub-stat {
+  font-size: $base * 2;
+  margin-bottom: $base;
+}
+
+.mining-summary__label {
+  font-size: $base * 1.2;
+  color: $grey;
+}

@@ -1,0 +1,46 @@
+@import "../../variables";
+
+.storage-miners-table {
+  &__search-download {
+    background: $light-grey;
+    padding: $base * 1.5;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search input {
+    border-radius: 2px;
+    border: 0;
+    font-size: $base * 1.2;
+    padding: $base $base $base ($base * 2 + 16px);
+    width: 500px;
+    background: white url('/assets/search.svg') no-repeat $base center;
+  }
+
+  &__download {
+    margin-left: $base * 2;
+    color: $black;
+    font-size: $base * 1.2;
+
+    img {
+      margin-right: $base / 2;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+  }
+
+  &__tipset-hash--consensus {
+    color: #13B7B3;
+  }
+
+  &__sort {
+    display: flex;
+    margin-left: $base * 2;
+    font-size: $base * 1.2;
+
+    .dropdown {
+      margin-left: $base / 2;
+    }
+  }
+}

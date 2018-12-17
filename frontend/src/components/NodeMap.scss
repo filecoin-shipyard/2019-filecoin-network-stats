@@ -1,0 +1,53 @@
+@import "../variables";
+
+.node-map {
+}
+
+.node-map__header {
+  border-bottom: 1px solid $border;
+  padding: $base * 2;
+  font-weight: 700;
+}
+
+.node-map__map {
+  position: relative;
+}
+
+.node-map__overlay {
+  position: absolute;
+  z-index: 200;
+  background: $teal-400;
+  border-radius: 3px;
+  @extend %box-shadow;
+  padding: $base;
+  left: 50%;
+  top: $base * 2;
+  width: 130px;
+  margin-left: -65px;
+}
+
+.node-map__node-count {
+  color: $white;
+  text-align: center;
+  font-size: $base * 1.2;
+
+  h1 {
+    margin-top: 0;
+    color: $white;
+    margin-bottom: $base;
+    font-weight: 400;
+    font-size: $base * 2;
+  }
+}
+
+.node-map__nick-tooltip {
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: block;
+    margin: 0;
+    padding: $base / 2;
+    border-bottom: 1px solid rgba(white, 0.25);
+  }
+}

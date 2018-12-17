@@ -1,0 +1,40 @@
+@import "../variables";
+
+.switchable-content {
+  &__header-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  &__header-links, &__dropdown {
+    margin-left: auto;
+    display: flex;
+    margin-bottom: -(($base / 4) + 2px);
+    font-weight: 500;
+  }
+
+  &__header-link {
+    margin-left: $base;
+    color: $grey;
+    font-size: $base * 1.1;
+    cursor: pointer;
+
+    &:hover {
+      border-bottom: 2px solid $grey;
+    }
+  }
+
+  &__header-link--active {
+    color: $black;
+    padding-bottom: $base / 4;
+    border-bottom: 2px solid $black;
+
+    &:hover {
+      border-bottom: 2px solid black;
+    }
+  }
+
+  .dropdown {
+    margin-left: auto;
+  }
+}
