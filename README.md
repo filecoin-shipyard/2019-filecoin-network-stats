@@ -66,6 +66,25 @@ go-filecoin config heartbeat.nickname '"Pizzanode"'
 go-filecoin config heartbeat.beatTarget "/dns4/<your-backend-domain-name>/tcp/8080/ipfs/<your-peer-id>"
 ```
 
+### REST API
+
+The backend exposes a REST API for some stats:
+
+| Endpoint                                                                | Description                                                                 |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| /stats/storage/historicalMinerCounts/:duration((all\|24h\|1w\|1m\|1y))      | Returns the number of heartbeating miners over time.                        |
+| /stats/storage/historicalStoragePrice/:duration((all\|24h\|1w\|1m\|1y))     | Returns the average price of storage (in FIL) over time.                    |
+| /stats/storage/historicalCollateral/:duration((all\|24h\|1w\|1m\|1y))       | Returns the amount of total pledged storage collateral (in FIL) over time.  |
+| /stats/storage/historicalCollateralPerGB/:duration((all\|24h\|1w\|1m\|1y))  | Returns the amount of pledged storage collateral per GB (in FIL) over time. |
+| /stats/storage/historicalStorageAmount/:duration((all\|24h\|1w\|1m\|1y))    | Returns the historical amount of network storage (in GB) over time.         |
+| /stats/storage/historicalUtilization/:duration((all\|24h\|1w\|1m\|1y))      | Returns historical network utilization (as a %) over time.                  |
+| /stats/token/historicalBlockRewards/:duration((all\|24h\|1w\|1m\|1y))       | Returns the historical block rewards (in FIL) over time.                    |
+| /stats/token/historicalCoinsInCirculation/:duration((all\|24h\|1w\|1m\|1y)) | Returns the number of coins in circulation over time.                       |
+
+The dashboard uses these to populate historical graphs when the user toggles between timeframes. You can also make a GET request to `/sync` to retrieve all of the stats that the dashboard uses to update itself.
+
+### more info
+
 For more information about the backend, check out [docs/backend.md](./docs/backend.md).
 
 ## a note about local development
