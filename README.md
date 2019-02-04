@@ -65,3 +65,19 @@ That's it! You're off to the races. To collect statistics on node counts and loc
 go-filecoin config heartbeat.nickname '"Pizzanode"'
 go-filecoin config heartbeat.beatTarget "/dns4/<your-backend-domain-name>/tcp/8080/ipfs/<your-peer-id>"
 ```
+
+## a note about local development
+
+You may find it easier to `npm link` the `filecoin-network-stats-common` dependency if you're actively developing. To do so, run these commands from the root of the repo:
+
+```bash
+cd common
+npm run build
+npm link
+cd ../frontend
+npm link filecoin-network-stats-common
+cd ../backend
+npm link filecoin-network-stats-common
+```
+
+Then, run `npm run build` from the `common` directory whenever you make changes to common dependencies. This prevents you from having to re-run `npm install` every time you change something in `common`.
