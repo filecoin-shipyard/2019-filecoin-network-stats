@@ -15,6 +15,10 @@ const root = document.createElement('div');
 root.id = 'root';
 body.appendChild(root);
 
+if (process.env.SENTRY_DSN) {
+  (window as any).Sentry.init({ dsn: process.env.SENTRY_DSN });
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <Router>

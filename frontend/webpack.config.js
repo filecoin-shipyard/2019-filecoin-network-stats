@@ -63,7 +63,8 @@ module.exports = {
       title: 'Filecoin Network Stats',
       meta: {
         viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
-      }
+      },
+      template: 'src/index.html'
     }),
     new CopyWebpackPlugin([{
       from: path.join(__dirname, 'src', 'assets'),
