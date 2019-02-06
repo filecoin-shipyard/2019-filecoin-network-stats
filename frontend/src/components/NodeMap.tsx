@@ -58,7 +58,7 @@ export class NodeMap extends React.Component<NodeMapProps> {
         const item = target.dataItem as any;
         return 5 * (1 + ((locsMap[`${item.lat}${item.long}`]) / nodes.length));
       });
-      point.fill = am4core.color('#12c4aa');
+      point.fill = am4core.color('#45b9e6');
       point.strokeWidth = 2;
       point.stroke = am4core.color('#fff');
     }

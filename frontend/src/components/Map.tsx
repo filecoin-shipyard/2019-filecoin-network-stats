@@ -34,7 +34,7 @@ export default class Map<T> extends React.Component<MapProps<T>, {}> {
 
     const polygonSeries = this.chart.series.push(new am4maps.MapPolygonSeries());
     polygonSeries.useGeodata = true;
-    polygonSeries.mapPolygons.template.fill = am4core.color('#b9f8f3').lighten(0.4);
+    polygonSeries.mapPolygons.template.fill = am4core.color('#daf1fa').lighten(0.4);
     polygonSeries.exclude = ['AQ'];
 
     this.props.onData(this.props.data, this.chart);
