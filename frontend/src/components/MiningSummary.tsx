@@ -12,6 +12,8 @@ import FloatTimeago from './FloatTimeago';
 import BigNumber from 'bignumber.js';
 import ContentHeader from './ContentHeader';
 import PercentageNumber from '../utils/PercentageNumber';
+import Tooltip from './Tooltip';
+import PowerTooltip from './PowerTooltip';
 
 const b = bemify('mining-summary');
 
@@ -73,7 +75,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
                   {PercentageNumber.create(this.props.mining.power).toDisplay(true)}
                 </div>
                 <div className={b('label')}>
-                  Storage Power
+                  Storage Power <PowerTooltip />
                 </div>
               </Col>
               <Col transparent>
@@ -93,7 +95,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
                   }
                 </div>
                 <div className={b('label')}>
-                  Last block
+                  Last Block
                 </div>
               </Col>
             </Grid>

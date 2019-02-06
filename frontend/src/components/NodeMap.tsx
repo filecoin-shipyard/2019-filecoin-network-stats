@@ -12,7 +12,7 @@ import ContentHeader from './ContentHeader';
 const b = bemify('node-map');
 
 export interface NodeMapStateProps {
-  nodes: Node[]|null
+  nodes: Node[] | null
 }
 
 export type NodeMapProps = NodeMapStateProps;
@@ -42,12 +42,22 @@ export class NodeMap extends React.Component<NodeMapProps> {
   }
 
   onData = (nodes: Node[], chart: am4maps.MapChart) => {
+    type locMap = { [k: string]: number }
+    const locsMap = nodes.reduce((acc: locMap, curr: Node) => {
+      const existing = locsMap[`${curr.long}${curr.lat}`] || 0;
+      locsMap[`${curr.lat}${curr.long}`] = existing + 1;
+      return acc;
+    }, {} as locMap);
+
     if (!this.cityPoints) {
       this.cityPoints = chart.series.push(new am4maps.MapImageSeries());
       this.cityPoints.mapImages.template.nonScaling = true;
 
       const point = this.cityPoints.mapImages.template.createChild(am4core.Circle);
-      point.radius = 5;
+      point.adapter.add('radius', (radius, target, key) => {
+        const item = target.dataItem as any;
+        return 5 + (1 + (locsMap[`${item.lat}${item.lat}`]));
+      });
       point.fill = am4core.color('#12c4aa');
       point.strokeWidth = 2;
       point.stroke = am4core.color('#fff');
@@ -86,6 +96,7 @@ export class NodeMap extends React.Component<NodeMapProps> {
 }
 
 const escapeDiv = document.createElement('div');
+
 function escape (data: string) {
   escapeDiv.textContent = data;
   return escapeDiv.innerHTML;
@@ -93,7 +104,7 @@ function escape (data: string) {
 
 function mapStateToProps (state: AppState) {
   return {
-    nodes: state.stats.stats ? state.stats.stats.nodes : null
+    nodes: state.stats.stats ? state.stats.stats.nodes : null,
   };
 }
 

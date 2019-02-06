@@ -14,8 +14,9 @@ import bemify from '../../utils/bemify';
 import './StorageMinersTable.scss';
 import c from 'classnames';
 import Dropdown from '../Dropdown';
-import debounce = require('lodash.debounce');
 import Tooltip from '../Tooltip';
+import PowerTooltip from '../PowerTooltip';
+import debounce = require('lodash.debounce');
 
 const b = bemify('storage-miners-table');
 
@@ -41,7 +42,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     this.state = {
       query: '',
       enteredQuery: '',
-      sortIndex: 0
+      sortIndex: 0,
     };
   }
 
@@ -86,7 +87,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
 
   onChangeSort = (i: number) => {
     this.setState({
-      sortIndex: i
+      sortIndex: i,
     });
   };
 
@@ -119,10 +120,10 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           </div>
         </div>
         <Table
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), 'Storage Power', 'Capacity', 'Block %', 'Time']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Capacity', 'Block %', 'Time']}
           rows={this.props.miners.filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
-              [b('tipset-hash', 'consensus')]: m.isInConsensus
+              [b('tipset-hash', 'consensus')]: m.isInConsensus,
             });
 
             return ([
@@ -147,6 +148,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     return (
       <React.Fragment>
         Tipset Hash <Tooltip content={explainer} />
+      </React.Fragment>
+    );
+  }
+
+  renderPowerHeader () {
+    return (
+      <React.Fragment>
+        Storage Power <PowerTooltip />
       </React.Fragment>
     );
   }

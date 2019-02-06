@@ -96,6 +96,7 @@ export class Home extends React.Component<HomeProps, {}> {
               <SwitchableContent
                 titles={['Avg. Price of Storage', 'Volume of FIL Transacted On-Chain']}
                 linkTitles={['Storage Price', 'Token Volume']}
+                dropdown
               >
                 <AverageStorageCostChart />
                 <GainLossTimelineChart
