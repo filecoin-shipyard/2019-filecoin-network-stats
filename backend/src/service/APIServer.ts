@@ -55,7 +55,7 @@ export class ExpressAPIServer implements IAPIServer {
         try {
           await handler(req, res);
         } catch (err) {
-          logger.error('caught exception in URL handler', { err });
+          logger.error('caught exception in URL handler', { err, route });
           res.sendStatus(500);
         }
       };
