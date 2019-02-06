@@ -50,6 +50,11 @@ export class Home extends React.Component<HomeProps, {}> {
           <PageHeader title="Network Overview" />
           <Grid>
             <Col>
+              <NodeMap />
+            </Col>
+          </Grid>
+          <Grid>
+            <Col>
               <SingleStat
                 value={averageCost.toDisplay(2)}
                 unit="FIL/GB/mo."
@@ -84,11 +89,6 @@ export class Home extends React.Component<HomeProps, {}> {
                 trend={1.23}
                 duration="24 hrs"
               />
-            </Col>
-          </Grid>
-          <Grid>
-            <Col>
-              <NodeMap />
             </Col>
           </Grid>
           <Grid>
