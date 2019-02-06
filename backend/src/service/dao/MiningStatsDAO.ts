@@ -1,6 +1,8 @@
-import {MiningStats} from '../../domain/MiningStats';
+import {MiningStats} from 'filecoin-network-stats-common/lib/domain/Stats';
 import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
+import {INodeStatusService} from '../NodeStatusService';
+import {min} from 'moment';
 
 export interface IMiningStatsDAO {
   getStats (): Promise<MiningStats>
@@ -9,8 +11,11 @@ export interface IMiningStatsDAO {
 export class PostgresMiningStatsDAO implements IMiningStatsDAO {
   private readonly client: PGClient;
 
-  constructor (client: PGClient) {
+  private readonly nss: INodeStatusService;
+
+  constructor (client: PGClient, nss: INodeStatusService) {
     this.client = client;
+    this.nss = nss;
   }
 
   async getStats (): Promise<MiningStats> {
@@ -24,6 +29,9 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
           averageBlockTime: 0,
           minerName: null,
           minerAddress: '',
+          power: 0,
+          blocksInTipset: 0,
+          peerId: '',
         };
       }
 
@@ -42,13 +50,27 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
       }
 
       const row = data.rows[0];
+      const minerAddress = row.miner;
+
+      const miner = await this.nss.getMinerByAddress(minerAddress);
+      let power = 0;
+      let peerId = '';
+      let blocksInTipset = 1;
+
+      if (miner) {
+        power = miner.power;
+        peerId = miner.peerId;
+      }
 
       return {
         lastBlockHeight: row.height,
         lastBlockTime: Number(row.ingested_at),
         averageBlockTime,
         minerName: null,
-        minerAddress: row.miner,
+        minerAddress,
+        power,
+        blocksInTipset,
+        peerId,
       };
     });
   }

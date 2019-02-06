@@ -11,6 +11,7 @@ import {secToMillis} from '../utils/time';
 import FloatTimeago from './FloatTimeago';
 import BigNumber from 'bignumber.js';
 import ContentHeader from './ContentHeader';
+import PercentageNumber from '../utils/PercentageNumber';
 
 const b = bemify('mining-summary');
 
@@ -43,10 +44,44 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
             <Grid>
               <Col transparent>
                 <div className={b('sub-stat')}>
+                  {ellipsify(this.props.mining.peerId, 20)}
+                </div>
+                <div className={b('label')}>
+                  Peer ID
+                </div>
+              </Col>
+              <Col transparent>
+                <div className={b('sub-stat')}>
+                  {ellipsify(this.props.mining.minerAddress, 20)}
+                </div>
+                <div className={b('label')}>
+                  Miner Address
+                </div>
+              </Col>
+            </Grid>
+            <Grid noMargin>
+              <Col transparent>
+                <div className={b('sub-stat')}>
+                  {this.props.mining.blocksInTipset}
+                </div>
+                <div className={b('label')}>
+                  # of Blocks in Tipset
+                </div>
+              </Col>
+              <Col transparent>
+                <div className={b('sub-stat')}>
+                  {PercentageNumber.create(this.props.mining.power).toDisplay(true)}
+                </div>
+                <div className={b('label')}>
+                  Storage Power
+                </div>
+              </Col>
+              <Col transparent>
+                <div className={b('sub-stat')}>
                   {new BigNumber(this.props.mining.averageBlockTime).toFixed(2)}s
                 </div>
                 <div className={b('label')}>
-                  Avg. block time
+                  Avg. Block Time
                 </div>
               </Col>
               <Col transparent>
@@ -59,24 +94,6 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
                 </div>
                 <div className={b('label')}>
                   Last block
-                </div>
-              </Col>
-            </Grid>
-            <Grid noMargin>
-              <Col transparent>
-                <div className={b('sub-stat')}>
-                  --
-                </div>
-                <div className={b('label')}>
-                  Miner nickname
-                </div>
-              </Col>
-              <Col transparent>
-                <div className={b('sub-stat')}>
-                  {ellipsify(this.props.mining.minerAddress, 20)}
-                </div>
-                <div className={b('label')}>
-                  Miner address
                 </div>
               </Col>
             </Grid>

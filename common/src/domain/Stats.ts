@@ -61,6 +61,9 @@ export interface MiningStats {
   averageBlockTime: number
   minerName: string | null
   minerAddress: string
+  power: number
+  blocksInTipset: number
+  peerId: string
 }
 
 export interface StorageStats {
