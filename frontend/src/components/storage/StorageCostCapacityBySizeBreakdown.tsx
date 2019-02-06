@@ -6,6 +6,7 @@ import './StorageCostCapacityBySizeBreakdown.scss';
 import {AppState} from '../../ducks/store';
 import {connect} from 'react-redux';
 import Filesize from '../../utils/Filesize';
+import PercentageNumber from '../../utils/PercentageNumber';
 
 const b = bemify('storage-cost-capacity-by-size-breakdown');
 
@@ -36,8 +37,9 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
         </div>
         <div className={b('split-stats')}>
           {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}
-          {this.renderStat(`${data.averageStoragePrice.div('1e18').toFixed(2)} FIL`, 'Avg. storage price')}
-          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).smartUnitString(), 'Avg. storage capacity/miner')}
+          {this.renderStat(`${data.averageStoragePrice.div('1e18').toFixed(2)} FIL`, 'Avg. Storage Price')}
+          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).smartUnitString(), 'Avg. Storage Capacity')}
+          {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(true), 'Avg. Utilization')}
         </div>
       </div>
     );
