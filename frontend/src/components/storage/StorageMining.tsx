@@ -26,9 +26,6 @@ export default class StorageMining extends React.Component {
         </Grid>
         <Grid>
           <Col>
-            <MiningDistributionOverTimeChart />
-          </Col>
-          <Col>
             <MiningEvolutionChart />
           </Col>
         </Grid>

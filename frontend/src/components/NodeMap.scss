@@ -16,9 +16,9 @@
 .node-map__overlay {
   position: absolute;
   z-index: 200;
-  background: $teal-400;
+  background: white;
   border-radius: 3px;
-  @extend %box-shadow;
+  box-shadow: 0 18px 40px rgba(1, 10, 59, 0.15);
   padding: $base;
   left: 50%;
   top: $base * 2;
@@ -27,16 +27,16 @@
 }
 
 .node-map__node-count {
-  color: $white;
+  color: #818E94;
   text-align: center;
   font-size: $base * 1.2;
 
   h1 {
     margin-top: 0;
-    color: $white;
+    color: $black;
     margin-bottom: $base;
-    font-weight: 400;
-    font-size: $base * 2;
+    font-weight: 700;
+    font-size: $base * 3;
   }
 }
 

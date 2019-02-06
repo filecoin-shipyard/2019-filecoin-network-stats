@@ -112,23 +112,64 @@ export default class StorageDeals extends React.Component {
         <PageHeader title="Storage Deal Stats" />
         <Grid singleMargin>
           <Col unsupported>
-            <SingleStat value="15,345" unit="" subtitle="Total Active Storage Deals" trend={15.67} />
+            <SingleStat value="15,345" unit="" subtitle="Active Storage Deals" trend={15.67} />
           </Col>
           <Col unsupported>
-            <SingleStat value="8,455" unit="" subtitle="New storage deals in last 24 hrs" trend={-38.91} />
+            <SingleStat value="8,455" unit="" subtitle="Storage Deals Created in Last 24 Hrs" trend={-38.91} />
           </Col>
           <Col unsupported>
             <SingleStat value="97.8" unit="%" subtitle="% of storage deals completed" trend={12.4} />
           </Col>
+        </Grid>
+        <Grid>
           <Col unsupported>
-            <SingleStat value="1,123" unit="FIL" subtitle="Total FIL Held In Storage Deals" trend={22.4} />
+            <SwitchableContent
+              titles={['Total Deals Over Time', 'Total FIL In Deals Over Time', 'Total Storage In Deals Over Time']}
+              linkTitles={['# of deals over time', 'Amount of FIL in deals over time', 'Amount of GBs stored in deals over time']}
+              dropdown
+            >
+              <React.Fragment>
+                <TimelineDateChart
+                  data={fakeSineWave()}
+                  lineColor={GraphColors.GREY}
+                  yAxisLabels={['Number of Deals']}
+                />
+              </React.Fragment>
+              <React.Fragment>
+                <TimelineDateChart
+                  data={fakeSineWave()}
+                  lineColor={GraphColors.GREY}
+                  yAxisLabels={['Number of Deals']}
+                />
+              </React.Fragment>
+              <React.Fragment>
+                <TimelineDateChart
+                  data={fakeSineWave()}
+                  lineColor={GraphColors.GREY}
+                  yAxisLabels={['Number of Deals']}
+                />
+              </React.Fragment>
+            </SwitchableContent>
+          </Col>
+        </Grid>
+        <Grid>
+          <Col unsupported>
+            <ContentHeader title="Deal Size Distribution" />
+            <PercentageLineChart
+              data={fakeEvolution(['<10 TB', '10TB-1PB', '1PB-10PB', '>10PB'])}
+              yAxisLabels={['% of All Deals']}
+              greyscale
+            />
           </Col>
         </Grid>
         <Grid>
           <Col unsupported>
             <ContentHeader title="Deal Duration" />
             <HistogramChart
+              summaryNumber={<React.Fragment>9 <small>Months</small></React.Fragment>}
+              label="Avg. Storage Deal Duration"
               data={durationHistogram}
+              yAxisLabels={['Number of Deals']}
               dataTransformer={this.durationDataTransformer}
               showBarLabels
             />
@@ -136,17 +177,13 @@ export default class StorageDeals extends React.Component {
           <Col unsupported>
             <ContentHeader title="Storage Deal Size" />
             <HistogramChart
+              summaryNumber={<React.Fragment>7 <small>TB</small></React.Fragment>}
+              label="Avg. Storage Deal Size"
               data={sizeHistogram}
+              yAxisLabels={['Number of Deals']}
               dataTransformer={this.sizeDataTransformer}
               showBarLabels
             />
-          </Col>
-        </Grid>
-        <Grid>
-          <Col unsupported>
-            <ContentHeader title="Deal Size Distribution" />
-            <PercentageLineChart data={fakeEvolution(['<10 TB', '10TB-1PB', '1PB-10PB', '>10PB'])}
-                                 yAxisLabels={['% of All Deals']} />
           </Col>
         </Grid>
         <Grid>
@@ -164,34 +201,6 @@ export default class StorageDeals extends React.Component {
               ]}
               rows={dealActivity}
             />
-          </Col>
-        </Grid>
-        <Grid>
-          <Col unsupported>
-            <SwitchableContent
-              titles={['Total Deals Over Time', 'Total FIL In Deals Over Time', 'Total Storage In Deals Over Time']}
-              linkTitles={['# of deals over time', 'Amount of FIL in deals over time', 'Amount of GBs stored in deals over time']}
-              dropdown
-            >
-              <React.Fragment>
-                <TimelineDateChart
-                  data={fakeSineWave()}
-                  lineColor={GraphColors.PURPLE}
-                />
-              </React.Fragment>
-              <React.Fragment>
-                <TimelineDateChart
-                  data={fakeSineWave()}
-                  lineColor={GraphColors.GREEN}
-                />
-              </React.Fragment>
-              <React.Fragment>
-                <TimelineDateChart
-                  data={fakeSineWave()}
-                  lineColor={GraphColors.BLUE}
-                />
-              </React.Fragment>
-            </SwitchableContent>
           </Col>
         </Grid>
       </div>

@@ -49,11 +49,11 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
     return (
       <StackedColumnChart
         summaryNumber={summary}
-        label="Total tokens in circulation"
+        label="Total Tokens in Circulation"
         data={isOverride ? this.props.overrideData : this.props.data}
         isPercentage={false}
         categoryNames={categoryNames}
-        yAxisLabels={['Circulating FIL']}
+        yAxisLabels={['Total FIL in Circulation']}
         showBarLabels={false}
         colors={[GraphColors.GREEN, GraphColors.BLUE]}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}

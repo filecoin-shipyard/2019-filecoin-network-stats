@@ -5,8 +5,8 @@ import PageHeader from './PageHeader';
 import TokenHoldingsDistribution from './token/TokenHoldingsDistribution';
 import HistoricalCollateralChart from './token/HistoricalCollateralChart';
 import HistoricalBlockRewards from './token/HistoricalBlockRewards';
-import {SingleStat} from './SingleStat';
 import CoinsInCirculation from './token/CoinsInCirculation';
+import BlockRewardLifecycle from './token/BlockRewardLifecycle';
 
 const b = bemify('macroeconomics');
 
@@ -17,28 +17,26 @@ export default class Macroeconomics extends React.Component<{}, {}> {
         <PageHeader title="Token Metrics" />
         <Grid>
           <Col>
-            <TokenHoldingsDistribution />
+            <CoinsInCirculation />
           </Col>
         </Grid>
         <Grid>
           <Col>
-            <CoinsInCirculation />
+            <TokenHoldingsDistribution />
           </Col>
         </Grid>
         <Grid>
           <Col>
             <HistoricalCollateralChart />
           </Col>
-          <Col>
-            <HistoricalBlockRewards />
-          </Col>
         </Grid>
         <Grid>
           <Col>
-            <SingleStat value="1000" unit="FIL" subtitle="Current Block Reward" />
+            <HistoricalBlockRewards />
           </Col>
-          <Col empty />
-          <Col empty />
+          <Col>
+            <BlockRewardLifecycle />
+          </Col>
         </Grid>
       </div>
     );

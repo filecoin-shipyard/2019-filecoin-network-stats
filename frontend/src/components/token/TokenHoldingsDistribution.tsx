@@ -28,7 +28,7 @@ export class TokenHoldingsDistribution extends React.Component<TokenHoldingsDist
           summaryNumber={new Currency(new BigNumber(summary)).toDisplay()}
           data={this.props.data}
           dataTransformer={this.dataTransformer}
-          yAxisLabels={['# of Token Addresses']}
+          yAxisLabels={['Amount of FIL in Each Address']}
           yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter()]}
         />
       </div>

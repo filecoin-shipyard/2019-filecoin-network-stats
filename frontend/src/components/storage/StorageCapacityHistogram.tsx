@@ -19,13 +19,12 @@ export class StorageCapacityHistogram extends React.Component<MinerCountChartPro
         <ContentHeader title="Storage Capacity Distribution" />
         <HistogramChart
           data={this.props.data}
-          yAxisLabels={['Number of Miners', 'Overall Avg. Storage Capacity']}
+          yAxisLabels={['Number of Miners']}
           dataTransformer={this.dataTransformer}
           barColor={GraphColors.DARK_GREEN}
-          yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter(), new FilesizeNumberFormatter(SizeUnit.GB)]}
+          yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter()]}
           xAxisLabels={['Avg. Storage Capacity/Miner']}
           heatMapped
-          showAverage
         />
       </div>
     );

@@ -66,16 +66,12 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
       case 0:
         return 0;
       case 1:
-        return m1.nickname > m2.nickname ? 1 : -1;
+        return m1.height - m2.height;
       case 2:
-        return m1.tipsetHash > m2.tipsetHash ? 1 : -1;
-      case 3:
         return m2.power - m1.power;
-      case 4:
+      case 3:
         return m2.capacity - m1.capacity;
-      case 5:
-        return m2.lastBlockMined - m1.lastBlockMined;
-      case 6:
+      case 4:
         return m2.blockPercentage - m1.blockPercentage;
     }
   };
@@ -108,22 +104,22 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
               type="text"
               onChange={this.onChangeQuery}
               value={this.state.enteredQuery}
-              placeholder="Search by node name, peer ID, etc."
+              placeholder="Search by Node Name, Peer ID, etc."
             />
           </div>
           <a className={b('download')} href={`${process.env.BACKEND_URL}/miners/csv`}>
-            <img src="/assets/download.svg" alt="" /> Download table
+            <img src="/assets/download.svg" alt="" /> Download
           </a>
           <div className={b('sort')}>
-            Sort by:
+            Sort By:
             <Dropdown
-              titles={['None', 'Node Name', 'Tipset Hash', 'Power', 'Capacity', 'Last Block', 'Block %']}
+              titles={['None', 'Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
               onSwitch={this.onChangeSort}
             />
           </div>
         </div>
         <Table
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), 'Power', 'Capacity', 'Last Block', 'Block %', 'Last Seen']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), 'Storage Power', 'Capacity', 'Block %', 'Time']}
           rows={this.props.miners.filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
               [b('tipset-hash', 'consensus')]: m.isInConsensus
@@ -135,7 +131,6 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
               <span className={tipsetNames}>{ellipsify(m.tipsetHash, 15)}</span>,
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
-              `#${m.lastBlockMined}`,
               `${Math.floor(m.blockPercentage * 100)}%`,
               <FloatTimeago date={secToMillis(m.lastSeen)} />,
             ]);

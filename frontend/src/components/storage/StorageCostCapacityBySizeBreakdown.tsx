@@ -32,7 +32,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
     return (
       <div className={b('split-child')}>
         <div className={b('split-header')}>
-          {idx === 0 ? '<' : '>='} 10 PB Storage Capacity
+          {idx === 0 ? '<' : '>='} 1 PB Storage Capacity
         </div>
         <div className={b('split-stats')}>
           {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}

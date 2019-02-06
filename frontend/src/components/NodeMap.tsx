@@ -27,12 +27,12 @@ export class NodeMap extends React.Component<NodeMapProps> {
 
     return (
       <div className={b()}>
-        <ContentHeader title="Network Node Activity and Distribution" />
+        <ContentHeader title="Filecoin Node Activity and Distribution" />
         <div className={b('map')}>
           <div className={b('overlay')}>
             <div className={b('node-count')}>
               <h1>{this.props.nodes.length}</h1>
-              Total Active Nodes
+              Active Nodes
             </div>
           </div>
           <Map onData={this.onData} data={this.props.nodes} />

@@ -17,6 +17,7 @@ import PercentageNumber from '../utils/PercentageNumber';
 import GainLossTimelineChart from './GainLossTimelineChart';
 import {makeAverage} from '../utils/averages';
 import BigNumber from 'bignumber.js';
+import Tooltip from './Tooltip';
 
 const b = bemify('home');
 
@@ -61,7 +62,7 @@ export class Home extends React.Component<HomeProps, {}> {
               <SingleStat
                 value={totalStorage.toString(SizeUnit.GB)}
                 unit="GB"
-                subtitle="Current Total Network Storage Capacity"
+                subtitle="Current Network Storage Capacity"
                 trend={PercentageNumber.create(this.props.storageStats.storageAmount.trend).toNumber()}
                 duration="24 hrs"
               />
@@ -69,9 +70,9 @@ export class Home extends React.Component<HomeProps, {}> {
             <Col>
               <SingleStat
                 value={PercentageNumber.create(currentUtilization).toDisplay(false)}
-                unit={"%"}
+                unit={'%'}
                 trend={utilizationTrend.toNumber()}
-                subtitle={"Current Total Network Utilization"}
+                subtitle={'Current Network Utilization'}
                 duration="24 hrs"
               />
             </Col>
@@ -79,7 +80,7 @@ export class Home extends React.Component<HomeProps, {}> {
               <SingleStat
                 value="1"
                 unit="FIL/GB"
-                subtitle="Avg. cost of retrieval"
+                subtitle="Avg. Price of Retrieval"
                 trend={1.23}
                 duration="24 hrs"
               />
@@ -101,7 +102,7 @@ export class Home extends React.Component<HomeProps, {}> {
                   data={this.props.marketStats.volume}
                   yAxisLabels={['FIL']}
                   yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
-                  label="Avg. Daily Volume"
+                  label={this.renderGainLossTimelineTooltip()}
                   summaryNumber={summary}
                 />
               </SwitchableContent>
@@ -114,6 +115,16 @@ export class Home extends React.Component<HomeProps, {}> {
           </Grid>
         </ContentArea>
       </div>
+    );
+  }
+
+  renderGainLossTimelineTooltip () {
+    const explainer = 'Average daily volume is the sum of all FIL moving on-chain, minus block rewards. Red bars represent days where volume is less than the day before.';
+
+    return (
+      <React.Fragment>
+        Avg. Daily Volume <Tooltip content={explainer} />
+      </React.Fragment>
     );
   }
 }

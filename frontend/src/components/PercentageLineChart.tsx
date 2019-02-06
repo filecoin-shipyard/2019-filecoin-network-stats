@@ -11,9 +11,14 @@ const b = bemify('percentage-line-chart');
 
 export interface PercentageLineChartProps extends BaseChartProps {
   data: CategoryDatapoint[]
+  greyscale?: boolean
 }
 
 export default class PercentageLineChart extends React.Component<PercentageLineChartProps> {
+  static defaultProps = {
+    greyscale: false
+  };
+
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
     chart.data = this.props.data.map((point: CategoryDatapoint) => ({
@@ -29,12 +34,22 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
     chart.paddingBottom = 12;
     chart.paddingLeft = 24;
     chart.paddingRight = 36;
-    chart.colors.list = [
-      GraphColors.BLUE,
-      GraphColors.PURPLE,
-      GraphColors.GREEN,
-      GraphColors.TURQUOISE,
-    ];
+
+    if (this.props.greyscale) {
+      chart.colors.list = [
+        am4core.color('#777'),
+        am4core.color('#999'),
+        am4core.color('#bbb'),
+        am4core.color('#ddd'),
+      ]
+    } else {
+      chart.colors.list = [
+        GraphColors.BLUE,
+        GraphColors.PURPLE,
+        GraphColors.GREEN,
+        GraphColors.TURQUOISE,
+      ];
+    }
 
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.startLocation = 0.5;

@@ -85,3 +85,17 @@
   margin-left: $base;
   font-size: $base * 1.2;
 }
+
+.grid__col--unsupported {
+  .single-stat__trend--up, .single-stat__trend--down {
+    color: #333;
+  }
+
+  .single-stat__trend--up:before {
+    border-color: transparent transparent #333;
+  }
+
+  .single-stat__trend--down:before {
+    border-color: #333 transparent transparent;
+  }
+}

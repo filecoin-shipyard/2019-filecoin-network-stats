@@ -32,7 +32,7 @@ export interface IStorageStatsDAO {
   materializeUtilizationStats(): Promise<void>
 }
 
-const TEN_PB = 10000000;
+const ONE_PB = 1000000;
 
 export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   private readonly client: PGClient;
@@ -58,8 +58,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         distributionOverTime: await this.getMiningDistributionOverTime(client),
         evolution: await this.getMiningEvolution(client),
         costCapacityBySize: [
-          await this.getCostCapacityBySize(client, TEN_PB, 'lt'),
-          await this.getCostCapacityBySize(client, TEN_PB, 'gte'),
+          await this.getCostCapacityBySize(client, ONE_PB, 'lt'),
+          await this.getCostCapacityBySize(client, ONE_PB, 'gte'),
         ]
       };
     });

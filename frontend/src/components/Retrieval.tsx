@@ -44,13 +44,13 @@ export default class Retrieval extends React.Component<{}, {}> {
         <PageHeader title="Retrieval Network Overview" />
         <Grid>
           <Col unsupported>
-            <SingleStat value="1" unit="FIL/GB" subtitle="Avg. price of retrieval" trend={1.25} />
+            <SingleStat value="1" unit="FIL/GB" subtitle="Avg. price of retrieval" trend={1.25} duration="24 hrs" />
           </Col>
           <Col unsupported>
-            <SingleStat value="150" unit="ms" subtitle="Avg. retrieval time / miner" trend={1.25} />
+            <SingleStat value="150" unit="ms" subtitle="Avg. retrieval time / miner" trend={1.25} duration="24 hrs" />
           </Col>
           <Col unsupported>
-            <SingleStat value="7" unit="GB/s" subtitle="Avg. GB retrieved per second" trend={0.74} />
+            <SingleStat value="7" unit="GB/s" subtitle="Avg. GB retrieved per second" trend={0.74} duration="24 hrs" />
           </Col>
         </Grid>
         <Grid>
@@ -61,7 +61,7 @@ export default class Retrieval extends React.Component<{}, {}> {
               summaryNumber={nodesOverTime[0].amount.toString()}
               label="Retrieval Miners"
               yAxisLabels={['# of Miners']}
-              lineColor={GraphColors.ORANGE}
+              lineColor={GraphColors.GREY}
             />
           </Col>
         </Grid>
@@ -73,7 +73,7 @@ export default class Retrieval extends React.Component<{}, {}> {
               summaryNumber={nodesOverTime[0].amount.toString()}
               label="Current Avg. # of Retrieval Asks"
               yAxisLabels={['# of Bids']}
-              lineColor={GraphColors.PURPLE}
+              lineColor={GraphColors.GREY}
             />
           </Col>
           <Col unsupported>

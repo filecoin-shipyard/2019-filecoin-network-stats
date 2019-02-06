@@ -16,6 +16,7 @@
 
 .sidebar--full-size:hover {
   width: 230px;
+  z-index: 100;
 
   .sidebar__link.active .sidebar__sub-nav {
     display: block;

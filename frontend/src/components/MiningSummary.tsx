@@ -36,7 +36,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
               #{this.props.mining.lastBlockHeight}
             </div>
             <div className={b('label')}>
-              Last block mined
+              Block Height
             </div>
           </div>
           <div className={b('right')}>

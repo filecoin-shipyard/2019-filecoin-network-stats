@@ -31,7 +31,7 @@ export class MinerCountChart extends React.Component<MinerCountChartProps> {
         data={isOverride ? this.props.overrideData : this.props.data}
         tooltipText="Miners: {amount}"
         summaryNumber={this.props.data[this.props.data.length - 1].amount.toFixed(0)}
-        label="Current Active Storage Miners"
+        label="Active Storage Miners"
         yAxisLabels={['Number of Miners']}
         yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter()]}
       />

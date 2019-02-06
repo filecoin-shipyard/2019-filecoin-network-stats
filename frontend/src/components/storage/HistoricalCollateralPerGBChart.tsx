@@ -5,7 +5,7 @@ import TimelineDateChart from '../TimelineDateChart';
 import {AppState} from '../../ducks/store';
 import {connect} from 'react-redux';
 import GraphColors from '../GraphColors';
-import Currency from '../../utils/Currency';
+import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
 import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
@@ -33,8 +33,10 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
       <TimelineDateChart
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
-        summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay()}
+        summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
         label="Current Avg. Collateral Per GB"
+        yAxisLabels={['FIL/GB']}
+        yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
       />
     );
   };

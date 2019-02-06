@@ -15,8 +15,6 @@ import Tooltip from '../Tooltip';
 export interface HistoricalUtilizationChartStateProps {
   data: TimeseriesDatapoint[]
   overrideData: TimeseriesDatapoint[]
-  barData: TimeseriesDatapoint[]
-  overrideBarData: TimeseriesDatapoint[]
 }
 
 export interface HistoricalUtilizationChartDispatchProps {
@@ -37,10 +35,9 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
       <TimelineDateChart
         lineColor={GraphColors.BLUE}
         data={isOverride ? this.props.overrideData : this.props.data}
-        barData={isOverride ? this.props.overrideBarData : this.props.barData}
-        yAxisLabels={['Current Utilization', '# of Miners']}
+        yAxisLabels={['Network Utilization']}
         summaryNumber={PercentageNumber.create(this.props.data[this.props.data.length - 1].amount).toDisplay(true)}
-        yAxisNumberFormatters={[new PercentageNumberFormatter(), new NumberFormatter()]}
+        yAxisNumberFormatters={[new PercentageNumberFormatter()]}
         label={this.renderTooltip()}
       />
     );
@@ -72,9 +69,7 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
 export function mapStateToProps (state: AppState): HistoricalUtilizationChartStateProps {
   return {
     data: state.stats.stats.storage.networkUtilization,
-    barData: state.stats.stats.storage.historicalMinerCounts,
     overrideData: state.overrides.storage.historicalUtilization,
-    overrideBarData: state.overrides.storage.historicalMinerCounts,
   };
 }
 
@@ -82,7 +77,6 @@ export function mapDispatchToProps (dispatch: Dispatch<any>): HistoricalUtilizat
   return {
     setOverride: async (dur: ChartDuration) => {
       await dispatch(setOverride('storage', 'historicalUtilization', dur));
-      await dispatch(setOverride('storage', 'historicalMinerCounts', dur));
     },
   };
 }
