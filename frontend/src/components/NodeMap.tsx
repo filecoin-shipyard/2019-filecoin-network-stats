@@ -42,27 +42,6 @@ export class NodeMap extends React.Component<NodeMapProps> {
   }
 
   onData = (nodes: Node[], chart: am4maps.MapChart) => {
-    type locMap = { [k: string]: number }
-    const locsMap = nodes.reduce((acc: locMap, curr: Node) => {
-      const existing = acc[`${curr.lat}${curr.long}`] || 0;
-      acc[`${curr.lat}${curr.long}`] = existing + 1;
-      return acc;
-    }, {} as locMap);
-
-    if (!this.cityPoints) {
-      this.cityPoints = chart.series.push(new am4maps.MapImageSeries());
-      this.cityPoints.mapImages.template.nonScaling = true;
-
-      const point = this.cityPoints.mapImages.template.createChild(am4core.Circle);
-      point.adapter.add('radius', (radius, target, key) => {
-        const item = target.dataItem as any;
-        return 5 * (1 + ((locsMap[`${item.lat}${item.long}`]) / nodes.length));
-      });
-      point.fill = am4core.color('#45b9e6');
-      point.strokeWidth = 2;
-      point.stroke = am4core.color('#fff');
-    }
-
     const nodeIndex: { [k: string]: Node[] } = {};
     for (const node of nodes) {
       const key = `${node.lat}-${node.long}`;
@@ -73,17 +52,27 @@ export class NodeMap extends React.Component<NodeMapProps> {
       }
     }
 
+    if (!this.cityPoints) {
+      this.cityPoints = chart.series.push(new am4maps.MapImageSeries());
+      this.cityPoints.mapImages.template.nonScaling = true;
+
+      const point = this.cityPoints.mapImages.template.createChild(am4core.Circle);
+      point.radius = 5;
+      point.fill = am4core.color('#45b9e6');
+      point.strokeWidth = 0;
+    }
 
     // TODO: diff the nodes
     this.cityPoints.mapImages.clear();
 
     const className = b('nick-tooltip');
     for (const latLong of Object.keys(nodeIndex)) {
-      const nodes = nodeIndex[latLong];
+      const idxNodes = nodeIndex[latLong];
       const city = this.cityPoints.mapImages.create();
-      const nodeList = nodes.map((n: Node) => `<li>${escape(n.nickname)}</li>`).join('');
-      city.latitude = nodes[0].lat;
-      city.longitude = nodes[0].long;
+      const nodeList = idxNodes.map((n: Node) => `<li>${escape(n.nickname)}</li>`).join('');
+      (city.children.getIndex(0) as am4core.Circle).scale = 1 + 3 * ((idxNodes.length) / nodes.length);
+      city.latitude = idxNodes[0].lat;
+      city.longitude = idxNodes[0].long;
       city.tooltipHTML = `
         <ul class="${className}">
         ${nodeList}
