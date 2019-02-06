@@ -47,7 +47,8 @@ export default class Dropdown extends React.Component<DropdownProps, DropdownSta
 
   handleGlobalClick = (e: MouseEvent) => {
     let node = e.target as HTMLElement;
-    while (node !== document.body) {
+
+    while (node && node !== document.body) {
       if (node === this.r) {
         return;
       }

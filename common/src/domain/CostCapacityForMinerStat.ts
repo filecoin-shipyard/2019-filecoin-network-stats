@@ -4,12 +4,14 @@ export interface CostCapacityForMinerStat {
   count: number
   averageStoragePrice: BigNumber
   averageCapacityGB: number
+  utilization: number
 }
 
 export interface CostCapacityForMinerStatJSON {
   count: number
   averageStoragePrice: string
   averageCapacityGB: number
+  utilization: number
 }
 
 export function costCapacityForMinerStatToJSON(stat: CostCapacityForMinerStat): CostCapacityForMinerStatJSON {
@@ -17,6 +19,7 @@ export function costCapacityForMinerStatToJSON(stat: CostCapacityForMinerStat): 
     count: stat.count,
     averageStoragePrice: stat.averageStoragePrice.toFixed(16),
     averageCapacityGB: stat.averageCapacityGB,
+    utilization: stat.utilization
   };
 }
 
@@ -25,5 +28,6 @@ export function costCapacityForMinerStatFromJSON(stat: CostCapacityForMinerStatJ
     count: stat.count,
     averageStoragePrice: new BigNumber(stat.averageStoragePrice),
     averageCapacityGB: stat.averageCapacityGB,
+    utilization: stat.utilization
   };
 }
