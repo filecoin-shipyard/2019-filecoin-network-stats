@@ -44,7 +44,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
             <Grid>
               <Col transparent>
                 <div className={b('sub-stat')}>
-                  {ellipsify(this.props.mining.peerId, 20)}
+                  {ellipsify(this.props.mining.peerId || 'UNKNOWN', 20)}
                 </div>
                 <div className={b('label')}>
                   Peer ID
