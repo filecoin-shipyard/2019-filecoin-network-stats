@@ -21,12 +21,12 @@ export default class StorageMining extends React.Component {
         </Grid>
         <Grid>
           <Col>
-            <StorageMinersTable />
+            <MiningEvolutionChart />
           </Col>
         </Grid>
         <Grid>
           <Col>
-            <MiningEvolutionChart />
+            <StorageMinersTable />
           </Col>
         </Grid>
       </div>
