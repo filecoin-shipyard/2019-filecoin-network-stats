@@ -44,8 +44,8 @@ export class NodeMap extends React.Component<NodeMapProps> {
   onData = (nodes: Node[], chart: am4maps.MapChart) => {
     type locMap = { [k: string]: number }
     const locsMap = nodes.reduce((acc: locMap, curr: Node) => {
-      const existing = locsMap[`${curr.lat}${curr.long}`] || 0;
-      locsMap[`${curr.lat}${curr.long}`] = existing + 1;
+      const existing = acc[`${curr.lat}${curr.long}`] || 0;
+      acc[`${curr.lat}${curr.long}`] = existing + 1;
       return acc;
     }, {} as locMap);
 
