@@ -48,8 +48,8 @@ export class Sidebar extends React.Component<{}, SidebarState> {
         <NavLink to="/retrieval" className={c(b('link'), b('link', 'retrieval'))}>
           Retrieval
         </NavLink>
-        <NavLink to="/macroeconomics" className={c(b('link'), b('link', 'macroeconomics'))}>
-          Macroeconomics
+        <NavLink to="/token-metrics" className={c(b('link'), b('link', 'macroeconomics'))}>
+          Token Metrics
         </NavLink>
       </div>
     );

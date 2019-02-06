@@ -118,14 +118,14 @@ export default class StorageDeals extends React.Component {
             <SingleStat value="8,455" unit="" subtitle="Storage Deals Created in Last 24 Hrs" trend={-38.91} />
           </Col>
           <Col unsupported>
-            <SingleStat value="97.8" unit="%" subtitle="% of storage deals completed" trend={12.4} />
+            <SingleStat value="97.8" unit="%" subtitle="% of Storage Deals Completed" trend={12.4} />
           </Col>
         </Grid>
         <Grid>
           <Col unsupported>
             <SwitchableContent
               titles={['Total Deals Over Time', 'Total FIL In Deals Over Time', 'Total Storage In Deals Over Time']}
-              linkTitles={['# of deals over time', 'Amount of FIL in deals over time', 'Amount of GBs stored in deals over time']}
+              linkTitles={['# of Deals Over Time', 'Amount of FIL In Deals Over Time', 'Amount of GBs Stored in Deals Over Time']}
               dropdown
             >
               <React.Fragment>

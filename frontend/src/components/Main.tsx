@@ -50,7 +50,7 @@ export class Main extends React.Component<MainProps> {
             <Route exact path="/storage/cost-capacity" render={this.wrapWithContentArea(StorageCostCapacity, true, false)} />
             <Route exact path="/storage/deals" render={this.wrapWithContentArea(StorageDeals, true, true)} />
             <Route path="/retrieval" render={this.wrapWithContentArea(Retrieval, true, true)} />
-            <Route path="/macroeconomics" render={this.wrapWithContentArea(Macroeconomics, true, false)} />
+            <Route path="/token-metrics" render={this.wrapWithContentArea(Macroeconomics, true, false)} />
             <Route exact path="/" render={this.wrapWithContentArea(Home, false, false)} />
           </Switch>
         </div>
