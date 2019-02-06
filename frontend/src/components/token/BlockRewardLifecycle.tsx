@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/TimeseriesDatapoint';
+import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
 import ContentHeader from '../ContentHeader';
 import TimelineDateChart from '../TimelineDateChart';
 import BigNumber from 'bignumber.js';
