@@ -51,7 +51,16 @@ export class ExpressAPIServer implements IAPIServer {
     for (let i = 0; i < routes.length; i++) {
       const route = routes[i];
       const handler = service[method][route];
-      (router as any)[method.toLowerCase()]('/' + route, handler);
+      const wrappedHandler = async (req: express.Request, res: express.Response) => {
+        try {
+          await handler(req, res);
+        } catch (err) {
+          logger.error('caught exception in URL handler', { err });
+          res.sendStatus(500);
+        }
+      };
+
+      (router as any)[method.toLowerCase()]('/' + route, wrappedHandler);
       logger.info('mounted route', {
         path: `/${service.namespace}/${route}`,
         method,
