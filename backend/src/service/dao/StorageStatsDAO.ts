@@ -11,6 +11,7 @@ import {PoolClient} from 'pg';
 import BigNumber from 'bignumber.js';
 import {INodeStatusService} from '../NodeStatusService';
 import {generateDurationSeries} from '../../util/generateDurationSeries';
+import {ICacheService} from '../CacheService';
 
 export interface IStorageStatsDAO {
   getStats (): Promise<StorageStats>
@@ -29,7 +30,7 @@ export interface IStorageStatsDAO {
 
   historicalUtilization (dur: ChartDuration): Promise<TimeseriesDatapoint[]>
 
-  materializeUtilizationStats(): Promise<void>
+  materializeUtilizationStats (): Promise<void>
 }
 
 const ONE_PB = 1000000;
@@ -39,12 +40,15 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   private readonly nss: INodeStatusService;
 
-  constructor (client: PGClient, nss: INodeStatusService) {
+  private readonly cs: ICacheService;
+
+  constructor (client: PGClient, nss: INodeStatusService, cs: ICacheService) {
     this.client = client;
     this.nss = nss;
+    this.cs = cs;
   }
 
-  getStats (): Promise<StorageStats> {
+  getStats = () => this.cs.wrapMethod<StorageStats>('storage-stats', 5 * 60 * 1000, () => {
     return this.client.execute(async (client: PoolClient) => {
       return {
         storageAmount: await this.getAmountStats(client),
@@ -60,10 +64,10 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         costCapacityBySize: [
           await this.getCostCapacityBySize(client, ONE_PB, 'lt'),
           await this.getCostCapacityBySize(client, ONE_PB, 'gte'),
-        ]
+        ],
       };
     });
-  }
+  });
 
   getMinerStats (): Promise<MinerStat[]> {
     return this.client.execute((client: PoolClient) => this.getMiners(client));
@@ -170,8 +174,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     };
   }
 
-  private async getHistoricalStoragePrice(client: PoolClient, duration: ChartDuration): Promise<TimeseriesDatapoint[]> {
-    const { durSeq, durBase } = generateDurationSeries(duration);
+  private async getHistoricalStoragePrice (client: PoolClient, duration: ChartDuration): Promise<TimeseriesDatapoint[]> {
+    const {durSeq, durBase} = generateDurationSeries(duration);
 
     const points = await client.query(`
       with d as (${durSeq}),
@@ -190,7 +194,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getHistoricalCollateral (client: PoolClient, duration: ChartDuration) {
-    const { durSeq, durBase } = generateDurationSeries(duration);
+    const {durSeq, durBase} = generateDurationSeries(duration);
 
     const dailyPoints = await client.query(`
       with d as (${durSeq}),
@@ -210,7 +214,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getHistoricalCollateralPerGB (client: PoolClient, duration: ChartDuration) {
-    const { durSeq, durBase } = generateDurationSeries(duration);
+    const {durSeq, durBase} = generateDurationSeries(duration);
 
     const dailyPoints = await client.query(`
       with d as (${durSeq}),
@@ -236,7 +240,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getHistoricalMinerCounts (client: PoolClient, duration: ChartDuration) {
-    const { durSeq, durBase } = generateDurationSeries(duration);
+    const {durSeq, durBase} = generateDurationSeries(duration);
 
     const points = await client.query(`
       WITH seq AS (${durSeq})
@@ -316,7 +320,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         blockPercentage: index[node.minerAddress] ? index[node.minerAddress].blockPercentage : 0,
         height: node.height,
         lastSeen: node.lastSeen,
-        isInConsensus: false
+        isInConsensus: false,
       });
     }
 
@@ -404,10 +408,10 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       return [];
     }
 
-    const nodeMap: {[k:string]: string} = {};
+    const nodeMap: { [k: string]: string } = {};
     for (const miner of topMinerRes.rows) {
       const node = await this.nss.getMinerByAddress(miner.address);
-      nodeMap[miner.address] = node ? node.nickname : miner.address
+      nodeMap[miner.address] = node ? node.nickname : miner.address;
     }
 
     const addresses = topMinerRes.rows.map((r: any) => r.address);
@@ -426,7 +430,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
              join totals t on c.date = t.date
       order by c.date asc;
     `, [
-      addresses
+      addresses,
     ]);
 
     const otherDailyCountsRes = await client.query(`
@@ -444,21 +448,21 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
              join totals t on c.date = t.date
       order by c.date asc;
     `, [
-      addresses
+      addresses,
     ]);
 
-    type CategoryDatapointData = { [k:string]: number }
+    type CategoryDatapointData = { [k: string]: number }
     const generateData = () => addresses.reduce((acc: CategoryDatapointData, curr: string) => {
       acc[nodeMap[curr]] = 0;
-      return acc
-    }, { other: 0 });
+      return acc;
+    }, {other: 0});
 
     const points: CategoryDatapoint[] = [];
     for (const dailyCount of topDailyCountsRes.rows) {
       if (!points.length || points[points.length - 1].category !== Number(dailyCount.date)) {
         points.push({
           category: Number(dailyCount.date),
-          data: generateData()
+          data: generateData(),
         });
       }
 
@@ -485,7 +489,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         date = date - 86400;
         points.unshift({
           category: date,
-          data: generateData()
+          data: generateData(),
         });
       }
     }
@@ -493,7 +497,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     return points;
   }
 
-  private async getCostCapacityBySize(client: PoolClient, size: number, op: 'lt'|'gte'): Promise<CostCapacityForMinerStat> {
+  private async getCostCapacityBySize (client: PoolClient, size: number, op: 'lt' | 'gte'): Promise<CostCapacityForMinerStat> {
     const countCapRes = await client.query(`
       with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) as gb
                           from messages m
@@ -528,7 +532,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                    where c.gb ${op === 'lt' ? '<' : '>='} $1
                      and c.address = m.from_address);
     `, [
-      size
+      size,
     ]);
 
     const utilizationRes = await client.query(`
@@ -547,7 +551,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       SELECT coalesce(avg(c.committed_gb / c.pledged_gb), 0) AS utilization
       FROM commitments c;
     `, [
-      size
+      size,
     ]);
 
     const price = priceRes.rows.length ? priceRes.rows[0].price : 0;
@@ -576,7 +580,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }));
   }
 
-  private calculateTrend(points: TimeseriesDatapoint[]) : number {
+  private calculateTrend (points: TimeseriesDatapoint[]): number {
     let trend;
     const ultimate = points[points.length - 1];
     const penultimate = points[points.length - 2];

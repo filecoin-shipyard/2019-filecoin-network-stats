@@ -1,12 +1,13 @@
-import {TokenStats} from 'filecoin-network-stats-common/lib/domain/Stats'
-import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint'
-import {HistogramDatapoint} from 'filecoin-network-stats-common/lib/domain/HistogramDatapoint'
-import {CategoryDatapoint} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint'
-import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration'
-import PGClient from '../PGClient'
-import {PoolClient} from 'pg'
-import BigNumber from 'bignumber.js'
-import {generateDurationSeries} from '../../util/generateDurationSeries'
+import {TokenStats} from 'filecoin-network-stats-common/lib/domain/Stats';
+import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
+import {HistogramDatapoint} from 'filecoin-network-stats-common/lib/domain/HistogramDatapoint';
+import {CategoryDatapoint} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
+import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
+import PGClient from '../PGClient';
+import {PoolClient} from 'pg';
+import BigNumber from 'bignumber.js';
+import {generateDurationSeries} from '../../util/generateDurationSeries';
+import {ICacheService} from '../CacheService';
 
 export interface ITokenStatsDAO {
   getStats (): Promise<TokenStats>
@@ -21,11 +22,14 @@ export interface ITokenStatsDAO {
 export class PostgresTokenStatsDAO implements ITokenStatsDAO {
   private readonly client: PGClient;
 
-  constructor (client: PGClient) {
+  private readonly cs: ICacheService;
+
+  constructor (client: PGClient, cs: ICacheService) {
     this.client = client;
+    this.cs = cs;
   }
 
-  async getStats (): Promise<TokenStats> {
+  getStats = () => this.cs.wrapMethod('token-stats', 5 * 60 * 1000, () => {
     return this.client.execute(async (client: PoolClient) => {
       return {
         tokenHoldingsDistribution: await this.getTokenHoldingsHistogram(client),
@@ -33,7 +37,7 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
         coinsInCirculation: await this.getCoinsInCirculation(client, ChartDuration.MONTH),
       };
     });
-  }
+  });
 
   materializeTokenStats (): Promise<void> {
     return this.client.executeTx(async (client: PoolClient) => {

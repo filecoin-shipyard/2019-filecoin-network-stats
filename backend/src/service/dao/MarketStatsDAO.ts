@@ -4,6 +4,7 @@ import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/Time
 import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import BigNumber from 'bignumber.js';
+import {ICacheService} from '../CacheService';
 
 export interface IMarketStatsDAO {
   getStats (): Promise<MarketStats>
@@ -12,11 +13,14 @@ export interface IMarketStatsDAO {
 export class PostgresMarketStatsDAO implements IMarketStatsDAO {
   private readonly client: PGClient;
 
-  constructor (client: PGClient) {
+  private readonly cs: ICacheService;
+
+  constructor (client: PGClient, cs: ICacheService) {
     this.client = client;
+    this.cs = cs;
   }
 
-  async getStats (): Promise<MarketStats> {
+  getStats = () => this.cs.wrapMethod('market-stats', 5 * 60 * 1000, () => {
     return this.client.execute(async (client: PoolClient) => {
       let asks: Ask[] = [];
       const askRows = await client.query(
@@ -33,7 +37,7 @@ export class PostgresMarketStatsDAO implements IMarketStatsDAO {
         volume: await this.getDailyVolume(client),
       };
     });
-  }
+  });
 
   async getDailyVolume (client: PoolClient): Promise<TimeseriesDatapoint[]> {
     const res = await client.query(`

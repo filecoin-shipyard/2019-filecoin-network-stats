@@ -25,6 +25,7 @@ import {ITokenStatsDAO, PostgresTokenStatsDAO} from './service/dao/TokenStatsDAO
 import {MaterializationServiceImpl} from './service/MaterializationService';
 import StatsAPI from './service/api/StatsAPI';
 import PeerInfo = require('peer-info');
+import {ICacheService, MemoryCacheService} from './service/CacheService';
 
 export default function registry (other: Registry = new Registry()): Registry {
   const registry = new Registry(other);
@@ -42,16 +43,17 @@ export default function registry (other: Registry = new Registry()): Registry {
   registry.bind('FilecoinClient', (httpClient: HTTPClient) => new FilecoinClient(httpClient), ['HTTPClient']);
   registry.bind('Chainsaw', (dao: IChainsawDAO, client: IFilecoinClient, mps: IMiningPowerService) => new Chainsaw(dao, client, mps), ['ChainsawDAO', 'FilecoinClient', 'MiningPowerService']);
   registry.bind('MiningStatsDAO', (client: PGClient) => new PostgresMiningStatsDAO(client), ['PGClient']);
-  registry.bind('MarketStatsDAO', (client: PGClient) => new PostgresMarketStatsDAO(client), ['PGClient']);
-  registry.bind('StorageStatsDAO', (client: PGClient, nss: INodeStatusService) => new PostgresStorageStatsDAO(client, nss), ['PGClient', 'NodeStatusService']);
+  registry.bind('MarketStatsDAO', (client: PGClient, cs: ICacheService) => new PostgresMarketStatsDAO(client, cs), ['PGClient', 'CacheService']);
+  registry.bind('StorageStatsDAO', (client: PGClient, nss: INodeStatusService, cs: ICacheService) => new PostgresStorageStatsDAO(client, nss, cs), ['PGClient', 'NodeStatusService', 'CacheService']);
   registry.bind('MinerStatsAPI', (ssd: IStorageStatsDAO) => new MinerStatsAPI(ssd), ['StorageStatsDAO']);
   registry.bind('SyncAPI', (msd: IMiningStatsDAO, mksd: IMarketStatsDAO, ssd: IStorageStatsDAO, nsd: INodeStatusService, tsd: ITokenStatsDAO) => new SyncAPI(msd, mksd, ssd, nsd, tsd), ['MiningStatsDAO', 'MarketStatsDAO', 'StorageStatsDAO', 'NodeStatusService', 'TokenStatsDAO']);
   registry.bind('StatsAPI', (msd: IMiningStatsDAO, mksd: IMarketStatsDAO, ssd: IStorageStatsDAO, nsd: INodeStatusService, tsd: ITokenStatsDAO) => new StatsAPI(msd, mksd, ssd, nsd, tsd), ['MiningStatsDAO', 'MarketStatsDAO', 'StorageStatsDAO', 'NodeStatusService', 'TokenStatsDAO']);
   registry.bind('APIServices', (...args: IAPIService[]) => args, ['SyncAPI', 'MinerStatsAPI', 'StatsAPI']);
   registry.bind('APIServer', (config: Config, apiServices: IAPIService[]) => new ExpressAPIServer(config, apiServices), ['Config', 'APIServices']);
   registry.bind('MiningPowerService', (bDao: IBlocksDAO, client: IFilecoinClient) => new MiningPowerServiceImpl(bDao, client), ['BlocksDAO', 'FilecoinClient']);
-  registry.bind('TokenStatsDAO', (client: PGClient) => new PostgresTokenStatsDAO(client), ['PGClient']);
+  registry.bind('TokenStatsDAO', (client: PGClient, cs: ICacheService) => new PostgresTokenStatsDAO(client, cs), ['PGClient', 'CacheService']);
   registry.bind('MaterializationService', (tsd: ITokenStatsDAO, ssd: IStorageStatsDAO, nss: INodeStatusService, mcd: IMinerCountsDAO) => new MaterializationServiceImpl(tsd, ssd, nss, mcd), ['TokenStatsDAO', 'StorageStatsDAO', 'NodeStatusService', 'MinerCountsDAO']);
+  registry.bind('CacheService', () => new MemoryCacheService(), []);
 
   return registry;
 }
