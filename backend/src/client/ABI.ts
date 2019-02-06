@@ -1,7 +1,8 @@
 import {leb128Unsigned2String} from '../util/conv';
+import BigNumber from 'bignumber.js';
+import fromPubkey from '../util/address';
 import CBOR = require('cbor');
 import PeerID = require('peer-id');
-import BigNumber from 'bignumber.js';
 
 export interface TypeDecoder<T> {
   decode (buf: Buffer): T
@@ -34,6 +35,12 @@ export const PeerIDDecoder: TypeDecoder<string> = {
 export const SectorIDDecoder: TypeDecoder<string> = {
   decode (buf: Buffer): string {
     return new BigNumber(buf.toString('hex'), 16).toFixed(0);
+  },
+};
+
+export const AddressDecoder: TypeDecoder<string> = {
+  decode (buf: Buffer): string {
+    return fromPubkey(buf);
   },
 };
 
@@ -72,6 +79,6 @@ export class ABIDecoder {
 
 export const methodDecoders: { [k: string]: (data: string) => any } = {
   addAsk: (data: string) => ABIDecoder.decodeBase64([AttoFilDecoder, BigIntDecoder], data),
-  createMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, BytesDecoder, PeerIDDecoder], data),
+  createMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, AddressDecoder, PeerIDDecoder], data),
   commitSector: (data: string) => ABIDecoder.decodeBase64([SectorIDDecoder, BytesDecoder, BytesDecoder, BytesDecoder, BytesDecoder], data),
 };

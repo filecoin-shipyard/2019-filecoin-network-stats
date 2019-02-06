@@ -511,6 +511,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         count: 0,
         averageStoragePrice: new BigNumber(0),
         averageCapacityGB: 0,
+        utilization: 0,
       };
     }
 
@@ -530,11 +531,32 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       size
     ]);
 
+    const utilizationRes = await client.query(`
+      WITH capacities AS (SELECT m.from_address AS address, sum(cast(m.params->>0 AS decimal)) AS gb
+                          FROM messages m
+                          WHERE m.method = 'createMiner'
+                          GROUP BY m.from_address),
+           commitments AS (SELECT m.from_address                     AS address,
+                                  sum(cast(m.params->>0 AS decimal)) AS committed_gb,
+                                  max(c.gb)                          AS pledged_gb
+                           FROM messages m
+                                  JOIN capacities c ON m.from_address = c.address
+                           WHERE m.method = 'commitSector'
+                             AND c.gb ${op === 'lt' ? '<' : '>='} $1
+                           GROUP BY m.from_address)
+      SELECT coalesce(avg(c.committed_gb / c.pledged_gb), 0) AS utilization
+      FROM commitments c;
+    `, [
+      size
+    ]);
+
     const price = priceRes.rows.length ? priceRes.rows[0].price : 0;
+    const utilization = utilizationRes.rows.length ? Number(utilizationRes.rows[0].utilization) : 0;
     return {
       count: Number(countCapRes.rows[0].count),
       averageCapacityGB: Number(countCapRes.rows[0].capacity),
       averageStoragePrice: new BigNumber(price),
+      utilization,
     };
   }
 
