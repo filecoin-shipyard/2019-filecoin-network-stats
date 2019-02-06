@@ -1,0 +1,1 @@
+ALTER TABLE blocks ADD COLUMN blocks_in_tipset INT NOT NULL DEFAULT 1;

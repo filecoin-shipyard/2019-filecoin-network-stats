@@ -55,7 +55,6 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
       const miner = await this.nss.getMinerByAddress(minerAddress);
       let power = 0;
       let peerId = '';
-      let blocksInTipset = 1;
 
       if (miner) {
         power = miner.power;
@@ -69,7 +68,7 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
         minerName: null,
         minerAddress,
         power,
-        blocksInTipset,
+        blocksInTipset: row.blocks_in_tipset,
         peerId,
       };
     });

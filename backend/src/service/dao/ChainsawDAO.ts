@@ -37,7 +37,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
     return this.client.executeTx(async (client: PoolClient) => {
       for (const block of blocks) {
         await client.query(
-          'INSERT INTO blocks(height, cid, miner, parent_weight, nonce, ingested_at) VALUES ($1, $2, $3, $4, $5, $6)',
+          'INSERT INTO blocks(height, cid, miner, parent_weight, nonce, ingested_at, blocks_in_tipset) VALUES ($1, $2, $3, $4, $5, $6, $7)',
           [
             block.height,
             block.cid,
@@ -45,6 +45,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
             block.parentWeight,
             block.nonce,
             this.tsp.now(),
+            block.parents.length,
           ],
         );
 
