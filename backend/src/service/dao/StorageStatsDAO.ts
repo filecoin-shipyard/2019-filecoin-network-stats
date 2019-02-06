@@ -11,7 +11,7 @@ import {PoolClient} from 'pg';
 import BigNumber from 'bignumber.js';
 import {INodeStatusService} from '../NodeStatusService';
 import {generateDurationSeries} from '../../util/generateDurationSeries';
-import {ICacheService} from '../CacheService';
+import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 
 export interface IStorageStatsDAO {
   getStats (): Promise<StorageStats>
@@ -48,26 +48,26 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     this.cs = cs;
   }
 
-  getStats = () => this.cs.wrapMethod<StorageStats>('storage-stats', 5 * 60 * 1000, () => {
+  async getStats() : Promise<StorageStats> {
     return this.client.execute(async (client: PoolClient) => {
       return {
-        storageAmount: await this.getAmountStats(client),
-        storageCost: await this.getCostStats(client),
-        historicalCollateral: await this.getHistoricalCollateral(client, ChartDuration.MONTH),
-        historicalCollateralPerGB: await this.getHistoricalCollateralPerGB(client, ChartDuration.MONTH),
-        historicalMinerCounts: await this.getHistoricalMinerCounts(client, ChartDuration.MONTH),
-        capacityHistogram: await this.getCapacityHistogram(client),
+        storageAmount: await this.cs.wrapMethod('storage-stats-storage-amount', DEFAULT_CACHE_TIME, () => this.getAmountStats(client)),
+        storageCost: await this.cs.wrapMethod('storage-stats-storage-cost', DEFAULT_CACHE_TIME, () => this.getCostStats(client)),
+        historicalCollateral: await this.cs.wrapMethod('storage-stats-historical-collateral', DEFAULT_CACHE_TIME, () => this.getHistoricalCollateral(client, ChartDuration.MONTH)),
+        historicalCollateralPerGB: await this.cs.wrapMethod('storage-stats-historical-collateral-per-gb', DEFAULT_CACHE_TIME, () => this.getHistoricalCollateralPerGB(client, ChartDuration.MONTH)),
+        historicalMinerCounts: await this.cs.wrapMethod('storage-stats-historical-miner-counts', DEFAULT_CACHE_TIME, () => this.getHistoricalMinerCounts(client, ChartDuration.MONTH)),
+        capacityHistogram: await this.cs.wrapMethod('storage-stats-capacity-histogram', DEFAULT_CACHE_TIME, () => this.getCapacityHistogram(client)),
         miners: await this.getMiners(client),
-        networkUtilization: await this.getHistoricalUtilization(client, ChartDuration.MONTH),
-        distributionOverTime: await this.getMiningDistributionOverTime(client),
-        evolution: await this.getMiningEvolution(client),
+        networkUtilization: await this.cs.wrapMethod('storage-stats-network-utilization', DEFAULT_CACHE_TIME, () => this.getHistoricalUtilization(client, ChartDuration.MONTH)),
+        distributionOverTime: await this.cs.wrapMethod('storage-stats-distribution-over-time', DEFAULT_CACHE_TIME, () => this.getMiningDistributionOverTime(client)),
+        evolution: await this.cs.wrapMethod('storage-stats-evolution', DEFAULT_CACHE_TIME, () => this.getMiningEvolution(client)),
         costCapacityBySize: [
-          await this.getCostCapacityBySize(client, ONE_PB, 'lt'),
-          await this.getCostCapacityBySize(client, ONE_PB, 'gte'),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-0', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, ONE_PB, 'lt')),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-1', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, ONE_PB, 'gte')),
         ],
       };
     });
-  });
+  };
 
   getMinerStats (): Promise<MinerStat[]> {
     return this.client.execute((client: PoolClient) => this.getMiners(client));
