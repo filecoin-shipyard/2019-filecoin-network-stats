@@ -89,8 +89,6 @@ export class NodeMap extends React.Component<NodeMapProps> {
         ${nodeList}
         </ul>
       `;
-
-      return city;
     }
   };
 }
