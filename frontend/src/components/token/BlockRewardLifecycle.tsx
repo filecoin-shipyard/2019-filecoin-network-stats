@@ -34,7 +34,7 @@ export default class BlockRewardLifecycle extends React.Component {
 
     return (
       <div>
-        <ContentHeader title="Block Reward Lifecycle" />
+        <ContentHeader title="Filecoin Network Block Rewards Curve" />
         <TimelineDateChart
           data={genData()}
           summaryNumber={summary}

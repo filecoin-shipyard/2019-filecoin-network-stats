@@ -54,7 +54,7 @@ export class HistoricalBlockRewards extends React.Component<HistoricalBlockRewar
   render () {
     return (
       <DateSwitchingChart
-        title="Block Rewards Over Time"
+        title="Cumulative Block Rewards Over Time"
         onChangeDuration={this.onChangeDuration}
         renderContent={this.renderContent}
       />

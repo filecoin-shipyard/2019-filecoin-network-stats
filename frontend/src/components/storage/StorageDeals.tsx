@@ -109,7 +109,7 @@ export default class StorageDeals extends React.Component {
   render () {
     return (
       <div className={b()}>
-        <PageHeader title="Storage Deal Stats" />
+        <PageHeader title="Storage Deals" />
         <Grid singleMargin>
           <Col unsupported>
             <SingleStat value="--" unit="" subtitle="Active Storage Deals" />

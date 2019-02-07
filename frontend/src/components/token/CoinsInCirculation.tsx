@@ -55,7 +55,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
         categoryNames={categoryNames}
         yAxisLabels={['Total FIL in Circulation']}
         showBarLabels={false}
-        colors={[GraphColors.GREEN, GraphColors.BLUE]}
+        colors={[GraphColors.ORANGE, GraphColors.BLUE]}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         isDate
       />
@@ -66,7 +66,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
     return (
       <div className={b()}>
         <DateSwitchingChart
-          title="Coins in Circulation"
+          title="FIL Outstanding"
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />

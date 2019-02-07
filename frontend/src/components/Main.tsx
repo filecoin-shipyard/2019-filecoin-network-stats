@@ -68,7 +68,7 @@ export class Main extends React.Component<MainProps> {
 
       return (
         <React.Fragment>
-          {mocked ? <Warning text="Heads-up! We don't have real data for this view yet. We will soon." /> : null}
+          {mocked ? <Warning text="Heads-up! We’re not able to provide data for this view yet. We will soon" /> : null}
           <ContentArea>
             <Component />
           </ContentArea>

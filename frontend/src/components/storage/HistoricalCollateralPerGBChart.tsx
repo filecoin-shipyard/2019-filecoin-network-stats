@@ -34,7 +34,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
         summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
-        label="Current Avg. Collateral Per GB"
+        label="Current Avg. Storage Collateral Per GB"
         yAxisLabels={['FIL/GB']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
       />
@@ -45,7 +45,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
     return (
       <div>
         <DateSwitchingChart
-          title="Historical Collateral Per GB"
+          title="Storage Collateral Per GB"
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />
