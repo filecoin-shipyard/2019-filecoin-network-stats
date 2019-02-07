@@ -5,18 +5,21 @@ import TimelineDateChart from '../TimelineDateChart';
 import BigNumber from 'bignumber.js';
 import GraphColors from '../GraphColors';
 
+function decay(month: number) {
+  return 1000 * Math.pow(2.71828, month * -0.0069270);
+}
+
 function genData (): TimeseriesDatapoint[] {
   const ret: TimeseriesDatapoint[] = [];
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const nowMs = now.getTime();
-  const amount = new BigNumber(1000);
   const monthMs = 30 * 24 * 60 * 60 * 1000;
 
-  for (let i = 0; i < 36; i++) {
+  for (let i = 0; i < 192; i++) {
     ret.push({
       date: Math.floor((nowMs + (monthMs * i)) / 1000),
-      amount,
+      amount: new BigNumber(decay(i)),
     });
   }
 
