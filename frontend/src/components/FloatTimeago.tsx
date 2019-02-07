@@ -39,7 +39,7 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
     const text = new BigNumber(diff).div(1000).toFixed(1);
     return (
       <time>
-        {text} seconds ago
+        {text}s ago
       </time>
     );
   }

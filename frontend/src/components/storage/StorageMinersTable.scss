@@ -3,6 +3,8 @@
 .storage-miners-table {
   &__tipset-hash {
     word-wrap: break-word;
+    display: block;
+    max-width: 222px;
   }
 
   &__tipset-hash--consensus {
