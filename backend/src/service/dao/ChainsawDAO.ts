@@ -45,7 +45,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
             block.parentWeight,
             block.nonce,
             this.tsp.now(),
-            block.parents.length,
+            (block.parents && block.parents.length) || 0,
           ],
         );
 
