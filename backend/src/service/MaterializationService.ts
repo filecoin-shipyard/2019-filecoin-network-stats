@@ -45,9 +45,11 @@ export class MaterializationServiceImpl implements IMaterializationService {
       await this.tsd.materializeTokenStats();
       await this.ssd.materializeUtilizationStats();
       await this.mcd.saveMinerCounts(this.nss.getMinerCounts());
-      logger.info('successfully materialized state');
+      logger.info('successfully materialized stats');
     } catch (e) {
-      logger.error('caught error while materializing stats', e);
+      logger.error('caught error while materializing stats', {
+        err: e
+      });
     } finally {
       this.timeout = setTimeout(this.poll, FIVE_MINUTES);
     }
