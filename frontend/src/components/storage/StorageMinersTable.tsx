@@ -61,14 +61,12 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   sort = (m1: MinerStat, m2: MinerStat): number => {
     switch (this.state.sortIndex) {
       case 0:
-        return 0;
-      case 1:
         return m1.height - m2.height;
-      case 2:
+      case 1:
         return m2.power - m1.power;
-      case 3:
+      case 2:
         return m2.capacity - m1.capacity;
-      case 4:
+      case 3:
         return m2.blockPercentage - m1.blockPercentage;
     }
   };
@@ -104,8 +102,8 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           onChangePage={this.onChangePage}
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
-          sortTitles={['None', 'Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', 'Block %',]}
+          sortTitles={['Most Recent Block Mined', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', '% Blocks Mined',]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
@@ -130,7 +128,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderTipsetHeader () {
-    const explainer = 'When a tipset hash is highlighted, it is in consensus with the chain.';
+    const explainer = 'When a tipset hash is highlighted, it means the corresponding node is in consensus with the chain.';
 
     return (
       <React.Fragment>

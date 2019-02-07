@@ -23,7 +23,7 @@
 
   &__download {
     margin-left: $base * 2;
-    color: $black;
+    color: #4F4F4F;
     font-size: $base * 1.2;
 
     img {
@@ -38,9 +38,21 @@
     display: flex;
     margin-left: $base * 2;
     font-size: $base * 1.2;
+    color: #4F4F4F;
+    background: url('/assets/sort.svg') transparent no-repeat left center;
+    padding-left: $base * 1.5;
 
     .dropdown {
       margin-left: $base / 2;
+      color: #4F4F4F;
+
+      &:before {
+        display: none;
+      }
+    }
+
+    .dropdown__selected {
+      font-weight: normal;
     }
   }
 
