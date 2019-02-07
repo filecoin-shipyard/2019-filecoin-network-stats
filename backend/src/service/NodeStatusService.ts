@@ -77,6 +77,12 @@ export class MemoryNodeStatusService implements INodeStatusService {
         old.power = await this.mps.getMinerPower(heartbeat.minerAddress);
       }
     } else {
+      logger.info('received new peer', {
+        ip: heartbeat.ip,
+        peerId: heartbeat.peerId,
+        nickname: heartbeat.nickname,
+      });
+
       this.nodeCount++;
       const loc = await this.gDao.locateIp(heartbeat.ip);
       const power = heartbeat.minerAddress ? await this.mps.getMinerPower(heartbeat.minerAddress) : 0;
