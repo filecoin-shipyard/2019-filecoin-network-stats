@@ -33,14 +33,14 @@ export class MaterializationServiceImpl implements IMaterializationService {
 
   async start (): Promise<void> {
     logger.info('waiting for chainsaw before materializing stats');
-    setTimeout(() => this.poll(), 30000);
+    setTimeout(this.poll, 30000);
   }
 
   async stop (): Promise<void> {
     clearTimeout(this.timeout);
   }
 
-  private async poll () {
+  private poll = async () => {
     try {
       await this.tsd.materializeTokenStats();
       await this.ssd.materializeUtilizationStats();
