@@ -107,8 +107,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
            total_pledges AS (SELECT sum(cast(m.params->>0 AS integer)) AS total
                              FROM messages m
                              WHERE method = 'createMiner'),
-           vals AS (SELECT s.total AS total_committed_gb,
-                           p.total AS total_pledges_gb,
+           vals AS (SELECT coalesce(s.total, 0) AS total_committed_gb,
+                           coalesce(p.total, 0) AS total_pledges_gb,
                            extract(EPOCH FROM current_timestamp)
                     FROM total_sectors s,
                          total_pledges p)
