@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {ChangeEvent} from 'react';
 import Table from '../Table';
 import {connect} from 'react-redux';
 import {AppState} from '../../ducks/store';
@@ -9,14 +8,11 @@ import BigNumber from 'bignumber.js';
 import ellipsify from '../../utils/ellipsify';
 import FloatTimeago from '../FloatTimeago';
 import {secToMillis} from '../../utils/time';
-import ContentHeader from '../ContentHeader';
 import bemify from '../../utils/bemify';
 import './StorageMinersTable.scss';
 import c from 'classnames';
-import Dropdown from '../Dropdown';
 import Tooltip from '../Tooltip';
 import PowerTooltip from '../PowerTooltip';
-import debounce = require('lodash.debounce');
 
 const b = bemify('storage-miners-table');
 
@@ -26,8 +22,8 @@ export interface StorageMinersTableProps {
 
 export interface StorageMinersTableState {
   query: string
-  enteredQuery: string
   sortIndex: number
+  currentPage: number
 }
 
 const FILTERABLE_FIELDS = [
@@ -41,7 +37,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
 
     this.state = {
       query: '',
-      enteredQuery: '',
+      currentPage: 1,
       sortIndex: 0,
     };
   }
@@ -77,12 +73,10 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     }
   };
 
-  onChangeQuery = (e: ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+  onChangeQuery = (query: string) => {
     this.setState({
-      enteredQuery: query,
+      query,
     });
-    this.updateQuery(query);
   };
 
   onChangeSort = (i: number) => {
@@ -91,37 +85,29 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     });
   };
 
-  updateQuery = debounce((query: string) => this.setState({
-    query,
-  }), 100);
+  onChangePage = (currentPage: number) => {
+    this.setState({
+      currentPage,
+    });
+  };
 
   render () {
+    const start = (this.state.currentPage - 1) * 10;
+    const end = start + 10;
+
     return (
       <div className={b()}>
-        <ContentHeader title="Storage Mining Activity Detail" />
-        <div className={b('search-download')}>
-          <div className={b('search')}>
-            <input
-              type="text"
-              onChange={this.onChangeQuery}
-              value={this.state.enteredQuery}
-              placeholder="Search by Node Name, Peer ID, etc."
-            />
-          </div>
-          <a className={b('download')} href={`${process.env.BACKEND_URL}/miners/csv`}>
-            <img src="/assets/download.svg" alt="" /> Download
-          </a>
-          <div className={b('sort')}>
-            Sort By:
-            <Dropdown
-              titles={['None', 'Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-              onSwitch={this.onChangeSort}
-            />
-          </div>
-        </div>
         <Table
+          title="Storage Mining Activity Detail"
+          onChangeFilter={this.onChangeQuery}
+          onChangeSort={this.onChangeSort}
+          onChangePage={this.onChangePage}
+          downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
+          filterPlaceholder="Search by Node Name, Peer ID, etc..."
+          sortTitles={['None', 'Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
           headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Capacity', 'Block %', 'Time']}
-          rows={this.props.miners.filter(this.filter).sort(this.sort).map((m: MinerStat) => {
+          rowCount={this.props.miners.length}
+          rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
               [b('tipset-hash', 'consensus')]: m.isInConsensus,
             });
