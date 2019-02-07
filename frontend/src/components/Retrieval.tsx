@@ -44,13 +44,13 @@ export default class Retrieval extends React.Component<{}, {}> {
         <PageHeader title="Retrieval Network Overview" />
         <Grid>
           <Col unsupported>
-            <SingleStat value="1" unit="FIL/GB" subtitle="Avg. Price of Retrieval" trend={1.25} duration="24 hrs" />
+            <SingleStat value="--" unit="" subtitle="Avg. Price of Retrieval" />
           </Col>
           <Col unsupported>
-            <SingleStat value="150" unit="ms" subtitle="Avg. Retrieval Time / Miner" trend={1.25} duration="24 hrs" />
+            <SingleStat value="--" unit="" subtitle="Avg. Retrieval Time / Miner" />
           </Col>
           <Col unsupported>
-            <SingleStat value="7" unit="GB/s" subtitle="Avg. GB Retrieved Per Second" trend={0.74} duration="24 hrs" />
+            <SingleStat value="--" unit="" subtitle="Avg. GB Retrieved Per Second" />
           </Col>
         </Grid>
         <Grid>

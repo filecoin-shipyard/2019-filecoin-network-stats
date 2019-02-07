@@ -11,6 +11,7 @@ import GraphColors from '../GraphColors';
 import PercentageNumber, {PercentageNumberFormatter} from '../../utils/PercentageNumber';
 import {NumberFormatter} from '@amcharts/amcharts4/core';
 import Tooltip from '../Tooltip';
+import UtilizationTooltip from '../UtilizationTooltip';
 
 export interface HistoricalUtilizationChartStateProps {
   data: TimeseriesDatapoint[]
@@ -56,11 +57,9 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
   }
 
   renderTooltip () {
-    const explainer = 'Utilization is calculated by dividing the number of committed sectors by the total number of pledged sectors.';
-
     return (
       <React.Fragment>
-        Current Network Utilization <Tooltip content={explainer} />
+        Current Network Utilization <UtilizationTooltip/>
       </React.Fragment>
     );
   }

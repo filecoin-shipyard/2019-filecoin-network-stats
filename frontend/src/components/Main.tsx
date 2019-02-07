@@ -15,6 +15,7 @@ import StorageMining from './storage/StorageMining';
 import Warning from './Warning';
 import StorageDeals from './storage/StorageDeals';
 import StorageCostCapacity from './storage/StorageCostCapacity';
+import Disclaimer from './Disclaimer';
 
 const b = bemify('main');
 
@@ -53,6 +54,7 @@ export class Main extends React.Component<MainProps> {
             <Route path="/token-metrics" render={this.wrapWithContentArea(Macroeconomics, true, false)} />
             <Route exact path="/" render={this.wrapWithContentArea(Home, false, false)} />
           </Switch>
+          <Disclaimer/>
         </div>
       </div>
     );

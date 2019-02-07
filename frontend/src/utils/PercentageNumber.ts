@@ -15,7 +15,7 @@ export default class PercentageNumber {
   }
 
   public toDisplay (showUnit: boolean): string {
-    return `${this.num.multipliedBy(100).toFixed(2)}${showUnit ? '%' : ''}`;
+    return `${this.num.multipliedBy(100).toFixed(1)}${showUnit ? '%' : ''}`;
   }
 
   public toNumber(): number {

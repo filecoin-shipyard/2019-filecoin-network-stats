@@ -105,7 +105,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['None', 'Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Capacity', 'Block %', 'Time']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', 'Block %',]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
@@ -115,11 +115,12 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
             return ([
               m.nickname,
               ellipsify(m.peerId, 15),
-              <span className={tipsetNames}>{ellipsify(m.tipsetHash, 15)}</span>,
+              <span className={tipsetNames}>{m.tipsetHash}</span>,
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
-              `${Math.floor(m.blockPercentage * 100)}%`,
+              m.height,
               <FloatTimeago date={secToMillis(m.lastSeen)} />,
+              `${Math.floor(m.blockPercentage * 100)}%`,
             ]);
           })}
           keyGetter={(i) => this.props.miners[i].peerId}

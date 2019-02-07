@@ -80,7 +80,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
               </Col>
               <Col transparent>
                 <div className={b('sub-stat')}>
-                  {new BigNumber(this.props.mining.averageBlockTime).toFixed(2)}s
+                  {new BigNumber(this.props.mining.averageBlockTime).toFixed(1)}s
                 </div>
                 <div className={b('label')}>
                   Avg. Block Time

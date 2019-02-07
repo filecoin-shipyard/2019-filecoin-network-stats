@@ -84,9 +84,10 @@
 .table__header {
   text-align: left;
   padding: $base ($base * 1.5);
-  font-size: $base * 1.2;
-  vertical-align: top;
+  vertical-align: middle;
   font-weight: normal;
+  color: #293134;
+  font-size: 13px;
 }
 
 .table__cell {

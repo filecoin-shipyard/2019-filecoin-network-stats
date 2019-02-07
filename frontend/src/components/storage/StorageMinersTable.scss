@@ -1,6 +1,10 @@
 @import "../../variables";
 
 .storage-miners-table {
+  &__tipset-hash {
+    word-wrap: break-word;
+  }
+
   &__tipset-hash--consensus {
     color: #13B7B3;
   }

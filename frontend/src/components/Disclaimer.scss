@@ -1,0 +1,13 @@
+@import "../variables";
+
+.disclaimer {
+  .grid__col-pad {
+    background: transparent;
+  }
+
+  &__text {
+    color: $grey;
+    font-size: $base;
+    line-height: 1.2;
+  }
+}

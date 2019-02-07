@@ -112,13 +112,13 @@ export default class StorageDeals extends React.Component {
         <PageHeader title="Storage Deal Stats" />
         <Grid singleMargin>
           <Col unsupported>
-            <SingleStat value="15,345" unit="" subtitle="Active Storage Deals" trend={15.67} />
+            <SingleStat value="--" unit="" subtitle="Active Storage Deals" />
           </Col>
           <Col unsupported>
-            <SingleStat value="8,455" unit="" subtitle="Storage Deals Created in Last 24 Hrs" trend={-38.91} />
+            <SingleStat value="--" unit="" subtitle="Storage Deals Created in Last 24 Hrs" />
           </Col>
           <Col unsupported>
-            <SingleStat value="97.8" unit="%" subtitle="% of Storage Deals Completed" trend={12.4} />
+            <SingleStat value="--" unit="" subtitle="% of Storage Deals Completed" />
           </Col>
         </Grid>
         <Grid>

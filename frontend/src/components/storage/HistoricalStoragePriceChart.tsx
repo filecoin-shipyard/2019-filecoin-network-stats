@@ -32,7 +32,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
         summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         label="Current Avg. Price of Storage"
-        yAxisLabels={['Price']}
+        yAxisLabels={['Price (FIL)']}
       />
     );
   };

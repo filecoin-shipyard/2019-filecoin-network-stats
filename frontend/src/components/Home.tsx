@@ -18,6 +18,8 @@ import GainLossTimelineChart from './GainLossTimelineChart';
 import {makeAverage} from '../utils/averages';
 import BigNumber from 'bignumber.js';
 import Tooltip from './Tooltip';
+import CapacityTooltip from './CapacityTooltip';
+import UtilizationTooltip from './UtilizationTooltip';
 
 const b = bemify('home');
 
@@ -57,7 +59,7 @@ export class Home extends React.Component<HomeProps, {}> {
             <Col>
               <SingleStat
                 value={averageCost.toDisplay(2)}
-                unit="FIL/GB/mo."
+                unit="FIL/GB/Month"
                 subtitle="Avg. Price of Storage"
                 trend={PercentageNumber.create(this.props.storageStats.storageCost.trend).toNumber()}
                 duration="24 hrs"
@@ -68,6 +70,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 value={totalStorage.toString(SizeUnit.GB)}
                 unit="GB"
                 subtitle="Current Network Storage Capacity"
+                tooltip={<CapacityTooltip/>}
                 trend={PercentageNumber.create(this.props.storageStats.storageAmount.trend).toNumber()}
                 duration="24 hrs"
               />
@@ -76,6 +79,7 @@ export class Home extends React.Component<HomeProps, {}> {
               <SingleStat
                 value={PercentageNumber.create(currentUtilization).toDisplay(false)}
                 unit={'%'}
+                tooltip={<UtilizationTooltip/>}
                 trend={utilizationTrend.toNumber()}
                 subtitle={'Current Network Utilization'}
                 duration="24 hrs"
@@ -83,11 +87,9 @@ export class Home extends React.Component<HomeProps, {}> {
             </Col>
             <Col unsupported>
               <SingleStat
-                value="1"
-                unit="FIL/GB"
+                value="--"
+                unit=""
                 subtitle="Avg. Price of Retrieval"
-                trend={1.23}
-                duration="24 hrs"
               />
             </Col>
           </Grid>
@@ -101,7 +103,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 <AverageStorageCostChart />
                 <GainLossTimelineChart
                   data={this.props.marketStats.volume}
-                  yAxisLabels={['FIL']}
+                  yAxisLabels={['Number of FIL']}
                   yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
                   label={this.renderGainLossTimelineTooltip()}
                   summaryNumber={summary}
