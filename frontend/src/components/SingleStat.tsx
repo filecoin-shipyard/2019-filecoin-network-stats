@@ -32,7 +32,7 @@ export class SingleStat extends React.Component<SingleStatProps, {}> {
         </div>
         <div className={b('bottom')}>
           <div className={trendClass}>
-            {this.props.trend || '--'}%
+            {typeof this.props.trend === 'undefined' ? '--' : this.props.trend}%
           </div>
           {this.renderDuration()}
         </div>
