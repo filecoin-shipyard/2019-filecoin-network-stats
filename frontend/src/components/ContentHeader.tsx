@@ -5,7 +5,7 @@ import './ContentHeader.scss';
 const b = bemify('content-header');
 
 export interface ContentHeaderProps {
-  title?: string
+  title?: string | React.ReactNode
 }
 
 export default class ContentHeader extends React.Component<ContentHeaderProps> {

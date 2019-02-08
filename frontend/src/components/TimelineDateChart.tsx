@@ -55,11 +55,12 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
     xAxis.dateFormatter = new am4core.DateFormatter();
 
     const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    yAxis.renderer.labels.template.dx = 5;
+    yAxis.min = 0;
 
     if (this.props.barData.length) {
       const axis = chart.yAxes.push(new am4charts.ValueAxis());
       axis.renderer.opposite = true;
+      axis.min = 0;
     }
 
     return chart;
@@ -86,6 +87,8 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
       const barAxis = chart.yAxes.getIndex(1) as am4charts.ValueAxis;
       barAxis.extraMax = 2;
     }
+
+
   };
 
   render () {

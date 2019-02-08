@@ -10,6 +10,8 @@ import {FilesizeNumberFormatter, SizeUnit} from '../../utils/Filesize';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import DateSwitchingChart from '../DateSwitchingChart';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 export interface HistoricalCollateralChartStateProps {
   data: TimeseriesDatapoint[]
@@ -34,7 +36,7 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
   renderContent = (isOverride: boolean) => {
     const summary = (
       <React.Fragment>
-        {new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay()}{' '}
+        {new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(0)}{' '}
         <small>FIL</small>
       </React.Fragment>
     );
@@ -56,10 +58,18 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
   render () {
     return (
       <DateSwitchingChart
-        title="Total Storage Collateral On Network"
+        title={this.renderTitle()}
         onChangeDuration={this.onChangeDuration}
         renderContent={this.renderContent}
       />
+    );
+  }
+
+  renderTitle () {
+    const explainer = `This chart is a snapshot of all FIL deposited in pledges, taken every five minutes.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Total FIL Held In Storage Collateral" />
     );
   }
 }

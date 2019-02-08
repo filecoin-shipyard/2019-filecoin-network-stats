@@ -10,6 +10,8 @@ import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
 import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 const b = bemify('coins-in-circulation');
 
@@ -41,7 +43,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
 
     const summary = (
       <React.Fragment>
-        {new Currency(total).toDisplay()}{' '}
+        {new Currency(total).toDisplay(0)}{' '}
         <small>FIL</small>
       </React.Fragment>
     );
@@ -66,11 +68,19 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
     return (
       <div className={b()}>
         <DateSwitchingChart
-          title="FIL Outstanding"
+          title={this.renderTitle()}
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `Outstanding FIL is the sum of all FIL on the network, including mining rewards and wallet balances, delineated by whether or not the FIL is locked up as storage collateral. Snapshots are taken every 5 minutes.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="FIL Outstanding" />
     );
   }
 }
@@ -84,7 +94,7 @@ function mapStateToProps (state: AppState): CoinsInCirculationStateProps {
 
 function mapDispatchToProps (dispatch: Dispatch<any>): CoinsInCirculationDispatchProps {
   return {
-    setOverride: (dur: ChartDuration) => dispatch(setOverride('token', 'historicalCoinsInCirculation', dur))
+    setOverride: (dur: ChartDuration) => dispatch(setOverride('token', 'historicalCoinsInCirculation', dur)),
   };
 }
 

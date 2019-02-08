@@ -14,7 +14,7 @@ export default class Disclaimer extends React.Component {
           <Grid>
             <Col transparent>
               <div className={b('text')}>
-                Disclaimer: Filecoin network and token data included on this dashboard are for test purposes only. Data included in this tool does not indicate any potential or future value of Filecoin tokens or storage on the network. Real data will not be available on this dashboard until the Filecoin main network has launched.
+                Disclaimer: Filecoin network and token data included on this dashboard are notional and for test and development purposes only.
               </div>
             </Col>
           </Grid>

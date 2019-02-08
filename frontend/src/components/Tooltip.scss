@@ -2,12 +2,11 @@
 
 .tooltip {
   position: relative;
-  display: inline-block;
 
-  img {
+  &, img {
     display: block;
-    position: relative;
-    bottom: -3px;
+    width: 16px;
+    height: 16px;
   }
 
   &:hover .tooltip__content {

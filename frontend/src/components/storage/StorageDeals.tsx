@@ -68,31 +68,31 @@ const sizeHistogram: HistogramDatapoint[] = [
   {
     n: 2,
     bucketStart: new BigNumber(11),
-    bucketEnd: new BigNumber(1000),
+    bucketEnd: new BigNumber(20),
     count: 1000,
   },
   {
     n: 3,
-    bucketStart: new BigNumber(1001),
-    bucketEnd: new BigNumber(10000),
+    bucketStart: new BigNumber(21),
+    bucketEnd: new BigNumber(30),
     count: 1500,
   },
   {
     n: 4,
-    bucketStart: new BigNumber(10001),
-    bucketEnd: new BigNumber(20000),
+    bucketStart: new BigNumber(31),
+    bucketEnd: new BigNumber(40),
     count: 1250,
   },
   {
     n: 5,
-    bucketStart: new BigNumber(20001),
-    bucketEnd: new BigNumber(30000),
+    bucketStart: new BigNumber(41),
+    bucketEnd: new BigNumber(50),
     count: 1100,
   },
   {
     n: 6,
-    bucketStart: new BigNumber(30001),
-    bucketEnd: new BigNumber(40000),
+    bucketStart: new BigNumber(51),
+    bucketEnd: new BigNumber(-1),
     count: 989,
   },
 ];
@@ -210,7 +210,7 @@ export default class StorageDeals extends React.Component {
   durationDataTransformer (point: HistogramDatapoint) {
     const start = point.bucketStart.toString();
     const end = point.bucketEnd.toString();
-    const label = point.bucketEnd.eq(-1) ? `${start}+ mo.` : `${start}-${end} mo.`;
+    const label = point.bucketEnd.eq(-1) ? `${start}+ mo` : `${start}-${end} mo`;
     return {
       ...point,
       label,
@@ -220,13 +220,20 @@ ${label}`,
   }
 
   sizeDataTransformer (point: HistogramDatapoint) {
-    const start = Filesize.fromGB(point.bucketStart).smartUnitString();
-    const end = Filesize.fromGB(point.bucketEnd).smartUnitString();
+    let start = Filesize.fromGB(point.bucketStart).smartUnitString();
+    let end = Filesize.fromGB(point.bucketEnd).smartUnitString();
+    if (point.bucketEnd.eq(-1)) {
+      start = `${Filesize.fromGB(point.bucketStart).smartUnit().size.toFixed(0)}+ GB`;
+      end = '';
+    } else {
+      end = ` - ${end}`
+    }
+
     return {
       ...point,
       label: start,
       tooltipText: `Count: ${point.count}
-${start} - ${end}`,
+${start}${end}`,
     };
   }
 }

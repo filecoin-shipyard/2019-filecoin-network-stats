@@ -7,6 +7,8 @@ import {connect} from 'react-redux';
 import GraphColors from '../GraphColors';
 import {makeAverage} from '../../utils/averages';
 import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
+import LabelledTooltip from '../LabelledTooltip';
+import AveragePriceTooltip from '../AveragePriceTooltip';
 
 export interface AverageStorageCostChartProps {
   data: TimeseriesDatapoint[]

@@ -10,7 +10,7 @@ const b = bemify('switchable-content');
 export interface SwitchableContentProps {
   children?: React.ReactChild | React.ReactChild[]
   renderContent?: (index: number) => React.ReactChild
-  titles: string[]
+  titles: (string|React.ReactNode)[]
   linkTitles: string[]
   dropdown?: boolean
   onSwitch?: (i: number) => void

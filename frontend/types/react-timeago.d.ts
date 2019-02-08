@@ -3,6 +3,7 @@ declare module 'react-timeago' {
 
   interface TimeagoProps {
     date: Date | string | number
+    formatter?: (value: number, unit: string, suffix: string) => string
   }
 
   const el: React.ComponentClass<TimeagoProps>;

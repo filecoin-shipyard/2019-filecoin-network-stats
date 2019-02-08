@@ -19,7 +19,7 @@
     top: 50%;
     margin-top: -($size / 2);
     right: 0;
-    transform: rotate(-180deg);
+    transform: rotate(0deg);
     transition: transform linear 100ms;
   }
 
@@ -29,7 +29,7 @@
     }
 
     &:before {
-      transform: rotate(0deg);
+      transform: rotate(180deg);
     }
   }
 

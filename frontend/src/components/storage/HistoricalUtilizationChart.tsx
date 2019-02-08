@@ -9,9 +9,8 @@ import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import GraphColors from '../GraphColors';
 import PercentageNumber, {PercentageNumberFormatter} from '../../utils/PercentageNumber';
-import {NumberFormatter} from '@amcharts/amcharts4/core';
-import Tooltip from '../Tooltip';
 import UtilizationTooltip from '../UtilizationTooltip';
+import LabelledTooltip from '../LabelledTooltip';
 
 export interface HistoricalUtilizationChartStateProps {
   data: TimeseriesDatapoint[]
@@ -39,7 +38,7 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
         yAxisLabels={['Network Utilization']}
         summaryNumber={PercentageNumber.create(this.props.data[this.props.data.length - 1].amount).toDisplay(true)}
         yAxisNumberFormatters={[new PercentageNumberFormatter()]}
-        label={this.renderTooltip()}
+        label="Current Network Utilization"
       />
     );
   };
@@ -48,7 +47,7 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
     return (
       <div>
         <DateSwitchingChart
-          title="Network Utilization"
+          title={this.renderTitle()}
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />
@@ -56,11 +55,9 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
     );
   }
 
-  renderTooltip () {
+  renderTitle () {
     return (
-      <React.Fragment>
-        Current Network Utilization <UtilizationTooltip/>
-      </React.Fragment>
+      <LabelledTooltip tooltip={<UtilizationTooltip />} text="Network Utilization" />
     );
   }
 }

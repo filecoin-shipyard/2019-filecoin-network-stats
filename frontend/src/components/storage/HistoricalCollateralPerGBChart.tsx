@@ -9,6 +9,8 @@ import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
 import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 export interface HistoricalCollateralPerGBChartStateProps {
   data: TimeseriesDatapoint[]
@@ -34,7 +36,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
         summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
-        label="Current Avg. Storage Collateral Per GB"
+        label="Current Storage Collateral Per GB"
         yAxisLabels={['FIL/GB']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
       />
@@ -45,11 +47,19 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
     return (
       <div>
         <DateSwitchingChart
-          title="Storage Collateral Per GB"
+          title={this.renderTitle()}
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `Calculated by dividing the collateralized FIL by the number of pledged sectors.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Collateral Per GB" />
     );
   }
 }

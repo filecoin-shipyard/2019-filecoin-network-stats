@@ -39,8 +39,6 @@
     margin-left: $base * 2;
     font-size: $base * 1.2;
     color: #4F4F4F;
-    background: url('/assets/sort.svg') transparent no-repeat left center;
-    padding-left: $base * 1.5;
 
     .dropdown {
       margin-left: $base / 2;
@@ -53,6 +51,8 @@
 
     .dropdown__selected {
       font-weight: normal;
+      padding-left: $base * 1.2;
+      background: url('/assets/sort.svg') transparent no-repeat left center;
     }
   }
 

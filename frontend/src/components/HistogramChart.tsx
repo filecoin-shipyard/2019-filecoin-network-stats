@@ -38,9 +38,11 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
     chart.data = this.props.data.map(this.props.dataTransformer);
+    console.log(chart.data);
 
     const xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     xAxis.dataFields.category = 'label';
+    xAxis.renderer.minGridDistance = 0.001;
     chart.yAxes.push(new am4charts.ValueAxis());
 
     if (this.props.showAverage) {
@@ -57,6 +59,9 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     series.dataFields.categoryX = 'label';
     series.name = 'Storage Distribution';
     series.zIndex = 20;
+
+    const xAxis = chart.xAxes.getIndex(0);
+    // xAxis.renderer.minLabelPosition = -0.05;
 
     const columnTemplate = series.columns.template;
     if (this.props.heatMapped) {

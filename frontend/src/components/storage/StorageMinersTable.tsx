@@ -13,6 +13,7 @@ import './StorageMinersTable.scss';
 import c from 'classnames';
 import Tooltip from '../Tooltip';
 import PowerTooltip from '../PowerTooltip';
+import LabelledTooltip from '../LabelledTooltip';
 
 const b = bemify('storage-miners-table');
 
@@ -103,7 +104,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['Most Recent Block Mined', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', '% Blocks Mined',]}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', '% Blocks Mined']}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             const tipsetNames = c(b('tipset-hash'), {
@@ -128,20 +129,16 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderTipsetHeader () {
-    const explainer = 'When a tipset hash is highlighted, it means the corresponding node is in consensus with the chain.';
+    const explainer = 'When a tipset hash is highlighted, it means the corresponding node is in consensus with the rest of the network.';
 
     return (
-      <React.Fragment>
-        Tipset Hash <Tooltip content={explainer} />
-      </React.Fragment>
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Tipset Hash" />
     );
   }
 
   renderPowerHeader () {
     return (
-      <React.Fragment>
-        Storage Power <PowerTooltip />
-      </React.Fragment>
+      <LabelledTooltip tooltip={<PowerTooltip />} text="Storage Power" />
     );
   }
 }

@@ -5,9 +5,12 @@ import {NumberFormatter} from '@amcharts/amcharts4/core';
 export class CurrencyNumberFormatter extends NumberFormatter {
   private readonly isOrderMagnitude: boolean;
 
-  constructor (isOrderMagnitude: boolean) {
+  private readonly decimals: number;
+
+  constructor (isOrderMagnitude: boolean, decimals: number = 2) {
     super();
     this.isOrderMagnitude = isOrderMagnitude;
+    this.decimals = decimals;
   }
 
   format (value: number | string, format?: string): string {
@@ -16,7 +19,7 @@ export class CurrencyNumberFormatter extends NumberFormatter {
       return currency.toOrderMagnitude();
     }
 
-    return currency.toDisplay(2);
+    return currency.toDisplay(this.decimals);
   }
 }
 
@@ -31,7 +34,7 @@ export default class Currency {
     return OrderMagnitudeNumber.smartSize(this.toBase(), true);
   }
 
-  toDisplay (decimalPlaces: number = 0): string {
+  toDisplay (decimalPlaces: number = 3): string {
     const str = this.toBase().toFixed(decimalPlaces);
     const split = str.split('.');
     const intPart = split[0];

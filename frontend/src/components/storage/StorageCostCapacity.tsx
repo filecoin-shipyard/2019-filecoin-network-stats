@@ -14,7 +14,7 @@ export default class StorageCostCapacity extends React.Component {
   render () {
     return (
       <div className={b()}>
-        <PageHeader title="Storage Price" />
+        <PageHeader title="Storage Price & Capacity" />
         <Grid>
           <Col>
             <HistoricalStoragePriceChart />

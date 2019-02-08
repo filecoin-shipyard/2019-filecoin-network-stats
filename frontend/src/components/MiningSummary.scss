@@ -6,7 +6,7 @@
 }
 
 .mining-summary__left {
-  width: 30%;
+  width: 260px;
   padding: 0 ($base * 4);
   display: flex;
   flex-direction: column;
@@ -14,8 +14,8 @@
 }
 
 .mining-summary__right {
-  width: 70%;
-  padding: ($base * 4) ($base * 6);
+  flex: 1 1 100%;
+  padding: ($base * 4) ($base * 4);
   border-left: 1px solid $border;
 }
 

@@ -8,10 +8,12 @@ import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
+import BigNumber from 'bignumber.js';
 
 export interface HistoricalStoragePriceChartStateProps {
   data: TimeseriesDatapoint[]
   overrideData: TimeseriesDatapoint[]
+  average: BigNumber
 }
 
 export interface HistoricalStoragePriceChartDispatchProps {
@@ -29,7 +31,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
     return (
       <TimelineDateChart
         data={isOverride ? this.props.overrideData : this.props.data}
-        summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
+        summaryNumber={new Currency(this.props.average).toDisplay()}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         label="Current Avg. Price of Storage"
         yAxisLabels={['Price (FIL)']}
@@ -54,6 +56,7 @@ export function mapStateToProps (state: AppState): HistoricalStoragePriceChartSt
   return {
     data: state.stats.stats.storage.storageCost.data,
     overrideData: state.overrides.storage.historicalStoragePrice,
+    average: state.stats.stats.storage.storageCost.average,
   };
 }
 

@@ -33,7 +33,10 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
     const diff = Date.now() - this.props.date;
 
     if (diff > 60000) {
-      return <Timeago date={this.props.date} />;
+      return <Timeago
+        date={this.props.date}
+        formatter={this.formatTime}
+      />;
     }
 
     const text = new BigNumber(diff).div(1000).toFixed(1);
@@ -42,5 +45,13 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
         {text}s ago
       </time>
     );
+  }
+
+  formatTime = (value: number, unit: string, suffix: string) => {
+    if (unit === 'minute') {
+      return `${value} mins ${suffix}`
+    }
+
+    return `${value} ${unit} ${suffix}`
   }
 }

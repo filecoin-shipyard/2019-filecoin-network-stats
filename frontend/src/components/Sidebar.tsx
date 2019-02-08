@@ -37,8 +37,8 @@ export class Sidebar extends React.Component<{}, SidebarState> {
             <NavLink to="/storage/mining" className={b('sub-link')}>
               Mining
             </NavLink>
-            <NavLink to="/storage/cost-capacity" className={b('sub-link')}>
-              Cost and Capacity
+            <NavLink to="/storage/price-capacity" className={b('sub-link')}>
+              Price & Capacity
             </NavLink>
             <NavLink to="/storage/deals" className={b('sub-link')}>
               Deal Stats

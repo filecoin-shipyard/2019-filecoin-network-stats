@@ -8,6 +8,8 @@ import OrderMagnitudeNumber, {OrderMagnitudeNumberFormatter} from '../../utils/O
 import BigNumber from 'bignumber.js';
 import Currency from '../../utils/Currency';
 import {sum} from 'd3-array';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 export interface TokenHoldingsDistributionProps {
   data: HistogramDatapoint[]
@@ -22,10 +24,10 @@ export class TokenHoldingsDistribution extends React.Component<TokenHoldingsDist
 
     return (
       <div>
-        <ContentHeader title="Total FIL Token Addresses" />
+        <ContentHeader title={this.renderTitle()} />
         <HistogramChart
           label="Token Addresses"
-          summaryNumber={new Currency(new BigNumber(summary)).toDisplay()}
+          summaryNumber={new Currency(new BigNumber(summary)).toDisplay(0)}
           data={this.props.data}
           dataTransformer={this.dataTransformer}
           yAxisLabels={['Amount of FIL in Each Address']}
@@ -45,6 +47,14 @@ export class TokenHoldingsDistribution extends React.Component<TokenHoldingsDist
       tooltipText: `Count: ${point.count}
 ${start}FIL - ${end}FIL`,
     };
+  }
+
+  renderTitle () {
+    const explainer = `This is the distribution of all token addresses, distributed into even buckets between the smallest balance and largest balances. Zero-balance addresses are excluded.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Total FIL Token Addresses" />
+    );
   }
 }
 

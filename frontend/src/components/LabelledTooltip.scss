@@ -1,0 +1,19 @@
+@import "../variables";
+
+.labelled-tooltip {
+  display: flex;
+  align-items: center;
+
+  .tooltip {
+    margin-left: $base / 3;
+  }
+
+  &--inline {
+    display: inline;
+
+    .tooltip {
+      display: inline-block;
+      margin-bottom: -3px;
+    }
+  }
+}

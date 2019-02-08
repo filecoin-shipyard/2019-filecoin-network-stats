@@ -22,6 +22,25 @@ export default class GainLossTimelineChart extends React.Component<GainLossTimel
 
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
+    const legend = new am4charts.Legend();
+    legend.parent = chart.tooltipContainer;
+    legend.data = [{
+      name: 'Daily Volume Increase',
+      fill: GraphColors.GREEN,
+    }, {
+      name: 'Daily Volume Decrease',
+      fill: GraphColors.RED,
+    }];
+    legend.fontSize = '12px';
+    legend.fontFamily = 'Open Sans, sans-serif';
+    legend.labels.template.stroke = am4core.color('#aaa');
+    legend.position = 'absolute';
+    legend.y = 8;
+    legend.x = 100;
+    legend.contentAlign = 'left';
+    const template = legend.markers.template;
+    template.width = 16;
+    template.height = 16;
 
     chart.data = this.props.data.map((point: TimeseriesDatapoint, i: number) => {
       const processed = this.props.datapointProcessor(point);

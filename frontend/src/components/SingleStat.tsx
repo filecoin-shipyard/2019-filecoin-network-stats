@@ -2,6 +2,7 @@ import * as React from 'react';
 import './SingleStat.scss';
 import bemify from '../utils/bemify';
 import classnames from 'classnames';
+import LabelledTooltip from './LabelledTooltip';
 
 const b = bemify('single-stat');
 
@@ -25,7 +26,7 @@ export class SingleStat extends React.Component<SingleStatProps, {}> {
     return (
       <div className={b()}>
         <div className={b('subtitle')}>
-          {this.props.subtitle} {this.props.tooltip || ''}
+          {this.renderSubtitle()}
         </div>
         <div className={b('name')}>
           {this.props.value} <span className={b('unit')}>{this.props.unit}</span>
@@ -49,6 +50,20 @@ export class SingleStat extends React.Component<SingleStatProps, {}> {
       <div className={b('duration')}>
         ({this.props.duration})
       </div>
+    );
+  }
+
+  renderSubtitle () {
+    if (!this.props.tooltip) {
+      return this.props.subtitle;
+    }
+
+    return (
+      <LabelledTooltip
+        tooltip={this.props.tooltip}
+        text={this.props.subtitle}
+        inline
+      />
     );
   }
 };

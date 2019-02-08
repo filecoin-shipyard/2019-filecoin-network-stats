@@ -8,6 +8,8 @@ import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import {OrderMagnitudeNumberFormatter} from '../../utils/OrderMagnitudeNumber';
+import LabelledTooltip from '../LabelledTooltip';
+import MinerCountTooltip from '../MinerCountTooltip';
 
 export interface MinerCountChartStateProps {
   data: TimeseriesDatapoint[]
@@ -42,7 +44,7 @@ export class MinerCountChart extends React.Component<MinerCountChartProps> {
     return (
       <div>
         <DateSwitchingChart
-          title="Total Storage Miners"
+          title={<LabelledTooltip tooltip={<MinerCountTooltip />} text="Total Storage Miners" />}
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />

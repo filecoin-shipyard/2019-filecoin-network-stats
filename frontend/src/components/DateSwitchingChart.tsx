@@ -15,7 +15,7 @@ const DURATIONS = [
 ];
 
 export interface DateSwitchingChartProps {
-  title: string
+  title: string|React.ReactNode
   onChangeDuration: (dur: ChartDuration) => Promise<void>
   renderContent: (isOverride: boolean) => React.ReactChild
 }

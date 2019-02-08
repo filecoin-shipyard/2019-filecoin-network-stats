@@ -48,7 +48,7 @@ export class Main extends React.Component<MainProps> {
           <Switch>
             <Route exact path="/storage" render={() => <Redirect to="/storage/mining" />} />
             <Route exact path="/storage/mining" render={this.wrapWithContentArea(StorageMining, true, false)} />
-            <Route exact path="/storage/cost-capacity" render={this.wrapWithContentArea(StorageCostCapacity, true, false)} />
+            <Route exact path="/storage/price-capacity" render={this.wrapWithContentArea(StorageCostCapacity, true, false)} />
             <Route exact path="/storage/deals" render={this.wrapWithContentArea(StorageDeals, true, true)} />
             <Route path="/retrieval" render={this.wrapWithContentArea(Retrieval, true, true)} />
             <Route path="/token-metrics" render={this.wrapWithContentArea(Macroeconomics, true, false)} />

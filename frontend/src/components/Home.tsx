@@ -20,6 +20,9 @@ import BigNumber from 'bignumber.js';
 import Tooltip from './Tooltip';
 import CapacityTooltip from './CapacityTooltip';
 import UtilizationTooltip from './UtilizationTooltip';
+import AveragePriceTooltip from './AveragePriceTooltip';
+import LabelledTooltip from './LabelledTooltip';
+import VolumeTransactedTooltip from './VolumeTransactedTooltip';
 
 const b = bemify('home');
 
@@ -52,17 +55,13 @@ export class Home extends React.Component<HomeProps, {}> {
           <PageHeader title="Network Overview" />
           <Grid>
             <Col>
-              <NodeMap />
-            </Col>
-          </Grid>
-          <Grid>
-            <Col>
               <SingleStat
-                value={averageCost.toDisplay(2)}
+                value={averageCost.toDisplay()}
                 unit="FIL/GB/Month"
                 subtitle="Avg. Price of Storage"
                 trend={PercentageNumber.create(this.props.storageStats.storageCost.trend).toNumber()}
                 duration="24 hrs"
+                tooltip={<AveragePriceTooltip />}
               />
             </Col>
             <Col>
@@ -70,7 +69,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 value={totalStorage.toString(SizeUnit.GB)}
                 unit="GB"
                 subtitle="Current Network Storage Capacity"
-                tooltip={<CapacityTooltip/>}
+                tooltip={<CapacityTooltip />}
                 trend={PercentageNumber.create(this.props.storageStats.storageAmount.trend).toNumber()}
                 duration="24 hrs"
               />
@@ -79,7 +78,7 @@ export class Home extends React.Component<HomeProps, {}> {
               <SingleStat
                 value={PercentageNumber.create(currentUtilization).toDisplay(false)}
                 unit={'%'}
-                tooltip={<UtilizationTooltip/>}
+                tooltip={<UtilizationTooltip />}
                 trend={utilizationTrend.toNumber()}
                 subtitle={'Current Network Utilization'}
                 duration="24 hrs"
@@ -89,14 +88,23 @@ export class Home extends React.Component<HomeProps, {}> {
               <SingleStat
                 value="--"
                 unit=""
+                tooltip={<Tooltip content="Retrieval data is coming soon." greyscale />}
                 subtitle="Avg. Price of Retrieval"
               />
             </Col>
           </Grid>
           <Grid>
             <Col>
+              <NodeMap />
+            </Col>
+          </Grid>
+          <Grid>
+            <Col>
               <SwitchableContent
-                titles={['Avg. Price of Storage', 'Volume of FIL Transacted On-Chain']}
+                titles={[
+                  <LabelledTooltip tooltip={<AveragePriceTooltip />} text="Avg. Price of Storage" />,
+                  <LabelledTooltip tooltip={<VolumeTransactedTooltip />} text="Volume of FIL Transacted On-Chain" />,
+                ]}
                 linkTitles={['Storage Price', 'Token Volume']}
                 dropdown
               >
@@ -105,7 +113,7 @@ export class Home extends React.Component<HomeProps, {}> {
                   data={this.props.marketStats.volume}
                   yAxisLabels={['Number of FIL']}
                   yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
-                  label={this.renderGainLossTimelineTooltip()}
+                  label="Avg. Daily Volume"
                   summaryNumber={summary}
                 />
               </SwitchableContent>
@@ -118,16 +126,6 @@ export class Home extends React.Component<HomeProps, {}> {
           </Grid>
         </ContentArea>
       </div>
-    );
-  }
-
-  renderGainLossTimelineTooltip () {
-    const explainer = 'Average daily volume is the sum of all FIL moving on-chain, minus block rewards. Red bars represent days where volume is less than the day before.';
-
-    return (
-      <React.Fragment>
-        Avg. Daily Volume <Tooltip content={explainer} />
-      </React.Fragment>
     );
   }
 }
