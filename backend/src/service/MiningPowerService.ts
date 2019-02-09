@@ -2,6 +2,7 @@ import IService from './Service';
 import {IBlocksDAO} from './dao/BlocksDAO';
 import {IMinerClient} from '../client/MinerClient';
 import {IFilecoinClient} from '../client/FilecoinClient';
+import {min} from 'moment';
 
 export interface IMiningPowerService extends IService {
   getMarketPower (): Promise<number>
@@ -9,6 +10,8 @@ export interface IMiningPowerService extends IService {
   updateMarketPower (): Promise<void>
 
   getMinerPower (miner: string): Promise<number>
+
+  getRawMinerPower (miner: string): Promise<{ miner: number, total: number}>
 }
 
 export class MiningPowerServiceImpl implements IMiningPowerService {
@@ -56,8 +59,12 @@ export class MiningPowerServiceImpl implements IMiningPowerService {
     this.power = power.total;
   }
 
+  async getRawMinerPower(miner: string): Promise<{ miner: number, total: number }> {
+    return this.minerClient.power(miner)
+  }
+
   async getMinerPower(miner: string): Promise<number> {
-    const power = await this.minerClient.power(miner);
+    const power = await this.getRawMinerPower(miner);
     return power.miner / power.total;
   }
 }

@@ -74,7 +74,9 @@ export class MemoryNodeStatusService implements INodeStatusService {
       }
 
       if (lastSeen - oldLastSeen > FIVE_MINUTES) {
-        old.power = await this.mps.getMinerPower(heartbeat.minerAddress);
+        const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
+        old.power = power.miner/power.total;
+        old.capacity = power.miner;
       }
     } else {
       logger.info('received new peer', {
@@ -85,7 +87,10 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
       this.nodeCount++;
       const loc = await this.gDao.locateIp(heartbeat.ip);
-      const power = heartbeat.minerAddress ? await this.mps.getMinerPower(heartbeat.minerAddress) : 0;
+      const power = heartbeat.minerAddress ? await this.mps.getRawMinerPower(heartbeat.minerAddress) : {
+        miner: 0,
+        total: 1
+      };
       this.data[heartbeat.peerId] = {
         lastSeen,
         lat: (loc && loc.lat) || null,
@@ -95,8 +100,9 @@ export class MemoryNodeStatusService implements INodeStatusService {
         nickname: heartbeat.nickname,
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
-        power,
-        capacity: 0,
+        power: power.miner/power.total,
+        // power.miner is in GB, so multiply by 1000 to get GB
+        capacity: power.miner * 1000,
       };
 
       if (heartbeat.minerAddress) {
