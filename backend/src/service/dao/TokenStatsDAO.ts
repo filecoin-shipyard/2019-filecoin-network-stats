@@ -88,8 +88,13 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
   }
 
   private async getTokenHoldingsHistogram (client: PoolClient): Promise<HistogramDatapoint[]> {
+    const increment = 500000;
+    const bucketCount = 6;
+
     const res = await client.query(`
-      WITH value_transfers AS (SELECT m.to_address AS address, m.value AS value
+      WITH series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
+                      FROM generate_series(1, ${bucketCount - 1}, 1) g (n)),
+           value_transfers AS (SELECT m.to_address AS address, m.value AS value
                                FROM messages m
                                WHERE value > 0
           UNION ALL SELECT m.from_address AS address, -1 * m.value AS value
@@ -103,25 +108,19 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
                         WHERE address != ''
                         GROUP BY address
                         HAVING sum(value) > 0),
-           stats AS (SELECT min(h.value)                       AS min_holdings,
-                            max(h.value)                       AS max_holdings,
-                            (max(h.value) - min(h.value)) / 10 AS step
-                     FROM holdings h),
-           series AS (SELECT g.n,
-                             stats.min_holdings + (step * (g.n - 1))        AS bucket_start,
-                             stats.min_holdings + (step * (g.n - 1)) + step AS bucket_end
-                      FROM generate_series(1, 10, 1) g (n),
-                           stats),
            counts AS (SELECT count(h.*) AS count, bucket
                       FROM holdings h,
-                           stats s,
-                           width_bucket(h.value, s.min_holdings, s.max_holdings + 1, 10) AS bucket
+                           width_bucket(h.value, 1, ${increment * (bucketCount - 1)}, ${bucketCount - 1}) AS bucket
                       GROUP BY bucket
                       ORDER BY bucket ASC)
       SELECT s.n AS n, s.bucket_start, s.bucket_end, coalesce(c.count, 0) AS count
       FROM series s
              LEFT JOIN counts c ON c.bucket = s.n
-      ORDER BY s.n ASC;
+      UNION ALL
+      SELECT 10 AS n, ${(increment * (bucketCount - 1)) + 1} AS bucket_start, 0 AS bucket_end, count(h)
+      FROM holdings h
+      WHERE h.value >= ${(increment * (bucketCount - 1)) + 1}
+      ORDER BY n ASC;
     `);
 
     return res.rows.map((r: any) => ({

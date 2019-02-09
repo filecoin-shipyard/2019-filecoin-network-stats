@@ -39,13 +39,16 @@ export class TokenHoldingsDistribution extends React.Component<TokenHoldingsDist
 
   dataTransformer (point: HistogramDatapoint) {
     const start = OrderMagnitudeNumber.smartSize(point.bucketStart, true);
-    const end = OrderMagnitudeNumber.smartSize(point.bucketEnd, true);
+    let end = 'FIL+';
+    if (point.bucketEnd.gt(0)) {
+      end = `FIL - ${OrderMagnitudeNumber.smartSize(point.bucketEnd, true)}FIL`
+    }
 
     return {
       ...point,
-      label: `${start}FIL`,
-      tooltipText: `Count: ${point.count}
-${start}FIL - ${end}FIL`,
+      label: `${start}${end}`,
+      tooltipText: `${point.count} Addresses
+${start}${end}`,
     };
   }
 
