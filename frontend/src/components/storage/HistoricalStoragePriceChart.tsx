@@ -9,6 +9,9 @@ import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
 import BigNumber from 'bignumber.js';
+import LabelledTooltip from '../LabelledTooltip';
+import AveragePriceTooltip from '../AveragePriceTooltip';
+import Tooltip from '../Tooltip';
 
 export interface HistoricalStoragePriceChartStateProps {
   data: TimeseriesDatapoint[]
@@ -43,11 +46,19 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
     return (
       <div>
         <DateSwitchingChart
-          title="Storage Price"
+          title={this.renderTitle()}
           onChangeDuration={this.onChangeDuration}
           renderContent={this.renderContent}
         />
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `Storage price is calculated by averaging all outstanding storage asks every five minutes and aggregating them across the provided time window.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Storage Price"/>
     );
   }
 }
