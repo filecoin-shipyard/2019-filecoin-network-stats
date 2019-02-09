@@ -2,12 +2,12 @@
 
 .disclaimer {
   .grid__col-pad {
-    background: transparent;
   }
 
   &__text {
-    color: $grey;
-    font-size: $base;
+    color: $black;
+    font-size: $base * 1.2;
     line-height: 1.2;
+    padding: $base * 1.5;
   }
 }
