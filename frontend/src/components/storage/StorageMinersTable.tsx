@@ -34,6 +34,8 @@ const FILTERABLE_FIELDS = [
 ];
 
 export class StorageMinersTable extends React.Component<StorageMinersTableProps, StorageMinersTableState> {
+  private dropdowns: { [k: string]: BaseDropdown } = {};
+
   constructor (props: StorageMinersTableProps) {
     super(props);
 
@@ -166,14 +168,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   renderBlocksInTipset (m: MinerStat) {
     return (
       <div className={b('blocks-in-tipset')}>
-        <BaseDropdown title="1 block">
+        <BaseDropdown title="1 block" ref={(r) => (this.dropdowns[m.peerId] = r)}>
           <div className={b('parent-hashes')}>
             <div className={b('parent-hashes-header')}>
-              Parent Hashes
+              Parent Hashes (Click to Copy)
             </div>
             <div className={b('tipset-hashes')}>
               {m.parentHashes.map((p: string) => (
-                <div className={b('tipset-hash')} onClick={() => copy(p)}>
+                <div className={b('tipset-hash')} onClick={this.copyHash(m, p)}>
                   {p}
                 </div>
               ))}
@@ -182,6 +184,15 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
         </BaseDropdown>
       </div>
     );
+  }
+
+  copyHash (m: MinerStat, hash: string) {
+    return () => {
+      copy(hash);
+      if (this.dropdowns[m.peerId]) {
+        this.dropdowns[m.peerId].hide();
+      }
+    };
   }
 }
 
