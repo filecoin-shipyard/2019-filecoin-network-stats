@@ -10,4 +10,38 @@
   &__tipset-hash--consensus {
     color: #13B7B3;
   }
+
+  .table__header {
+    white-space: nowrap;
+  }
+
+  .tooltip {
+    white-space: normal;
+  }
+
+  .dropdown {
+    font-weight: normal;
+
+    &:before {
+      opacity: 0.5;
+    }
+
+    &:hover {
+      color: $black;
+
+      &:before {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__parent-hashes-header {
+    font-weight: bold;
+    margin-bottom: $base * 1.5;
+    color: $black;
+  }
+
+  &__blocks-in-tipset {
+    display: flex;
+  }
 }

@@ -43,7 +43,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
 
     const summary = (
       <React.Fragment>
-        {new Currency(total).toDisplay(0)}{' '}
+        {new Currency(total).toDisplay()}{' '}
         <small>FIL</small>
       </React.Fragment>
     );

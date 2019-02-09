@@ -282,20 +282,24 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const nodes = await this.nss.listMiners();
     const addresses = nodes.map((m: Node) => m.minerAddress);
     const enriched = await client.query(`
-      SELECT b.miner                                               AS address,
-             max(b.height)                                         AS last_block_mined,
-             (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
-      FROM blocks b
-      WHERE b.miner = ANY($1::varchar[])
-      GROUP BY b.miner;
+      WITH miners AS (SELECT b.miner                                               AS address,
+                             max(b.height)                                         AS last_block_mined,
+                             (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
+                      FROM blocks b
+                      WHERE b.miner = ANY($1::varchar[])
+                      GROUP BY b.miner)
+      SELECT m.*, b.blocks_in_tipset
+      FROM miners m
+             JOIN blocks b ON b.height = m.last_block_mined
     `, [
       addresses,
     ]);
-    type BlockIndex = { [k: string]: { blockPercentage: number, address: string, lastBlockMined: number } };
+    type BlockIndex = { [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[] } };
     const index = enriched.rows.reduce((acc: BlockIndex, curr: any) => {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
         lastBlockMined: curr.last_block_mined,
+        blocksInTipset: curr.blocks_in_tipset,
         address: curr.address,
       };
       return acc;
@@ -304,7 +308,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const ret: MinerStat[] = [];
     let maxBlock = 0;
     for (const node of nodes) {
-      const lastBlockMined = index[node.minerAddress] ? index[node.minerAddress].lastBlockMined : 0;
+      const indexed = index[node.minerAddress];
+      const lastBlockMined = indexed ? indexed.lastBlockMined : 0;
       if (lastBlockMined > maxBlock) {
         maxBlock = lastBlockMined;
       }
@@ -313,11 +318,11 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         nickname: node.nickname,
         address: node.minerAddress,
         peerId: node.peerId,
-        tipsetHash: node.tipsetHash,
+        parentHashes: indexed ? indexed.blocksInTipset : [],
         power: node.power,
         capacity: node.capacity,
         lastBlockMined,
-        blockPercentage: index[node.minerAddress] ? index[node.minerAddress].blockPercentage : 0,
+        blockPercentage: indexed ? indexed.blockPercentage : 0,
         height: node.height,
         lastSeen: node.lastSeen,
         isInConsensus: false,

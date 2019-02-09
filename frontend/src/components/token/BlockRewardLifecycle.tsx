@@ -32,7 +32,7 @@ export default class BlockRewardLifecycle extends React.Component {
   render () {
     const summary = (
       <React.Fragment>
-        1000{' '}
+        1000.00{' '}
         <small>FIL</small>
       </React.Fragment>
     );

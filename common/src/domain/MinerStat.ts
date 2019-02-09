@@ -2,7 +2,7 @@ export interface MinerStat {
   nickname: string
   address: string
   peerId: string
-  tipsetHash: string
+  parentHashes: string[]
   power: number
   capacity: number
   lastBlockMined: number

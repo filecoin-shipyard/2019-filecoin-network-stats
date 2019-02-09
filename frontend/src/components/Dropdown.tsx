@@ -2,6 +2,7 @@ import * as React from 'react';
 import bemify from '../utils/bemify';
 import c from 'classnames';
 import './Dropdown.scss';
+import BaseDropdown from './BaseDropdown';
 
 const b = bemify('dropdown');
 
@@ -13,11 +14,10 @@ export interface DropdownProps {
 
 export interface DropdownState {
   selectedIndex: number
-  isShowing: boolean
 }
 
 export default class Dropdown extends React.Component<DropdownProps, DropdownState> {
-  private r: HTMLDivElement | null = null;
+  private r: BaseDropdown | null = null;
 
   static defaultProps = {
     defaultIndex: 0,
@@ -33,33 +33,8 @@ export default class Dropdown extends React.Component<DropdownProps, DropdownSta
 
     this.state = {
       selectedIndex: props.defaultIndex,
-      isShowing: false
     };
   }
-
-  componentDidMount () {
-    window.addEventListener('mousedown', this.handleGlobalClick);
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener('mousedown', this.handleGlobalClick);
-  }
-
-  handleGlobalClick = (e: MouseEvent) => {
-    let node = e.target as HTMLElement;
-
-    while (node && node !== document.body) {
-      if (node === this.r) {
-        return;
-      }
-
-      node = node.parentElement;
-    }
-
-    this.setState({
-      isShowing: false
-    });
-  };
 
   onClickTitle (i: number) {
     return () => {
@@ -69,8 +44,11 @@ export default class Dropdown extends React.Component<DropdownProps, DropdownSta
 
       this.setState({
         selectedIndex: i,
-        isShowing: false
       });
+
+      if (this.r) {
+        this.r.hide();
+      }
 
       if (this.props.onSwitch) {
         this.props.onSwitch(i);
@@ -78,36 +56,24 @@ export default class Dropdown extends React.Component<DropdownProps, DropdownSta
     };
   }
 
-  toggleDropdown = () => {
-    this.setState({
-      isShowing: !this.state.isShowing
-    });
-  };
-
   render () {
-    const names = c(b(), {
-      [b(null, 'open')]: this.state.isShowing
-    });
-
     return (
-      <div className={names} ref={(r: HTMLDivElement) => (this.r = r)}>
-        <div className={b('selected')} onClick={this.toggleDropdown}>
-          {this.props.titles[this.state.selectedIndex]}
-        </div>
-        <div className={b('box')}>
-          {this.props.titles.map((l: string, i: number) => {
-            const linkName = c(b('link'), {
-              [b('link', 'active')]: this.state.selectedIndex === i
-            });
+      <BaseDropdown
+        ref={(r) => (this.r = r)}
+        title={this.props.titles[this.state.selectedIndex]}
+      >
+        {this.props.titles.map((l: string, i: number) => {
+          const linkName = c(b('link'), {
+            [b('link', 'active')]: this.state.selectedIndex === i
+          });
 
-            return (
-              <div className={linkName} onClick={this.onClickTitle(i)} key={l}>
-                {l}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+          return (
+            <div className={linkName} onClick={this.onClickTitle(i)} key={l}>
+              {l}
+            </div>
+          );
+        })}
+      </BaseDropdown>
     );
   }
 }

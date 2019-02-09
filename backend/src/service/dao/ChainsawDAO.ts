@@ -36,8 +36,16 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
   persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
     return this.client.executeTx(async (client: PoolClient) => {
       for (const block of blocks) {
+        const parentHashes = (block.parents || []).reduce((acc: string[], curr: { [p: string]: string }) => {
+          for (const path of Object.keys(curr)) {
+            acc.push(curr[path]);
+          }
+
+          return acc;
+        }, []);
+
         await client.query(
-          'INSERT INTO blocks(height, cid, miner, parent_weight, nonce, ingested_at, blocks_in_tipset) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          'INSERT INTO blocks(height, cid, miner, parent_weight, nonce, ingested_at, blocks_in_tipset, parent_hashes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
           [
             block.height,
             block.cid,
@@ -45,7 +53,8 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
             block.parentWeight,
             block.nonce,
             this.tsp.now(),
-            (block.parents && block.parents.length) || 0,
+            parentHashes.length,
+            parentHashes,
           ],
         );
 

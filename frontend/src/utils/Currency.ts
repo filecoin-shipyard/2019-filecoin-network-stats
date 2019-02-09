@@ -34,7 +34,7 @@ export default class Currency {
     return OrderMagnitudeNumber.smartSize(this.toBase(), true);
   }
 
-  toDisplay (decimalPlaces: number = 3): string {
+  toDisplay (decimalPlaces: number = 2): string {
     const str = this.toBase().toFixed(decimalPlaces);
     const split = str.split('.');
     const intPart = split[0];

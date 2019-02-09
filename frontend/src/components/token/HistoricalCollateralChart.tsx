@@ -36,7 +36,7 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
   renderContent = (isOverride: boolean) => {
     const summary = (
       <React.Fragment>
-        {new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(0)}{' '}
+        {new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay()}{' '}
         <small>FIL</small>
       </React.Fragment>
     );

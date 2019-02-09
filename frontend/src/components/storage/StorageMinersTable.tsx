@@ -10,10 +10,11 @@ import FloatTimeago from '../FloatTimeago';
 import {secToMillis} from '../../utils/time';
 import bemify from '../../utils/bemify';
 import './StorageMinersTable.scss';
-import c from 'classnames';
 import Tooltip from '../Tooltip';
 import PowerTooltip from '../PowerTooltip';
 import LabelledTooltip from '../LabelledTooltip';
+import BaseDropdown from '../BaseDropdown';
+import copy = require('copy-to-clipboard');
 
 const b = bemify('storage-miners-table');
 
@@ -104,17 +105,13 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['Most Recent Block Mined', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Time', '% Blocks Mined']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Last Block', '% Blocks Mined']}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
-            const tipsetNames = c(b('tipset-hash'), {
-              [b('tipset-hash', 'consensus')]: m.isInConsensus,
-            });
-
             return ([
               m.nickname,
-              ellipsify(m.peerId, 15),
-              <span className={tipsetNames}>{m.tipsetHash}</span>,
+              ellipsify(m.peerId, 18),
+              this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
               m.height,
@@ -132,13 +129,34 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     const explainer = 'When a tipset hash is highlighted, it means the corresponding node is in consensus with the rest of the network.';
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Tipset Hash" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Blocks in Tipset" />
     );
   }
 
   renderPowerHeader () {
     return (
       <LabelledTooltip tooltip={<PowerTooltip />} text="Storage Power" />
+    );
+  }
+
+  renderBlocksInTipset (m: MinerStat) {
+    return (
+      <div className={b('blocks-in-tipset')}>
+        <BaseDropdown title="1 block">
+          <div className={b('parent-hashes')}>
+            <div className={b('parent-hashes-header')}>
+              Parent Hashes
+            </div>
+            <div className={b('tipset-hashes')}>
+              {m.parentHashes.map((p: string) => (
+                <div className={b('tipset-hash')} onClick={() => copy(p)}>
+                  {p}
+                </div>
+              ))}
+            </div>
+          </div>
+        </BaseDropdown>
+      </div>
     );
   }
 }

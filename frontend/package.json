@@ -42,6 +42,7 @@
     "bignumber.js": "8.0.1",
     "c3": "0.6.11",
     "classnames": "2.2.6",
+    "copy-to-clipboard": "3.0.8",
     "filecoin-network-stats-common": "file:../common",
     "lodash.after": "4.0.4",
     "lodash.debounce": "4.0.8",
