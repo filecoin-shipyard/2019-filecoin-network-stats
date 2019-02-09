@@ -69,6 +69,11 @@ export default class Chart extends React.Component<ChartProps, ChartState> {
     }
 
     if (chart instanceof am4charts.XYChart) {
+      if (chart.cursor) {
+        chart.cursor.fontFamily = 'Open Sans, sans-serif';
+        chart.cursor.fontSize = '12px';
+      }
+
       let i = 0;
       const styleAxes = (axis: am4charts.Axis) => {
         axis.renderer.grid.template.disabled = true;
@@ -80,6 +85,13 @@ export default class Chart extends React.Component<ChartProps, ChartState> {
         axis.title.stroke = am4core.color('#aaa');
         axis.title.fontSize = '12px';
         axis.title.fontFamily = 'Open Sans, sans-serif';
+
+        if (chart.cursor) {
+          axis.tooltip.fontFamily = 'Open Sans, sans-serif';
+          axis.tooltip.fontSize = '12px';
+          axis.tooltip.background.cornerRadius = 3;
+        }
+
         i++;
       };
 
@@ -115,6 +127,18 @@ export default class Chart extends React.Component<ChartProps, ChartState> {
     }
 
     this.props.styleChart(chart);
+
+    if (chart instanceof am4charts.XYChart) {
+      chart.series.each((ser: am4charts.Series) => {
+        ser.tooltip.background.fill = am4core.color('#000');
+        ser.tooltip.background.cornerRadius = 3;
+        ser.tooltip.background.strokeOpacity = 0;
+        ser.tooltip.fontFamily = 'Open Sans, sans-serif';
+        ser.tooltip.fontSize = '12px';
+        ser.tooltip.getFillFromObject = false;
+      });
+    }
+
     chart.events.on('ready', () => {
       this.setState({
         isLoading: false

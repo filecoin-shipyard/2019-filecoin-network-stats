@@ -43,6 +43,7 @@ export default class BlockRewardLifecycle extends React.Component {
         <TimelineDateChart
           data={genData()}
           summaryNumber={summary}
+          tooltip="{amount0.formatNumber('#,###.')} FIL"
           label="Current Block Reward"
           yAxisLabels={['Block Reward (FIL)']}
           lineColor={GraphColors.BLUE}

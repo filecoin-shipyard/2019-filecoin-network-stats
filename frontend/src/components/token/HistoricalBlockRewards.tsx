@@ -47,6 +47,8 @@ export class HistoricalBlockRewards extends React.Component<HistoricalBlockRewar
         barData={isOverride ? this.props.overrideBarData : this.props.barData}
         lineColor={GraphColors.BLUE}
         barColor={GraphColors.ORANGE}
+        tooltip="{amount0.formatNumber('#,###.00')} FIL"
+        barTooltip="{amount1.formatNumber('#,###')} Miners"
         yAxisLabels={['Cumulative Block Rewards Distributed', '# of Miners']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true), new OrderMagnitudeNumberFormatter()]}
       />

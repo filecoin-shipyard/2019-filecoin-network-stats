@@ -37,6 +37,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
         data={isOverride ? this.props.overrideData : this.props.data}
         summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
         label="Current Storage Collateral Per GB"
+        tooltip="{amount0.formatNumber('#,###.00')} FIL/GB"
         yAxisLabels={['FIL/GB']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
       />

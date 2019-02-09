@@ -98,11 +98,11 @@ const sizeHistogram: HistogramDatapoint[] = [
 ];
 
 const dealActivity = [
-  ['1.34 GB', '1 month', '1 FIL/GB/mo.', ellipsify('zDPWYqFD7X4ozU2kv5F5Wv6mbdjVh3gDFg5wLtwFm9mhF18z5V8K', 20), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15)],
-  ['1.34 GB', '1 month', '1 FIL/GB/mo.', ellipsify('zDPWYqFD7X4ozU2kv5F5Wv6mbdjVh3gDFg5wLtwFm9mhF18z5V8K', 20), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15)],
-  ['1.34 GB', '1 month', '1 FIL/GB/mo.', ellipsify('zDPWYqFD7X4ozU2kv5F5Wv6mbdjVh3gDFg5wLtwFm9mhF18z5V8K', 20), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15)],
-  ['1.34 GB', '1 month', '1 FIL/GB/mo.', ellipsify('zDPWYqFD7X4ozU2kv5F5Wv6mbdjVh3gDFg5wLtwFm9mhF18z5V8K', 20), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15)],
-  ['1.34 GB', '1 month', '1 FIL/GB/mo.', ellipsify('zDPWYqFD7X4ozU2kv5F5Wv6mbdjVh3gDFg5wLtwFm9mhF18z5V8K', 20), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15), ellipsify('fcq0dgwy9x22a7tke3xmgkm9aexqy2t0453w394ds', 15)],
+  ['-.-- GB', '- months', '-- FIL/GB/mo.', ellipsify('---------------------------------------------------', 20), ellipsify('----------------------------------------', 15), ellipsify('----------------------------------------', 15)],
+  ['-.-- GB', '- months', '-- FIL/GB/mo.', ellipsify('---------------------------------------------------', 20), ellipsify('----------------------------------------', 15), ellipsify('----------------------------------------', 15)],
+  ['-.-- GB', '- months', '-- FIL/GB/mo.', ellipsify('---------------------------------------------------', 20), ellipsify('----------------------------------------', 15), ellipsify('----------------------------------------', 15)],
+  ['-.-- GB', '- months', '-- FIL/GB/mo.', ellipsify('---------------------------------------------------', 20), ellipsify('----------------------------------------', 15), ellipsify('----------------------------------------', 15)],
+  ['-.-- GB', '- months', '-- FIL/GB/mo.', ellipsify('---------------------------------------------------', 20), ellipsify('----------------------------------------', 15), ellipsify('----------------------------------------', 15)],
 ];
 
 export default class StorageDeals extends React.Component {
@@ -166,7 +166,7 @@ export default class StorageDeals extends React.Component {
           <Col unsupported>
             <ContentHeader title="Deal Duration" />
             <HistogramChart
-              summaryNumber={<React.Fragment>9 <small>Months</small></React.Fragment>}
+              summaryNumber={<React.Fragment>-- <small>Months</small></React.Fragment>}
               label="Avg. Storage Deal Duration"
               data={durationHistogram}
               yAxisLabels={['Number of Deals']}
@@ -177,7 +177,7 @@ export default class StorageDeals extends React.Component {
           <Col unsupported>
             <ContentHeader title="Storage Deal Size" />
             <HistogramChart
-              summaryNumber={<React.Fragment>7 <small>TB</small></React.Fragment>}
+              summaryNumber={<React.Fragment>-- <small>TB</small></React.Fragment>}
               label="Avg. Storage Deal Size"
               data={sizeHistogram}
               yAxisLabels={['Number of Deals']}
@@ -194,7 +194,6 @@ export default class StorageDeals extends React.Component {
                 <TableHeaderWithUnit label="Deal Size" unit="GB" />,
                 <TableHeaderWithUnit label="Deal Duration" unit="Months" />,
                 <TableHeaderWithUnit label="Storage Price" unit="FIL/GB/Month" />,
-                'Price',
                 'Content ID',
                 'Miner Address',
                 'Client Address',
@@ -226,7 +225,7 @@ ${label}`,
       start = `${Filesize.fromGB(point.bucketStart).smartUnit().size.toFixed(0)}+ GB`;
       end = '';
     } else {
-      end = ` - ${end}`
+      end = ` - ${end}`;
     }
 
     return {

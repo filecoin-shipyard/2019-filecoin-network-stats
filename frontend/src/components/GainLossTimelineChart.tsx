@@ -58,6 +58,8 @@ export default class GainLossTimelineChart extends React.Component<GainLossTimel
     const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
     yAxis.renderer.labels.template.dx = .5;
 
+    chart.cursor = new am4charts.XYCursor();
+
     return chart;
   };
 

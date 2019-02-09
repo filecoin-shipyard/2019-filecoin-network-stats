@@ -36,6 +36,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
         data={isOverride ? this.props.overrideData : this.props.data}
         summaryNumber={new Currency(this.props.average).toDisplay()}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
+        tooltip="{amount0.formatNumber('#,###.00')} FIL"
         label="Current Avg. Price of Storage"
         yAxisLabels={['Price (FIL)']}
       />

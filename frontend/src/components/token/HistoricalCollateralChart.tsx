@@ -49,6 +49,8 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
         barData={isOverride ? this.props.overrideBarData : this.props.barData}
         lineColor={GraphColors.TURQUOISE}
         barColor={GraphColors.GREEN}
+        tooltip="{amount0} FIL"
+        barTooltip="{amount1} GB"
         yAxisLabels={['FIL', 'GB of Data Stored']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true), new FilesizeNumberFormatter(SizeUnit.GB)]}
       />

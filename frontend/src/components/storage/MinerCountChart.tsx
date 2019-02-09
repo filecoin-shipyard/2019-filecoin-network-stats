@@ -31,7 +31,7 @@ export class MinerCountChart extends React.Component<MinerCountChartProps> {
     return (
       <TimelineDateChart
         data={isOverride ? this.props.overrideData : this.props.data}
-        tooltipText="Miners: {amount}"
+        tooltip="{amount0.formatNumber('#,###')} Miners"
         summaryNumber={this.props.data[this.props.data.length - 1].amount.toFixed(0)}
         label="Active Storage Miners"
         yAxisLabels={['Number of Miners']}

@@ -31,6 +31,7 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
           data={this.props.data}
           lineColor={this.props.overrideColor || GraphColors.GREEN}
           summaryNumber={summary}
+          tooltip="{amount0.formatNumber('#,###.00')} FIL/GB/Month"
           label="Current Avg. Price of Storage"
           yAxisLabels={['PRICE']}
           yAxisNumberFormatters={[new CurrencyNumberFormatter(false)]}

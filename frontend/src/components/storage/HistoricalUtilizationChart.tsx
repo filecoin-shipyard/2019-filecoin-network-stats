@@ -38,6 +38,7 @@ export class HistoricalUtilizationChart extends React.Component<HistoricalUtiliz
         yAxisLabels={['Network Utilization']}
         summaryNumber={PercentageNumber.create(this.props.data[this.props.data.length - 1].amount).toDisplay(true)}
         yAxisNumberFormatters={[new PercentageNumberFormatter()]}
+        tooltip="{amount0.formatNumber('.00%')} Utilized"
         label="Current Network Utilization"
       />
     );

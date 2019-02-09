@@ -13,14 +13,16 @@ export interface LineChartProps extends BaseChartProps {
   barData?: TimeseriesDatapoint[]
   datapointProcessor?: (point: TimeseriesDatapoint) => TimeseriesDatapoint,
   barDatapointProcessor?: (point: TimeseriesDatapoint) => TimeseriesDatapoint
-  tooltipText?: string
+  tooltip?: string
+  barTooltip?: string
   lineColor?: am4core.Color
   barColor?: am4core.Color
 }
 
 export default class TimelineDateChart extends React.Component<LineChartProps, {}> {
   static defaultProps = {
-    tooltipText: '{amount}',
+    tooltip: '{amount0}',
+    barTooltip: '{amount1}',
     lineColor: GraphColors.TURQUOISE,
     barColor: GraphColors.TURQUOISE,
     datapointProcessor: (p: TimeseriesDatapoint) => p,
@@ -63,6 +65,8 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
       axis.min = 0;
     }
 
+    chart.cursor = new am4charts.XYCursor();
+
     return chart;
   };
 
@@ -74,7 +78,7 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
     valueSeries.stroke = this.props.lineColor;
     valueSeries.fill = valueSeries.stroke;
     valueSeries.fillOpacity = 0.1;
-    valueSeries.tooltipText = this.props.tooltipText;
+    valueSeries.tooltipText = this.props.tooltip;
 
     if (this.props.barData.length) {
       const barSeries = chart.series.push(new am4charts.ColumnSeries());
@@ -83,12 +87,11 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
       barSeries.strokeWidth = 0;
       barSeries.fill = this.props.barColor;
       barSeries.yAxis = chart.yAxes.getIndex(1);
+      barSeries.tooltipText = this.props.barTooltip;
 
       const barAxis = chart.yAxes.getIndex(1) as am4charts.ValueAxis;
       barAxis.extraMax = 2;
     }
-
-
   };
 
   render () {

@@ -112,6 +112,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 <GainLossTimelineChart
                   data={this.props.marketStats.volume}
                   yAxisLabels={['Number of FIL']}
+                  tooltipText="{amount.formatNumber('#,###.00')} FIL"
                   yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
                   label="Avg. Daily Volume"
                   summaryNumber={summary}

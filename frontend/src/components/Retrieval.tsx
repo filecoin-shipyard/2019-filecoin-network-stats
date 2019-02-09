@@ -14,15 +14,18 @@ import GraphColors from './GraphColors';
 const b = bemify('retrieval');
 
 const rows: React.ReactNode[][] = [
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['2ac4dfc1...d5dcce16', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
-  ['1e2037c3...fe0f427d', '3.47 GB', '24,790'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
+  ['--------...--------', '-.-- GB', '--'],
 ];
 
 const nodesOverTime: TimeseriesDatapoint[] = [];
@@ -58,7 +61,7 @@ export default class Retrieval extends React.Component<{}, {}> {
             <ContentHeader title="Total Retrieval Miners" />
             <TimelineDateChart
               data={nodesOverTime}
-              summaryNumber={nodesOverTime[0].amount.toString()}
+              summaryNumber="--"
               label="Retrieval Miners"
               yAxisLabels={['# of Miners']}
               lineColor={GraphColors.GREY}
@@ -70,7 +73,7 @@ export default class Retrieval extends React.Component<{}, {}> {
             <ContentHeader title="Retrieval Asks Per Hour" />
             <TimelineDateChart
               data={nodesOverTime}
-              summaryNumber={nodesOverTime[0].amount.toString()}
+              summaryNumber="--"
               label="Current Avg. # of Retrieval Asks"
               yAxisLabels={['# of Bids']}
               lineColor={GraphColors.GREY}
