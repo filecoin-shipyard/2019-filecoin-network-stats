@@ -288,7 +288,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                       FROM blocks b
                       WHERE b.miner = ANY($1::varchar[])
                       GROUP BY b.miner)
-      SELECT m.*, b.blocks_in_tipset
+      SELECT m.*, b.parent_hashes
       FROM miners m
              JOIN blocks b ON b.height = m.last_block_mined
     `, [
@@ -299,7 +299,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
         lastBlockMined: curr.last_block_mined,
-        blocksInTipset: curr.blocks_in_tipset,
+        blocksInTipset: curr.parent_hashes,
         address: curr.address,
       };
       return acc;
