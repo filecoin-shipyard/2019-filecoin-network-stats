@@ -110,7 +110,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
               m.nickname,
-              ellipsify(m.peerId, 18),
+              ellipsify(m.peerId, 12),
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
