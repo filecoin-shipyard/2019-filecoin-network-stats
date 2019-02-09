@@ -10,6 +10,8 @@ import {OrderMagnitudeNumberFormatter} from '../../utils/OrderMagnitudeNumber';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import DateSwitchingChart from '../DateSwitchingChart';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 export interface HistoricalBlockRewardsStateProps {
   data: TimeseriesDatapoint[]
@@ -54,10 +56,18 @@ export class HistoricalBlockRewards extends React.Component<HistoricalBlockRewar
   render () {
     return (
       <DateSwitchingChart
-        title="Cumulative Block Rewards Over Time"
+        title={this.renderTitle()}
         onChangeDuration={this.onChangeDuration}
         renderContent={this.renderContent}
       />
+    );
+  }
+
+  renderTitle () {
+    const explainer = `Block rewards for each block plotted against the date of block ingestion.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Cumulative Block Rewards Over Time" />
     );
   }
 }

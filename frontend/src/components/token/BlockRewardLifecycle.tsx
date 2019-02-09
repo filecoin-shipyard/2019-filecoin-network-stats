@@ -4,6 +4,8 @@ import ContentHeader from '../ContentHeader';
 import TimelineDateChart from '../TimelineDateChart';
 import BigNumber from 'bignumber.js';
 import GraphColors from '../GraphColors';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 function decay(month: number) {
   return 1000 * Math.pow(2.71828, month * -0.0069270);
@@ -37,7 +39,7 @@ export default class BlockRewardLifecycle extends React.Component {
 
     return (
       <div>
-        <ContentHeader title="Filecoin Network Block Rewards Curve" />
+        <ContentHeader title={this.renderTitle()} />
         <TimelineDateChart
           data={genData()}
           summaryNumber={summary}
@@ -46,6 +48,14 @@ export default class BlockRewardLifecycle extends React.Component {
           lineColor={GraphColors.BLUE}
         />
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `The expected block reward given the Filecoin whitepaper.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Filecoin Network Block Rewards Curve" />
     );
   }
 }

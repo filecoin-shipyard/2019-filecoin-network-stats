@@ -38,7 +38,6 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
     chart.data = this.props.data.map(this.props.dataTransformer);
-    console.log(chart.data);
 
     const xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     xAxis.dataFields.category = 'label';
