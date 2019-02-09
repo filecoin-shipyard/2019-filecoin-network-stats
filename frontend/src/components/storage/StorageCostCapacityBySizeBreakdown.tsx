@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { CostCapacityForMinerStat } from 'filecoin-network-stats-common/lib/domain/CostCapacityForMinerStat';
+import {CostCapacityForMinerStat} from 'filecoin-network-stats-common/lib/domain/CostCapacityForMinerStat';
 import bemify from '../../utils/bemify';
 import ContentHeader from '../ContentHeader';
 import './StorageCostCapacityBySizeBreakdown.scss';
 import {AppState} from '../../ducks/store';
 import {connect} from 'react-redux';
-import Filesize from '../../utils/Filesize';
+import Filesize, {SizeUnit} from '../../utils/Filesize';
 import PercentageNumber from '../../utils/PercentageNumber';
 
 const b = bemify('storage-cost-capacity-by-size-breakdown');
@@ -18,7 +18,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
   render () {
     return (
       <div className={b()}>
-        <ContentHeader title="Storage Cost & Capacity by Miner Size" />
+        <ContentHeader title="Storage Price & Capacity by Miner Size" />
         <div className={b('split')}>
           {this.renderSide(0)}
           {this.renderSide(1)}
@@ -38,7 +38,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
         <div className={b('split-stats')}>
           {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}
           {this.renderStat(`${data.averageStoragePrice.div('1e18').toFixed(2)} FIL`, 'Avg. Storage Price')}
-          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).smartUnitString(), 'Avg. Storage Capacity')}
+          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).toUnitString(idx === 1 ? SizeUnit.PB : SizeUnit.GB), 'Avg. Storage Capacity')}
           {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(true), 'Avg. Utilization')}
         </div>
       </div>

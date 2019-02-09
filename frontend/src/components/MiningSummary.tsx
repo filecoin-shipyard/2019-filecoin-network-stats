@@ -39,7 +39,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
               #{this.props.mining.lastBlockHeight}
             </div>
             <div className={b('label')}>
-              {this.renderBlockHeightLabel()}
+              Block Height
             </div>
           </div>
           <div className={b('right')}>
@@ -110,14 +110,6 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Best Block" />
-    );
-  }
-
-  renderBlockHeightLabel () {
-    const explainer = `Block height is the block with the highest known number.`;
-
-    return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Block Height" inline />
     );
   }
 

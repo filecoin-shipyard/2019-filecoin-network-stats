@@ -22,7 +22,7 @@ const UNITS_TO_STRINGS = {
   [SizeUnit.MB]: 'MB',
   [SizeUnit.GB]: 'GB',
   [SizeUnit.TB]: 'TB',
-  [SizeUnit.PB]: 'KB',
+  [SizeUnit.PB]: 'PB',
 };
 
 export class FilesizeNumberFormatter extends NumberFormatter {
@@ -61,6 +61,11 @@ export default class Filesize {
 
   toBigNumber (size: SizeUnit) {
     return size < 0 ? this.mb.div(Math.abs(size)) : this.mb.times(size);
+  }
+
+  toUnitString(unit: SizeUnit) {
+    const size = this.toBigNumber(unit);
+    return `${size.toFixed(0)} ${UNITS_TO_STRINGS[unit]}`
   }
 
   smartUnit (): { size: BigNumber, unit: SizeUnit } {

@@ -105,7 +105,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['Most Recent Block Mined', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), 'Storage Capacity', 'Block Height', 'Last Block', '% Blocks Mined']}
+          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
@@ -136,6 +136,30 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   renderPowerHeader () {
     return (
       <LabelledTooltip tooltip={<PowerTooltip />} text="Storage Power" />
+    );
+  }
+
+  renderStorageCapacityHeader () {
+    const explainer = `Storage Capacity represents the sum of the miner's pledged sectors.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Capacity" />
+    );
+  }
+
+  renderLastBlockHeader () {
+    const explainer = `This is the last block seen by a particular miner.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Last Block" />
+    );
+  }
+
+  renderPercentageBlocksMinedHeader () {
+    const explainer = `This is the percentage of all historically emitted blocks mined by a particular miner.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="% of Blocks Mined" />
     );
   }
 
