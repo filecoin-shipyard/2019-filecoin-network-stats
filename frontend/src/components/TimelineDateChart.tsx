@@ -68,6 +68,8 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
     }
 
     chart.cursor = new am4charts.XYCursor();
+    chart.cursor.lineX.disabled = true;
+    chart.cursor.lineY.disabled = true;
 
     return chart;
   };

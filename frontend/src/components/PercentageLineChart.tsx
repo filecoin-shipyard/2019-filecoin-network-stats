@@ -96,6 +96,8 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
 
     chart.cursor = new am4charts.XYCursor();
     chart.cursor.xAxis = chart.xAxes.getIndex(0);
+    chart.cursor.lineX.disabled = true;
+    chart.cursor.lineY.disabled = true;
   };
 
   render () {
