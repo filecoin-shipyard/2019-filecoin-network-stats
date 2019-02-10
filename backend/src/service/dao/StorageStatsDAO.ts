@@ -256,23 +256,24 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getCapacityHistogram (client: PoolClient) {
+    const increment = 10000;
+    const bucketCount = 10;
+
     const points = await client.query(`
-      WITH stats AS (SELECT min(amount) AS min, max(amount) AS max, (max(amount) - min(amount)) / 10 AS step
-                     FROM miners),
-           series AS (SELECT g.n,
-                             stats.min + (step * (g.n - 1))        AS bucket_start,
-                             stats.min + (step * (g.n - 1)) + step AS bucket_end
-                      FROM generate_series(1, 10, 1) g (n),
-                           stats),
+      WITH series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
+                      FROM generate_series(1, ${bucketCount - 1}, 1) g (n)),
            miners AS (SELECT p.*, bucket
-                       FROM miners p,
-                            stats s,
-                            width_bucket(p.amount, s.min, s.max + 1, 10) AS bucket)
+                      FROM miners p,
+                           width_bucket(p.amount, 1, ${increment * (bucketCount - 1)}, ${bucketCount - 1}) AS bucket)
       SELECT s.n, s.bucket_start, s.bucket_end, count(p)
       FROM series s
              LEFT OUTER JOIN miners p ON p.bucket = s.n
       GROUP BY s.n, s.bucket_start, s.bucket_end
-      ORDER BY s.n ASC;
+      UNION ALL
+      SELECT 10 AS n, ${(increment * (bucketCount - 1)) + 1} AS bucket_start, 0 AS bucket_end, count(m)
+      FROM miners m
+      WHERE m.amount >= ${(increment * (bucketCount - 1)) + 1}
+      ORDER BY n ASC;
     `);
 
     return this.inflateHistogramDatapoint(points.rows);
