@@ -5,6 +5,8 @@ import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import BigNumber from 'bignumber.js';
 import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
+import {generateDurationSeries} from '../../util/generateDurationSeries';
+import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 
 export interface IMarketStatsDAO {
   getStats (): Promise<MarketStats>
@@ -40,18 +42,18 @@ export class PostgresMarketStatsDAO implements IMarketStatsDAO {
   });
 
   async getDailyVolume (client: PoolClient): Promise<TimeseriesDatapoint[]> {
+    const { durSeq } = generateDurationSeries(ChartDuration.MONTH);
+
     const res = await client.query(`
-      WITH ts AS (SELECT extract(EPOCH FROM d) AS ts
-                  FROM generate_series(date_trunc('day', current_timestamp - INTERVAL '30 days'),
-                                       date_trunc('day', current_timestamp), '1 day'::interval) AS d),
+      WITH ts AS (${durSeq}),
            messages AS (SELECT m.*, extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS ts
                         FROM messages m
                                INNER JOIN blocks b ON b.height = m.height
                         WHERE m.value > 0)
-      SELECT t.ts as date, coalesce(sum(m.value), 0) AS amount
+      SELECT t.date as date, coalesce(sum(m.value), 0) AS amount
       FROM ts t
-             LEFT OUTER JOIN messages m ON m.ts = t.ts
-      GROUP BY t.ts ORDER BY date ASC;
+             LEFT OUTER JOIN messages m ON m.ts = t.date
+      GROUP BY t.date ORDER BY date ASC;
     `);
 
     if (!res.rows.length) {

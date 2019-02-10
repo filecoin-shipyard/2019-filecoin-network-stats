@@ -81,7 +81,6 @@ export default class Chart extends React.Component<ChartProps, ChartState> {
         axis.fontFamily = 'Open Sans, sans-serif';
         axis.fontWeight = '400';
         axis.renderer.labels.template.stroke = am4core.color('#aaa');
-        axis.renderer.minLabelPosition = 0.05;
         axis.title.stroke = am4core.color('#aaa');
         axis.title.fontSize = '12px';
         axis.title.fontFamily = 'Open Sans, sans-serif';
@@ -111,6 +110,7 @@ export default class Chart extends React.Component<ChartProps, ChartState> {
       i = 0;
       chart.yAxes.each((axis: am4charts.Axis) => {
         axis.numberFormatter = this.props.yAxisNumberFormatters[i] || new NumberFormatter();
+        axis.renderer.minLabelPosition = 0.05;
 
         if (axis instanceof am4charts.ValueAxis) {
           axis.extraMax = 0.3;

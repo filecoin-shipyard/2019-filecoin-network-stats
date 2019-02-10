@@ -40,8 +40,15 @@ export class Home extends React.Component<HomeProps, {}> {
     const averageVolume = makeAverage(this.props.marketStats.volume);
     const utilization = this.props.storageStats.networkUtilization;
     const currentUtilization = utilization[utilization.length - 1].amount;
-    const utilizationTrend = (currentUtilization.gt(0) ? currentUtilization.minus(utilization[utilization.length - 2].amount)
-      .div(currentUtilization) : new BigNumber(1)).multipliedBy(100);
+    let utilizationTrend;
+
+    if (utilization.length > 1) {
+      utilizationTrend = (currentUtilization.gt(0) ? currentUtilization.minus(utilization[utilization.length - 2].amount)
+        .div(currentUtilization) : new BigNumber(1)).multipliedBy(100);
+    } else {
+      utilizationTrend = new BigNumber(100);
+    }
+
     const summary = (
       <React.Fragment>
         {new Currency(averageVolume).toDisplay(2)}{' '}

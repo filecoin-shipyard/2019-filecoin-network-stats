@@ -503,8 +503,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }
 
     let date = Number(points[0].category);
-    if (points.length < 28) {
-      while (points.length < 28) {
+    if (points.length < 2) {
+      while (points.length < 2) {
         date = date - 86400;
         points.unshift({
           category: date,
@@ -604,7 +604,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const ultimate = points[points.length - 1];
     const penultimate = points[points.length - 2];
 
-    if (penultimate.amount.gt(0)) {
+    if (penultimate && penultimate.amount.gt(0)) {
       const diff = ultimate.amount.minus(penultimate.amount);
       trend = diff.div(penultimate.amount).toNumber();
     } else {

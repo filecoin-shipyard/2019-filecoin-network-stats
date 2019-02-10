@@ -1,41 +1,33 @@
 import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 
-export function generateDurationSeries(duration: ChartDuration): {durSeq: string, durBase: string, durInterval: string} {
+export function generateDurationSeries (duration: ChartDuration): { durSeq: string, durBase: string, durInterval: string } {
   let durSeq;
   let durBase;
   let durInterval;
 
   switch (duration) {
     case ChartDuration.DAY:
-      durSeq = `SELECT extract(EPOCH FROM g.s) AS date
-                  FROM generate_series(date_trunc('hour', current_timestamp),
-                                       date_trunc('hour', current_timestamp - INTERVAL '24 hours'),
-                                       -'1 hour'::interval) g (s)`;
+      durSeq = `SELECT date
+                FROM generate_duration_series(INTERVAL '24 hours', 'hour')`;
       durBase = 'hour';
       durInterval = '1 hour';
       break;
     case ChartDuration.WEEK:
-      durSeq = `SELECT extract(EPOCH FROM g.s) AS date
-                  FROM generate_series(date_trunc('day', current_timestamp),
-                                       date_trunc('day', current_timestamp - INTERVAL '7 days'),
-                                       -'1 day'::interval) g (s)`;
+      durSeq = `SELECT date
+                FROM generate_duration_series(INTERVAL '7 days', 'day')`;
       durBase = 'day';
       durInterval = '1 day';
       break;
     case ChartDuration.MONTH:
-      durSeq = `SELECT extract(EPOCH FROM g.s) AS date
-                  FROM generate_series(date_trunc('day', current_timestamp),
-                                       date_trunc('day', current_timestamp - INTERVAL '30 days'),
-                                       -'1 day'::interval) g (s)`;
+      durSeq = `SELECT date
+                FROM generate_duration_series(INTERVAL '30 days', 'day')`;
       durBase = 'day';
       durInterval = '30 days';
       break;
     case ChartDuration.ALL:
     case ChartDuration.YEAR:
-      durSeq = `SELECT extract(EPOCH FROM g.s) AS date
-                  FROM generate_series(date_trunc('month', current_timestamp),
-                                       date_trunc('month', current_timestamp - INTERVAL '12 months'),
-                                       -'1 month'::interval) g (s)`;
+      durSeq = `SELECT date
+                FROM generate_duration_series(INTERVAL '12 months', 'month')`;
       durBase = 'month';
       durInterval = '1 month';
       break;
