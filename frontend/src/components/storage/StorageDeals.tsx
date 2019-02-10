@@ -133,20 +133,23 @@ export default class StorageDeals extends React.Component {
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
                   yAxisLabels={['Number of Deals']}
+                  tooltip="{amount0.formatNumber('#,###')} Deals"
                 />
               </React.Fragment>
               <React.Fragment>
                 <TimelineDateChart
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
-                  yAxisLabels={['Number of Deals']}
+                  tooltip="{amount0.formatNumber('#,###.00')}FIL"
+                  yAxisLabels={['FIL']}
                 />
               </React.Fragment>
               <React.Fragment>
                 <TimelineDateChart
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
-                  yAxisLabels={['Number of Deals']}
+                  tooltip="{amount0.formatNumber('#,###')} GB"
+                  yAxisLabels={['GB Stored In Deals']}
                 />
               </React.Fragment>
             </SwitchableContent>
