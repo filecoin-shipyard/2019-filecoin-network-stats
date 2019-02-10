@@ -80,7 +80,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
     const explainer = `Outstanding FIL is the sum of all FIL on the network, including mining rewards and wallet balances, delineated by whether or not the FIL is locked up as storage collateral. Snapshots are taken every 5 minutes.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="FIL Outstanding" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer} bottom />} text="FIL Outstanding" />
     );
   }
 }

@@ -20,7 +20,7 @@
     position: absolute;
     bottom: calc(100% + 5px);
     left: 50%;
-    margin-left: -105px;
+    margin-left: -104px;
     background: $black;
     padding: $base;
     border-radius: 3px;
@@ -43,6 +43,20 @@
       left: 50%;
       bottom: -8px;
       margin-left: -4px;
+    }
+  }
+
+  &--bottom {
+    .tooltip__content {
+      bottom: auto;
+      top: calc(100% + 5px);
+
+      &:before {
+        border-width: 0 8px 8px 8px;
+        border-color: transparent transparent $black;
+        bottom: auto;
+        top: -8px;
+      }
     }
   }
 }
