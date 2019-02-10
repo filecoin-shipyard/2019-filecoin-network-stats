@@ -414,10 +414,23 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       return [];
     }
 
+    // miners can use the same nickname a whole bunch, so use the
+    // set below to make them distinct.
+    const seenNicks: {[k:string]: number} = {};
+    // create an index of addresses to nicknames
+    // (with a fallback to the address if no nickname is available.)
     const nodeMap: { [k: string]: string } = {};
     for (const miner of topMinerRes.rows) {
       const node = await this.nss.getMinerByAddress(miner.address);
-      nodeMap[miner.address] = node ? node.nickname : miner.address;
+      const nick = node ? node.nickname : miner.address;
+      let suffix = '';
+      if (seenNicks[nick]) {
+        seenNicks[nick]++;
+        suffix = `_${seenNicks[nick]}`;
+      } else {
+        seenNicks[nick] = 1;
+      }
+      nodeMap[miner.address] = `${nick}${suffix}`;
     }
 
     const addresses = topMinerRes.rows.map((r: any) => r.address);
