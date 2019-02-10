@@ -100,7 +100,6 @@ export default class StackedColumnChart extends React.Component<StackedColumnCha
       series.stacked = true;
       series.columns.template.width = am4core.percent(60);
       series.columns.template.tooltipText = `[bold]{name}[/]\n[font-size:12px]{${this.props.isDate ? 'dateX' : 'categoryX'}}: {valueY}${this.props.isPercentage ? '%' : ''}`;
-      chart.yAxes.getIndex(0).numberFormatter.numberFormat = '###\'%\'';
 
       if (this.props.showBarLabels) {
         const labelBullet = series.bullets.push(new am4charts.LabelBullet());
