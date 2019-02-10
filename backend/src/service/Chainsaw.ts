@@ -44,31 +44,19 @@ export default class Chainsaw implements IService {
 
     const start = Date.now();
     logger.silly('started poll');
-    const allBlocks = await this.client.chain().ls();
-    let unseenBlocks: BlockFromClientWithMessages[] = [];
-
-    if (this.lastHeight > 0) {
-      for (const block of allBlocks) {
-        if (block.height === this.lastHeight) {
-          break;
-        }
-        unseenBlocks.push(block);
-      }
-    } else {
-      unseenBlocks = allBlocks;
-    }
-
+    const unseenBlocks = await this.client.chain().ls(this.lastHeight);
     if (!unseenBlocks.length) {
       logger.info('chainsaw found no new blocks to process, trying again later');
       this.enqueuePoll(start);
       return;
     }
 
-    logger.silly('processing blocks', {
+    logger.info('processing blocks', {
       count: unseenBlocks.length,
     });
     await this.processBlocks(unseenBlocks);
 
+    // 0th element is top block
     this.lastHeight = unseenBlocks[0].height;
     logger.info('processed blocks', {
       height: this.lastHeight,

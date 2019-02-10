@@ -9,10 +9,10 @@ export interface IMinerClient {
 }
 
 export class MinerClientImpl implements IMinerClient {
-  private readonly callAPI: CurriedCall;
+  private readonly callAPI: CurriedCall['callAPI'];
 
   constructor (client: HTTPClient) {
-    this.callAPI = client.forService('miner');
+    this.callAPI = client.forService('miner').callAPI;
   }
 
   async pledge (address: string): Promise<BigNumber> {

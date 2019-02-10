@@ -8,18 +8,37 @@ import BigNumber from 'bignumber.js';
 import {methodDecoders} from './ABI';
 
 export interface IChainClient {
-  ls (): Promise<BlockFromClientWithMessages[]>
+  ls (toBlock: number): Promise<BlockFromClientWithMessages[]>
 }
 
 export class ChainClientImpl implements IChainClient {
-  private readonly callAPI: CurriedCall;
+  private readonly callAPIStream: CurriedCall['callAPIStream'];
 
   constructor (client: HTTPClient) {
-    this.callAPI = client.forService('chain');
+    this.callAPIStream = client.forService('chain').callAPIStream;
   }
 
-  async ls (): Promise<BlockFromClientWithMessages[]> {
-    const blockData = await this.callAPI<[BlockJSON][]>('ls');
+  async ls (toBlock: number): Promise<BlockFromClientWithMessages[]> {
+    const blockData: [BlockJSON][] = [];
+    await new Promise((resolve, reject) => this.callAPIStream<[BlockJSON]>(
+      'ls',
+      [],
+      {},
+      (d: [BlockJSON]) => {
+        if (leb128Base642Number(d[0].height) === toBlock) {
+          return false;
+        }
+
+        blockData.push(d);
+        return true;
+      },
+      (e: any) => {
+        reject(e);
+      },
+      () => {
+        resolve();
+      }
+    ));
 
     const out: BlockFromClientWithMessages[] = [];
     let lastCid = '';

@@ -25,6 +25,7 @@
     "@types/node": "^10.12.18",
     "@types/pg": "7.4.11",
     "@types/request": "^2.48.1",
+    "@types/split2": "2.1.6",
     "@types/winston": "2.4.4",
     "bignumber.js": "^8.0.1",
     "blake2": "2.0.1",
@@ -48,6 +49,7 @@
     "pull-stream": "3.6.9",
     "reflect-metadata": "0.1.12",
     "request": "^2.88.0",
+    "split2": "3.1.0",
     "winston": "3.1.0"
   }
 }
