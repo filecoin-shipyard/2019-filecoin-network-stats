@@ -108,7 +108,7 @@ export class Home extends React.Component<HomeProps, {}> {
             <Col>
               <SwitchableDateSwitchingChart
                 titles={[
-                  <LabelledTooltip tooltip={<AveragePriceTooltip />} text="Avg. Price of Storage" />,
+                  <LabelledTooltip tooltip={<Tooltip content="The average ask price for the selected window." />} text="Avg. Price of Storage" />,
                   <LabelledTooltip tooltip={<VolumeTransactedTooltip />} text="Volume of FIL Transacted On-Chain" />,
                 ]}
                 linkTitles={['Storage Price', 'Token Volume']}

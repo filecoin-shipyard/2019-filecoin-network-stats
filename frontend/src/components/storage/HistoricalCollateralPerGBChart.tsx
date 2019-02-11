@@ -38,7 +38,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
         summaryNumber={new Currency(this.props.average).toDisplay(2)}
-        label="Avg. Storage Collateral Per GB"
+        label={<LabelledTooltip tooltip={<Tooltip content="Averaged FIL divided by the number of pledged sectors for all pledges in the last 30 days."/>} text="Current Storage Collateral Per GB" />}
         tooltip="{amount0.formatNumber('#,###.00')} FIL/GB"
         yAxisLabels={['FIL/GB']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
@@ -59,7 +59,7 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
   }
 
   renderTitle () {
-    const explainer = `Calculated by dividing the collateralized FIL by the number of pledged sectors.`;
+    const explainer = `Pledged FIL divided by the number of pledged sectors across all storage miners for the provided time period.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Collateral Per GB" />

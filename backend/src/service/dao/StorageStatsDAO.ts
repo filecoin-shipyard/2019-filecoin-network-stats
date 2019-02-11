@@ -441,7 +441,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         AND b.ingested_at > extract(EPOCH FROM current_timestamp - INTERVAL '30 day')
       GROUP BY b.miner
       ORDER BY percentage DESC
-      LIMIT 9;
+      LIMIT 10;
     `);
 
     if (!topMinerRes.rows.length) {
@@ -488,29 +488,11 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       addresses,
     ]);
 
-    const otherDailyCountsRes = await client.query(`
-      with totals as (select count(*), extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
-                      from blocks b
-                      group by date),
-           counts as (select b.miner                                                            as address,
-                             count(*)                                                           as count,
-                             extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
-                      from blocks b
-                      where NOT (b.miner = ANY($1::varchar[]))
-                      group by b.miner, date)
-      select c.address, c.count::decimal / t.count as percentage, c.date
-      from counts c
-             join totals t on c.date = t.date
-      order by c.date asc;
-    `, [
-      addresses,
-    ]);
-
     type CategoryDatapointData = { [k: string]: number }
     const generateData = () => addresses.reduce((acc: CategoryDatapointData, curr: string) => {
       acc[nodeMap[curr]] = 0;
       return acc;
-    }, {other: 0});
+    }, {});
 
     const points: CategoryDatapoint[] = [];
     for (const dailyCount of topDailyCountsRes.rows) {
@@ -523,19 +505,6 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
       const cat = points[points.length - 1];
       cat.data[nodeMap[dailyCount.address]] = new BigNumber(dailyCount.percentage);
-    }
-
-    let i = 0;
-    for (const otherCount of otherDailyCountsRes.rows) {
-      while (points[i].category !== Number(otherCount.date) && i < points.length) {
-        i++;
-      }
-
-      if (i === points.length) {
-        break;
-      }
-
-      points[i].data.other = new BigNumber(otherCount.percentage);
     }
 
     let date = Number(points[0].category);

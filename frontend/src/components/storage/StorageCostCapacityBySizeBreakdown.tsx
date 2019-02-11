@@ -7,6 +7,8 @@ import {AppState} from '../../ducks/store';
 import {connect} from 'react-redux';
 import Filesize, {SizeUnit} from '../../utils/Filesize';
 import PercentageNumber from '../../utils/PercentageNumber';
+import LabelledTooltip from '../LabelledTooltip';
+import Tooltip from '../Tooltip';
 
 const b = bemify('storage-cost-capacity-by-size-breakdown');
 
@@ -18,7 +20,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
   render () {
     return (
       <div className={b()}>
-        <ContentHeader title="Storage Price & Capacity by Miner Size" />
+        <ContentHeader title={this.renderTitle()} />
         <div className={b('split')}>
           {this.renderSide(0)}
           {this.renderSide(1)}
@@ -27,7 +29,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
     );
   }
 
-  renderSide (idx: 0|1) {
+  renderSide (idx: 0 | 1) {
     const data = this.props.data[idx];
 
     return (
@@ -55,6 +57,14 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
           {label}
         </div>
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `Stats calculated across all time for miners in the provided category.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Price & Capacity by Miner Size" />
     );
   }
 }

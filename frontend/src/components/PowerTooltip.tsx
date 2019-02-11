@@ -3,7 +3,7 @@ import Tooltip from './Tooltip';
 
 export default class PowerTooltip extends React.Component {
   render() {
-    const text = `Mining power is a miner's pledged sectors divided by the total pledges of the network.`;
+    const text = `Probability that a storage miner will win the ability to mine the next block.`;
 
     return (
       <Tooltip content={text} />

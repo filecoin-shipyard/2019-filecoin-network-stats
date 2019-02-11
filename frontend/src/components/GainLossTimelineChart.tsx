@@ -9,6 +9,8 @@ import {AppState} from '../ducks/store';
 import {connect} from 'react-redux';
 import {makeAverage} from '../utils/averages';
 import Currency, {CurrencyNumberFormatter} from '../utils/Currency';
+import LabelledTooltip from './LabelledTooltip';
+import Tooltip from './Tooltip';
 
 const b = bemify('gain-loss-timeline-chart');
 
@@ -94,7 +96,7 @@ export class GainLossTimelineChart extends React.Component<GainLossTimelineChart
       <div className={b()}>
         <Chart
           summaryNumber={summary}
-          label={'Avg. Daily Volume'}
+          label={<LabelledTooltip tooltip={<Tooltip content="The average of all daily volume taken over 30 days."/>} text="Avg. Daily Volume" />}
           createChart={this.createChart}
           styleChart={this.styleChart}
           yAxisLabels={['Number of FIL']}

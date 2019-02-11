@@ -37,7 +37,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
         summaryNumber={new Currency(this.props.average).toDisplay()}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         tooltip="{amount0.formatNumber('#,###.00')} FIL"
-        label="Current Avg. Price of Storage"
+        label={<LabelledTooltip tooltip={<AveragePriceTooltip/>} text="Current Avg. Price of Storage" />}
         yAxisLabels={['Price (FIL)']}
       />
     );
@@ -56,7 +56,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
   }
 
   renderTitle () {
-    const explainer = `Storage price is calculated by averaging all outstanding storage asks every five minutes and aggregating them across the provided time window.`;
+    const explainer = `Average of all outstanding storage asks over the provided time window.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Storage Price"/>

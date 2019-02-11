@@ -137,7 +137,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderTipsetHeader () {
-    const explainer = 'When a tipset hash is highlighted, it means the corresponding node is in consensus with the rest of the network.';
+    const explainer = `List of blocks in the current best block's tipset. A tipset is a collection of blocks mined by different miners.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Blocks in Tipset" />
@@ -151,7 +151,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderStorageCapacityHeader () {
-    const explainer = `Storage Capacity represents the sum of the miner's pledged sectors.`;
+    const explainer = `Sum of pledged sectors for each unique miner.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Capacity" />
@@ -159,7 +159,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderLastBlockHeader () {
-    const explainer = `This is the last block seen by a particular miner.`;
+    const explainer = `Last block processed by each unique miner.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Last Block" />
@@ -167,7 +167,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderPercentageBlocksMinedHeader () {
-    const explainer = `This is the percentage of all historically emitted blocks mined by a particular miner.`;
+    const explainer = `Percentage of all blocks mined by a unique miner.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="% of Blocks Mined" />

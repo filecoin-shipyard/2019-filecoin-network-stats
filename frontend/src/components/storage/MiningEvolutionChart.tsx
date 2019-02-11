@@ -28,7 +28,7 @@ export class MiningEvolutionChart extends React.Component<MiningEvolutionChartPr
     const explainer = `Mining Evolution is calculated by finding the top 10 miners by blocks mined percentage over 30 days, and plotting how that percentage changes for those miners.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Mining Evolution (Last 30 Days)" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Evolution of Top Miners (Last 30 Days)" />
     );
   }
 }

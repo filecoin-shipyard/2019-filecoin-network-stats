@@ -106,7 +106,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderTitle () {
-    const explainer = `The 'Best Block' is the block with the heaviest tipset.`;
+    const explainer = `The block mined with the most storage power.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Best Block" />
@@ -120,7 +120,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderBlocksInTipsetLabel () {
-    const explainer = `The number of blocks in the current best block's tipset.`;
+    const explainer = `Number of blocks in the current best block's tipset. A tipset is a collection of blocks mined by different miners.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text={'Blocks in Tipset'} inline />
@@ -128,19 +128,19 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderAvgBlockTimeLabel () {
-    const explainer = `The average time it takes for a miner to create a new block.`;
+    const explainer = `Average time between blocks.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Avg. Block Time" inline />
-    )
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Avg. Block Time" inline />
+    );
   }
 
   renderTimeSinceLastBlockLabel () {
     const explainer = `Time since a miner last created a block.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Time Since Last Block" inline />
-    )
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Time Since Last Block" inline />
+    );
   }
 }
 

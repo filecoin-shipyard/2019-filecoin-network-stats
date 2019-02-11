@@ -3,7 +3,7 @@ import Tooltip from './Tooltip';
 
 export default class CapacityTooltip extends React.Component {
   render() {
-    const text = `Network storage capacity is the sum of all pledged sectors.`;
+    const text = `Sum of all pledged sectors. Future network upgrades will incorporate slashing.`;
 
     return (
       <Tooltip content={text} />

@@ -9,9 +9,11 @@ import {makeAverage} from '../../utils/averages';
 import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
 import LabelledTooltip from '../LabelledTooltip';
 import AveragePriceTooltip from '../AveragePriceTooltip';
+import BigNumber from 'bignumber.js';
 
 export interface AverageStorageCostChartProps {
   data: TimeseriesDatapoint[]
+  average: BigNumber
   overrideData: TimeseriesDatapoint[]
   overrideColor?: am4core.Color
   isOverride?: boolean
@@ -19,10 +21,9 @@ export interface AverageStorageCostChartProps {
 
 export class AverageStorageCostChart extends React.Component<AverageStorageCostChartProps> {
   render () {
-    const avg = makeAverage(this.props.data);
     const summary = (
       <React.Fragment>
-        {new Currency(avg).toDisplay(2)}{' '}
+        {new Currency(this.props.average).toDisplay()}{' '}
         <small>FIL/GB/Month</small>
       </React.Fragment>
     );
@@ -34,8 +35,8 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
           lineColor={this.props.overrideColor || GraphColors.GREEN}
           summaryNumber={summary}
           tooltip="{amount0.formatNumber('#,###.00')} FIL/GB/Month"
-          label="Current Avg. Price of Storage"
-          yAxisLabels={['PRICE']}
+          label={<LabelledTooltip tooltip={<AveragePriceTooltip />} text="Current Avg. Price of Storage"/>}
+          yAxisLabels={['Price (FIL)']}
           yAxisNumberFormatters={[new CurrencyNumberFormatter(false)]}
         />
       </div>
@@ -46,6 +47,7 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
 function mapStateToProps (state: AppState) {
   return {
     data: state.stats.stats.storage.storageCost.data,
+    average: state.stats.stats.storage.storageCost.average,
     overrideData: state.overrides.storage.historicalStoragePrice,
   };
 }
