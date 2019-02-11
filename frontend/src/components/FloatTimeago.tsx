@@ -52,6 +52,6 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
       return `${value} mins ${suffix}`
     }
 
-    return `${value} ${unit} ${suffix}`
+    return `${value} ${unit}${value === 0 || value > 1 ? 's' : ''} ${suffix}`
   }
 }
