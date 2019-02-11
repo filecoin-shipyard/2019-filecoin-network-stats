@@ -51,7 +51,7 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
         barColor={GraphColors.GREEN}
         tooltip="{amount0} FIL"
         barTooltip="{amount1} GB"
-        yAxisLabels={['FIL', 'GB of Data Stored']}
+        yAxisLabels={['FIL', 'Storage Capacity']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true), new FilesizeNumberFormatter(SizeUnit.GB)]}
       />
     );
