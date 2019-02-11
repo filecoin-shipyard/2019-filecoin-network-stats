@@ -194,9 +194,9 @@ export default class StorageDeals extends React.Component {
             <ContentHeader title="Current Deal Activity" />
             <Table
               headers={[
-                <TableHeaderWithUnit label="Deal Size" unit="GB" />,
-                <TableHeaderWithUnit label="Deal Duration" unit="Months" />,
-                <TableHeaderWithUnit label="Storage Price" unit="FIL/GB/Month" />,
+                'Deal Size',
+                'Deal Duration',
+                'Storage Price',
                 'Content ID',
                 'Miner Address',
                 'Client Address',
