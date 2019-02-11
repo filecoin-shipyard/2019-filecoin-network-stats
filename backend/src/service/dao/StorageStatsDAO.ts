@@ -462,7 +462,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         const disamb = node ? node.peerId.substr(node.peerId.length - 4) :
           miner.address.substr(miner.address.length - 4);
         seenNicks[nick]++;
-        suffix = `(${disamb})`;
+        suffix = ` (${disamb})`;
       } else {
         seenNicks[nick] = 1;
       }
