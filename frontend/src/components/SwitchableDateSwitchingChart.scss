@@ -1,0 +1,22 @@
+@import "../variables";
+
+.switchable-date-switching-chart {
+  &__durations {
+    text-transform: uppercase;
+  }
+
+  .switchable-content .dropdown {
+    margin-left: $base * 2;
+  }
+
+  &__loading {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      transform: scale(1.5, 1.5);
+    }
+  }
+}

@@ -12,7 +12,9 @@ import AveragePriceTooltip from '../AveragePriceTooltip';
 
 export interface AverageStorageCostChartProps {
   data: TimeseriesDatapoint[]
+  overrideData: TimeseriesDatapoint[]
   overrideColor?: am4core.Color
+  isOverride?: boolean
 }
 
 export class AverageStorageCostChart extends React.Component<AverageStorageCostChartProps> {
@@ -28,7 +30,7 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
     return (
       <div>
         <TimelineDateChart
-          data={this.props.data}
+          data={this.props.isOverride ? this.props.overrideData : this.props.data}
           lineColor={this.props.overrideColor || GraphColors.GREEN}
           summaryNumber={summary}
           tooltip="{amount0.formatNumber('#,###.00')} FIL/GB/Month"
@@ -44,6 +46,7 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
 function mapStateToProps (state: AppState) {
   return {
     data: state.stats.stats.storage.storageCost.data,
+    overrideData: state.overrides.storage.historicalStoragePrice,
   };
 }
 

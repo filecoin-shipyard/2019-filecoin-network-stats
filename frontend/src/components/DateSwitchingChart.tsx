@@ -6,7 +6,7 @@ import './DateSwitchingChart.scss';
 
 const b = bemify('date-switching-chart');
 
-const DURATIONS = [
+export const DURATIONS = [
   ChartDuration.DAY,
   ChartDuration.WEEK,
   ChartDuration.MONTH,

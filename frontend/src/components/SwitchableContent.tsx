@@ -5,11 +5,12 @@ import c from 'classnames';
 import './SwitchableContent.scss';
 import Dropdown from './Dropdown';
 
-const b = bemify('switchable-content');
+export const b = bemify('switchable-content');
 
 export interface SwitchableContentProps {
   children?: React.ReactChild | React.ReactChild[]
   renderContent?: (index: number) => React.ReactChild
+  renderExtraHeader?: () => React.ReactChild
   titles: (string|React.ReactNode)[]
   linkTitles: string[]
   dropdown?: boolean
@@ -26,7 +27,8 @@ export default class SwitchableContent extends React.Component<SwitchableContent
 
   static defaultProps = {
     dropdown: false,
-    defaultIndex: 0
+    defaultIndex: 0,
+    renderExtraHeader: (): React.ReactChild => null
   };
 
   constructor (props: SwitchableContentProps) {
@@ -88,6 +90,7 @@ export default class SwitchableContent extends React.Component<SwitchableContent
             <div className={b('header-title')}>
               {this.props.titles[this.state.selectedIndex]}
             </div>
+            {this.props.renderExtraHeader()}
             {this.props.dropdown ? this.renderDropdown() : this.renderLinks()}
           </div>
         </ContentHeader>

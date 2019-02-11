@@ -6,10 +6,12 @@ import {PoolClient} from 'pg';
 import BigNumber from 'bignumber.js';
 import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 import {generateDurationSeries} from '../../util/generateDurationSeries';
-import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
+import ChartDuration from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 
 export interface IMarketStatsDAO {
   getStats (): Promise<MarketStats>
+
+  historicalVolume (dur: ChartDuration): Promise<TimeseriesDatapoint[]>
 }
 
 export class PostgresMarketStatsDAO implements IMarketStatsDAO {
@@ -36,13 +38,17 @@ export class PostgresMarketStatsDAO implements IMarketStatsDAO {
       return {
         asks,
         bids: [],
-        volume: await this.getDailyVolume(client),
+        volume: await this.getDailyVolume(client, ChartDuration.MONTH),
       };
     });
   });
 
-  async getDailyVolume (client: PoolClient): Promise<TimeseriesDatapoint[]> {
-    const { durSeq } = generateDurationSeries(ChartDuration.MONTH);
+  async historicalVolume (dur: ChartDuration): Promise<TimeseriesDatapoint[]> {
+    return this.client.execute((client: PoolClient) => this.getDailyVolume(client, dur));
+  }
+
+  private async getDailyVolume (client: PoolClient, dur: ChartDuration): Promise<TimeseriesDatapoint[]> {
+    const {durSeq} = generateDurationSeries(dur);
 
     const res = await client.query(`
       WITH ts AS (${durSeq}),

@@ -79,6 +79,12 @@ export default class StatsAPI implements IAPIService {
     return res.json(data.map(categoryDatapointToJSON));
   };
 
+  private historicalTokenVolume = async (req: Request, res: Response) => {
+    const dur = chartDurationFromString(req.params.duration);
+    const data = await this.mksd.historicalVolume(dur);
+    return res.json(data.map(timeseriesDatapointToJSON));
+  };
+
   GET = {
     [`storage/historicalMinerCounts/:duration(${durationPathRegex})`]: this.historicalMinerCountStats,
     [`storage/historicalStoragePrice/:duration(${durationPathRegex})`]: this.historicalStoragePrice,
@@ -88,5 +94,6 @@ export default class StatsAPI implements IAPIService {
     [`storage/historicalUtilization/:duration(${durationPathRegex})`]: this.historicalUtilization,
     [`token/historicalBlockRewards/:duration(${durationPathRegex})`]: this.historicalBlockRewards,
     [`token/historicalCoinsInCirculation/:duration(${durationPathRegex})`]: this.historicalCoinsInCirculation,
+    [`market/historicalTokenVolume/:duration(${durationPathRegex})`]: this.historicalTokenVolume,
   };
 }

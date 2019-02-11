@@ -9,13 +9,11 @@ import {AppState} from '../ducks/store';
 import {MarketStats, StorageStats} from 'filecoin-network-stats-common/lib/domain/Stats';
 import Filesize, {SizeUnit} from '../utils/Filesize';
 import NodeMap from './NodeMap';
-import SwitchableContent from './SwitchableContent';
 import PageHeader from './PageHeader';
 import AverageStorageCostChart from './storage/AverageStorageCostChart';
-import Currency, {CurrencyNumberFormatter} from '../utils/Currency';
+import Currency from '../utils/Currency';
 import PercentageNumber from '../utils/PercentageNumber';
 import GainLossTimelineChart from './GainLossTimelineChart';
-import {makeAverage} from '../utils/averages';
 import BigNumber from 'bignumber.js';
 import Tooltip from './Tooltip';
 import CapacityTooltip from './CapacityTooltip';
@@ -23,6 +21,10 @@ import UtilizationTooltip from './UtilizationTooltip';
 import AveragePriceTooltip from './AveragePriceTooltip';
 import LabelledTooltip from './LabelledTooltip';
 import VolumeTransactedTooltip from './VolumeTransactedTooltip';
+import {SwitchableDateSwitchingChart} from './SwitchableDateSwitchingChart';
+import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
+import {Dispatch} from 'redux';
+import {setOverride} from '../ducks/overrides';
 
 const b = bemify('home');
 
@@ -31,13 +33,17 @@ export interface HomeStateProps {
   marketStats: MarketStats | null
 }
 
-export type HomeProps = HomeStateProps
+export interface HomeDispatchProps {
+  setPriceOverride: (dur: ChartDuration) => any,
+  setVolumeOverride: (dur: ChartDuration) => any,
+}
+
+export type HomeProps = HomeStateProps & HomeDispatchProps
 
 export class Home extends React.Component<HomeProps, {}> {
   render () {
     const totalStorage = Filesize.fromGB(this.props.storageStats.storageAmount.total);
     const averageCost = new Currency(this.props.storageStats.storageCost.average);
-    const averageVolume = makeAverage(this.props.marketStats.volume);
     const utilization = this.props.storageStats.networkUtilization;
     const currentUtilization = utilization[utilization.length - 1].amount;
     let utilizationTrend;
@@ -48,13 +54,6 @@ export class Home extends React.Component<HomeProps, {}> {
     } else {
       utilizationTrend = new BigNumber(100);
     }
-
-    const summary = (
-      <React.Fragment>
-        {new Currency(averageVolume).toDisplay(2)}{' '}
-        <small>FIL</small>
-      </React.Fragment>
-    );
 
     return (
       <div className={b()}>
@@ -107,24 +106,15 @@ export class Home extends React.Component<HomeProps, {}> {
           </Grid>
           <Grid>
             <Col>
-              <SwitchableContent
+              <SwitchableDateSwitchingChart
                 titles={[
                   <LabelledTooltip tooltip={<AveragePriceTooltip />} text="Avg. Price of Storage" />,
                   <LabelledTooltip tooltip={<VolumeTransactedTooltip />} text="Volume of FIL Transacted On-Chain" />,
                 ]}
                 linkTitles={['Storage Price', 'Token Volume']}
-                dropdown
-              >
-                <AverageStorageCostChart />
-                <GainLossTimelineChart
-                  data={this.props.marketStats.volume}
-                  yAxisLabels={['Number of FIL']}
-                  tooltipText="{amount.formatNumber('#,###.00')} FIL"
-                  yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
-                  label="Avg. Daily Volume"
-                  summaryNumber={summary}
-                />
-              </SwitchableContent>
+                onChangeDuration={this.onChangeDuration}
+                renderContent={this.renderSwitchingCharts}
+              />
             </Col>
           </Grid>
           <Grid>
@@ -136,6 +126,26 @@ export class Home extends React.Component<HomeProps, {}> {
       </div>
     );
   }
+
+  renderSwitchingCharts = (chartIndex: number, isOverride: boolean) => {
+    if (chartIndex === 0) {
+      return (
+        <AverageStorageCostChart isOverride={isOverride} />
+      );
+    }
+
+    return (
+      <GainLossTimelineChart isOverride={isOverride} />
+    );
+  };
+
+  onChangeDuration = async (chartIndex: number, duration: ChartDuration) => {
+    if (chartIndex === 0) {
+      return this.props.setPriceOverride(duration);
+    }
+
+    return this.props.setVolumeOverride(duration);
+  };
 }
 
 function mapStateToProps (state: AppState) {
@@ -145,4 +155,11 @@ function mapStateToProps (state: AppState) {
   };
 }
 
-export default connect(mapStateToProps)(Home);
+function mapDispatchToProps (dispatch: Dispatch<any>) {
+  return {
+    setPriceOverride: (dur: ChartDuration) => dispatch(setOverride('storage', 'historicalStoragePrice', dur)),
+    setVolumeOverride: (dur: ChartDuration) => dispatch(setOverride('market', 'historicalTokenVolume', dur)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -5,21 +5,26 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
 import GraphColors from './GraphColors';
+import {AppState} from '../ducks/store';
+import {connect} from 'react-redux';
+import {makeAverage} from '../utils/averages';
+import Currency, {CurrencyNumberFormatter} from '../utils/Currency';
+import {sum} from 'd3-array';
 
 const b = bemify('gain-loss-timeline-chart');
 
-export interface GainLossTimelineChartProps extends BaseChartProps {
+export interface GainLossTimelineChartStateProps {
   data: TimeseriesDatapoint[]
-  datapointProcessor?: (point: TimeseriesDatapoint) => TimeseriesDatapoint,
-  tooltipText?: string
+  overrideData: TimeseriesDatapoint[]
 }
 
-export default class GainLossTimelineChart extends React.Component<GainLossTimelineChartProps, {}> {
-  static defaultProps = {
-    tooltipText: '{amount}',
-    datapointProcessor: (p: TimeseriesDatapoint) => p,
-  };
+export interface GainLossTimelineChartExternalProps {
+  isOverride: boolean
+}
 
+export type GainLossTimelineChartProps = GainLossTimelineChartStateProps & GainLossTimelineChartExternalProps;
+
+export class GainLossTimelineChart extends React.Component<GainLossTimelineChartProps, {}> {
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
     const legend = new am4charts.Legend();
@@ -42,8 +47,8 @@ export default class GainLossTimelineChart extends React.Component<GainLossTimel
     template.width = 16;
     template.height = 16;
 
-    chart.data = this.props.data.map((point: TimeseriesDatapoint, i: number) => {
-      const processed = this.props.datapointProcessor(point);
+    chart.data = (this.props.isOverride ? this.props.overrideData : this.props.data).map((point: TimeseriesDatapoint, i: number) => {
+      const processed = point;
       const prev = this.props.data[i - 1];
       return {
         amount: processed.amount.toString(),
@@ -69,23 +74,42 @@ export default class GainLossTimelineChart extends React.Component<GainLossTimel
     const valueSeries = chart.series.push(new am4charts.ColumnSeries());
     valueSeries.dataFields.dateX = 'date';
     valueSeries.dataFields.valueY = 'amount';
-    valueSeries.tooltipText = this.props.tooltipText;
+    valueSeries.tooltipText = `{amount.formatNumber('#,###.00')} FIL`;
     valueSeries.columns.template.propertyFields.fill = 'color';
     valueSeries.columns.template.propertyFields.stroke = 'color';
     valueSeries.columns.template.strokeWidth = 0;
   };
 
   render () {
+    const averageVolume = makeAverage(this.props.data);
+
+    const summary = (
+      <React.Fragment>
+        {new Currency(averageVolume).toDisplay(2)}{' '}
+        <small>FIL</small>
+      </React.Fragment>
+    );
+
     return (
       <div className={b()}>
         <Chart
-          {...this.props}
-          summaryNumber={this.props.summaryNumber}
-          label={this.props.label}
+          summaryNumber={summary}
+          label={"Avg. Daily Volume"}
           createChart={this.createChart}
           styleChart={this.styleChart}
+          yAxisLabels={['Number of FIL']}
+          yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         />
       </div>
     );
   }
 }
+
+function mapStateToProps (state: AppState) {
+  return {
+    data: state.stats.stats.market.volume,
+    overrideData: state.overrides.market.historicalTokenVolume,
+  }
+}
+
+export default connect(mapStateToProps)(GainLossTimelineChart);

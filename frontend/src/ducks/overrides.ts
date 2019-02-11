@@ -19,10 +19,13 @@ export interface OverridesState {
   token: {
     historicalBlockRewards: TimeseriesDatapoint[]
     historicalCoinsInCirculation: CategoryDatapoint[]
+  },
+  market: {
+    historicalTokenVolume: TimeseriesDatapoint[]
   }
 }
 
-type StatName = keyof OverridesState['storage'] | keyof OverridesState['token']
+type StatName = keyof OverridesState['storage'] | keyof OverridesState['token'] | keyof OverridesState['market']
 
 const minDelay = 500;
 
@@ -60,6 +63,9 @@ function getInitialState (): OverridesState {
     token: {
       historicalBlockRewards: [],
       historicalCoinsInCirculation: []
+    },
+    market: {
+      historicalTokenVolume: []
     }
   };
 }
