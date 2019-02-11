@@ -48,11 +48,11 @@ export class PostgresMarketStatsDAO implements IMarketStatsDAO {
   }
 
   private async getDailyVolume (client: PoolClient, dur: ChartDuration): Promise<TimeseriesDatapoint[]> {
-    const {durSeq} = generateDurationSeries(dur);
+    const {durSeq, durBase} = generateDurationSeries(dur);
 
     const res = await client.query(`
       WITH ts AS (${durSeq}),
-           messages AS (SELECT m.*, extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS ts
+           messages AS (SELECT m.*, extract(EPOCH FROM date_trunc('${durBase}', to_timestamp(b.ingested_at))) AS ts
                         FROM messages m
                                INNER JOIN blocks b ON b.height = m.height
                         WHERE m.value > 0)
