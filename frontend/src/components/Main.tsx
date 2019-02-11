@@ -15,7 +15,6 @@ import StorageMining from './storage/StorageMining';
 import Warning from './Warning';
 import StorageDeals from './storage/StorageDeals';
 import StorageCostCapacity from './storage/StorageCostCapacity';
-import Disclaimer from './Disclaimer';
 
 const b = bemify('main');
 
@@ -47,28 +46,29 @@ export class Main extends React.Component<MainProps> {
         <div className={b('main')}>
           <Switch>
             <Route exact path="/storage" render={() => <Redirect to="/storage/mining" />} />
-            <Route exact path="/storage/mining" render={this.wrapWithContentArea(StorageMining, true, false)} />
-            <Route exact path="/storage/price-capacity" render={this.wrapWithContentArea(StorageCostCapacity, true, false)} />
-            <Route exact path="/storage/deals" render={this.wrapWithContentArea(StorageDeals, true, true)} />
-            <Route path="/retrieval" render={this.wrapWithContentArea(Retrieval, true, true)} />
-            <Route path="/token-metrics" render={this.wrapWithContentArea(Macroeconomics, true, false)} />
-            <Route exact path="/" render={this.wrapWithContentArea(Home, false, false)} />
+            <Route exact path="/storage/mining" render={this.wrapWithContentArea(StorageMining, false)} />
+            <Route exact path="/storage/price-capacity"
+                   render={this.wrapWithContentArea(StorageCostCapacity, false)} />
+            <Route exact path="/storage/deals" render={this.wrapWithContentArea(StorageDeals, true)} />
+            <Route path="/retrieval" render={this.wrapWithContentArea(Retrieval, true)} />
+            <Route path="/token-metrics" render={this.wrapWithContentArea(Macroeconomics, false)} />
+            <Route exact path="/" render={this.wrapWithContentArea(Home, false)} />
           </Switch>
-          <Disclaimer/>
         </div>
       </div>
     );
   }
 
-  wrapWithContentArea (Component: React.ComponentClass, wrap: boolean, mocked: boolean) {
+  wrapWithContentArea (Component: React.ComponentClass, mocked: boolean) {
     return () => {
-      if (!wrap) {
-        return <Component />;
-      }
-
       return (
         <React.Fragment>
-          {mocked ? <Warning text="Heads-up! We’re not able to provide data for this view yet. We will soon" /> : null}
+          <Warning
+            text={
+              mocked ?
+                'Heads-up! We’re not able to provide data for this view yet. We will soon.' :
+                'Filecoin network and token data included on this dashboard are notional and for test and development purposes only.'
+            } />
           <ContentArea>
             <Component />
           </ContentArea>
