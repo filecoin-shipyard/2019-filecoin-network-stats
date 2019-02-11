@@ -14,7 +14,6 @@ import PageHeader from '../PageHeader';
 import {fakeEvolution, fakeSineWave} from '../../utils/randomData';
 import GraphColors from '../GraphColors';
 import PercentageLineChart from '../PercentageLineChart';
-import TableHeaderWithUnit from '../TableHeaderWithUnit';
 import SwitchableContent from '../SwitchableContent';
 
 const b = bemify('storage-deals');
