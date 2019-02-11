@@ -41,7 +41,7 @@ export class HistoricalBlockRewards extends React.Component<HistoricalBlockRewar
 
     return (
       <TimelineDateChart
-        label="Total Block Rewards Earned"
+        label="Total Block Rewards Distributed"
         summaryNumber={summary}
         data={isOverride ? this.props.overrideData : this.props.data}
         barData={isOverride ? this.props.overrideBarData : this.props.barData}

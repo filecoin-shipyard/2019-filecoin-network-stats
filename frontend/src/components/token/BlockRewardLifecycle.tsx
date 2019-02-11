@@ -56,7 +56,7 @@ export default class BlockRewardLifecycle extends React.Component {
     const explainer = `The expected block reward given the Filecoin whitepaper.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Filecoin Network Block Rewards Curve" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Filecoin Network Block Reward Curve" />
     );
   }
 }
