@@ -33,21 +33,33 @@ export default class Chainsaw implements IService {
     setImmediate(() => this.poll());
   }
 
-  async stop (): Promise<void> {
-    return undefined;
+  async poll() {
+    const start = Date.now();
+
+    try {
+      await this._doPoll();
+    } catch (err) {
+      logger.error('caught error during chainsaw run', {
+        err,
+      });
+    } finally {
+      this.enqueuePoll(start);
+    }
   }
 
-  private async poll () {
+  async stop (): Promise<void> {
+    this.isPolling = false;
+  }
+
+  private async _doPoll () {
     if (!this.isPolling) {
       return;
     }
 
-    const start = Date.now();
     logger.silly('started poll');
     const unseenBlocks = await this.client.chain().ls(this.lastHeight);
     if (!unseenBlocks.length) {
       logger.info('chainsaw found no new blocks to process, trying again later');
-      this.enqueuePoll(start);
       return;
     }
 
@@ -64,8 +76,6 @@ export default class Chainsaw implements IService {
       topCid: unseenBlocks[0].cid,
       bottomCid: unseenBlocks[unseenBlocks.length - 1].cid,
     });
-
-    this.enqueuePoll(start);
   }
 
   private enqueuePoll (start: number) {

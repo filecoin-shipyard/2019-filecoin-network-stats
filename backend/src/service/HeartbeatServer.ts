@@ -89,8 +89,10 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
     let peerInfo: PeerInfo | null;
     try {
       peerInfo = await promisify((cb) => conn.getPeerInfo(cb));
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      logger.error('failed to get peer info', {
+        err
+      });
       return;
     }
 
@@ -110,7 +112,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
 
       addr = addrs[0];
     } catch (err) {
-      logger.warn('error thrown getting observed addrs', {err});
+      logger.error('error thrown getting observed addrs', {err});
       return;
     }
 

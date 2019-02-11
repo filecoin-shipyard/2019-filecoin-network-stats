@@ -36,9 +36,9 @@ export class MemoryCacheService implements ICacheService {
 
     if (!cached || cached.expiry < Date.now()) {
       if (cached) {
-        logger.silly('got expired cache entry, replacing', {key, expiry: cached.expiry});
+        logger.info('got expired cache entry, replacing', {key, expiry: cached.expiry});
       } else {
-        logger.silly('got cache miss', {key});
+        logger.info('got cache miss', {key});
       }
 
       const res = await m();

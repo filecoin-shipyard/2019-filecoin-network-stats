@@ -79,13 +79,15 @@ export class MemoryNodeStatusService implements INodeStatusService {
         old.capacity = power.miner;
       }
     } else {
+      this.nodeCount++;
+
       logger.info('received new peer', {
         ip: heartbeat.ip,
         peerId: heartbeat.peerId,
         nickname: heartbeat.nickname,
+        nodeCOunt: this.nodeCount,
       });
 
-      this.nodeCount++;
       const loc = await this.gDao.locateIp(heartbeat.ip);
       const power = heartbeat.minerAddress ? await this.mps.getRawMinerPower(heartbeat.minerAddress) : {
         miner: 0,
@@ -101,7 +103,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
         power: power.miner/power.total,
-        // power.miner is in GB, so multiply by 1000 to get GB
+        // power.miner is in MB, so multiply by 1000 to get GB
         capacity: power.miner * 1000,
       };
 
@@ -128,6 +130,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
     }
 
     if (this.lru.length > MAX_NODES) {
+      logger.info('LRU is at maximum size, removing older nodes');
       const last = this.lru.pop();
       const peerId = last.split(':')[0];
       delete this.data[peerId];
@@ -148,7 +151,6 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   async listMiners (): Promise<Node[]> {
-    // todo: filter
     return this.listNodes();
   }
 

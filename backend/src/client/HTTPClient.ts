@@ -42,6 +42,7 @@ export default class HTTPClient {
     let dataFinished = false;
     const handleError = (err: any) => {
       logger.error('got error in HTTP stream handler', {
+        url,
         err,
       });
       if (!dataFinished) {
