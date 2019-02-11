@@ -16,6 +16,7 @@ import LabelledTooltip from '../LabelledTooltip';
 import BaseDropdown from '../BaseDropdown';
 import copy = require('copy-to-clipboard');
 import ClickCopyable from '../ClickCopyable';
+import PercentageNumber from '../../utils/PercentageNumber';
 
 const b = bemify('storage-miners-table');
 
@@ -119,7 +120,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
               new Filesize(m.capacity).smartUnitString(),
               m.height,
               <FloatTimeago date={secToMillis(m.lastSeen)} />,
-              `${Math.floor(m.blockPercentage * 100)}%`,
+              PercentageNumber.create(m.blockPercentage).toDisplay(true),
             ]);
           })}
           keyGetter={(i) => this.props.miners[i].peerId}
