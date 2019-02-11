@@ -3,6 +3,7 @@
 .click-copyable {
   position: relative;
   cursor: pointer;
+  display: inline-block;
 
   &:before {
     position: absolute;
@@ -22,6 +23,7 @@
     text-align: center;
     margin-top: -14px;
     border-radius: 3px;
+    font-size: $base;
     transition: transform 50ms ease-in, margin-left 50ms ease-in, width 50ms ease-in;
   }
 

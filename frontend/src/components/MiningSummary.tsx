@@ -14,6 +14,7 @@ import PercentageNumber from '../utils/PercentageNumber';
 import Tooltip from './Tooltip';
 import PowerTooltip from './PowerTooltip';
 import LabelledTooltip from './LabelledTooltip';
+import ClickCopyable from './ClickCopyable';
 
 const b = bemify('mining-summary');
 
@@ -46,7 +47,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
             <Grid>
               <Col transparent>
                 <div className={b('sub-stat')}>
-                  {ellipsify(this.props.mining.peerId || 'UNKNOWN', 20)}
+                  {this.renderPeerID()}
                 </div>
                 <div className={b('label')}>
                   Peer ID
@@ -54,7 +55,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
               </Col>
               <Col transparent>
                 <div className={b('sub-stat')}>
-                  {ellipsify(this.props.mining.minerAddress, 20)}
+                  {this.renderMinerAddress()}
                 </div>
                 <div className={b('label')}>
                   Miner Address
@@ -102,6 +103,30 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
           </div>
         </div>
       </div>
+    );
+  }
+
+  renderPeerID () {
+    if (!this.props.mining.peerId) {
+      return 'UNKNOWN';
+    }
+
+    return (
+      <ClickCopyable copyData={this.props.mining.peerId}>
+        {ellipsify(this.props.mining.peerId, 20)}
+      </ClickCopyable>
+    );
+  }
+
+  renderMinerAddress () {
+    if (!this.props.mining.minerAddress) {
+      return 'UNKNOWN';
+    }
+
+    return (
+      <ClickCopyable copyData={this.props.mining.minerAddress}>
+        {ellipsify(this.props.mining.minerAddress, 20)}
+      </ClickCopyable>
     );
   }
 
