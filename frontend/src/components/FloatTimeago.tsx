@@ -21,6 +21,8 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
     const diff = Date.now() - this.props.date;
 
     if (diff > 60000) {
+      clearTimeout(this.timer);
+      this.forceUpdate();
       return;
     }
 
