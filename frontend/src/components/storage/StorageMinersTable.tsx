@@ -15,6 +15,7 @@ import PowerTooltip from '../PowerTooltip';
 import LabelledTooltip from '../LabelledTooltip';
 import BaseDropdown from '../BaseDropdown';
 import copy = require('copy-to-clipboard');
+import ClickCopyable from '../ClickCopyable';
 
 const b = bemify('storage-miners-table');
 
@@ -175,8 +176,10 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
             </div>
             <div className={b('tipset-hashes')}>
               {m.parentHashes.map((p: string) => (
-                <div className={b('tipset-hash')} onClick={this.copyHash(m, p)}>
-                  {p}
+                <div className={b('tipset-hash')} key={p}>
+                  <ClickCopyable copyData={p}>
+                    {p}
+                  </ClickCopyable>
                 </div>
               ))}
             </div>

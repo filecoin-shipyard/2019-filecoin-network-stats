@@ -1,6 +1,6 @@
 import * as React from 'react';
 import bemify from '../utils/bemify';
-import Chart, {BaseChartProps} from './Chart';
+import Chart from './Chart';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
@@ -9,7 +9,6 @@ import {AppState} from '../ducks/store';
 import {connect} from 'react-redux';
 import {makeAverage} from '../utils/averages';
 import Currency, {CurrencyNumberFormatter} from '../utils/Currency';
-import {sum} from 'd3-array';
 
 const b = bemify('gain-loss-timeline-chart');
 
@@ -95,7 +94,7 @@ export class GainLossTimelineChart extends React.Component<GainLossTimelineChart
       <div className={b()}>
         <Chart
           summaryNumber={summary}
-          label={"Avg. Daily Volume"}
+          label={'Avg. Daily Volume'}
           createChart={this.createChart}
           styleChart={this.styleChart}
           yAxisLabels={['Number of FIL']}
@@ -110,7 +109,7 @@ function mapStateToProps (state: AppState) {
   return {
     data: state.stats.stats.market.volume,
     overrideData: state.overrides.market.historicalTokenVolume,
-  }
+  };
 }
 
 export default connect(mapStateToProps)(GainLossTimelineChart);

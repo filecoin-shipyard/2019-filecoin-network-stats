@@ -1,0 +1,40 @@
+@import "../variables";
+
+.click-copyable {
+  position: relative;
+
+  &:before {
+    position: absolute;
+    transform: scale(0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $black;
+    box-shadow: 0 0 8px rgba(white, 0.25);
+    content: 'Copy';
+    color: white;
+    top: 50%;
+    left: 50%;
+    margin-left: -25px;
+    width: 50px;
+    height: 28px;
+    text-align: center;
+    margin-top: -14px;
+    border-radius: 3px;
+    transition: transform 50ms ease-in, margin-left 50ms ease-in, width 50ms ease-in;
+  }
+
+  &:hover:before {
+    transform: scale(1);
+  }
+
+  &--copied:before {
+    transform: scale(1);
+    white-space: nowrap;
+    overflow: hidden;
+    content: 'Copied To Clipboard';
+    background: #1fcd8b;
+    width: 150px;
+    margin-left: -75px;
+  }
+}
