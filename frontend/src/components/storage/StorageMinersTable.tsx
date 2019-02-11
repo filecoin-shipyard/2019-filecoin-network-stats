@@ -66,7 +66,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   sort = (m1: MinerStat, m2: MinerStat): number => {
     switch (this.state.sortIndex) {
       case 0:
-        return m2.height - m1.height;
+        return m2.lastBlockMined - m1.lastBlockMined;
       case 1:
         return m2.power - m1.power;
       case 2:
