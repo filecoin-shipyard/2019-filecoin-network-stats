@@ -188,15 +188,6 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
       </div>
     );
   }
-
-  copyHash (m: MinerStat, hash: string) {
-    return () => {
-      copy(hash);
-      if (this.dropdowns[m.peerId]) {
-        this.dropdowns[m.peerId].hide();
-      }
-    };
-  }
 }
 
 function mapStateToProps (state: AppState) {
