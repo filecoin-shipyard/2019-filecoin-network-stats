@@ -3,7 +3,6 @@ import bemify from '../utils/bemify';
 import {Col, Grid} from './Grid';
 import PageHeader from './PageHeader';
 import TokenHoldingsDistribution from './token/TokenHoldingsDistribution';
-import HistoricalCollateralChart from './token/HistoricalCollateralChart';
 import HistoricalBlockRewards from './token/HistoricalBlockRewards';
 import CoinsInCirculation from './token/CoinsInCirculation';
 import BlockRewardLifecycle from './token/BlockRewardLifecycle';
@@ -23,11 +22,6 @@ export default class Macroeconomics extends React.Component<{}, {}> {
         <Grid>
           <Col>
             <TokenHoldingsDistribution />
-          </Col>
-        </Grid>
-        <Grid>
-          <Col>
-            <HistoricalCollateralChart />
           </Col>
         </Grid>
         <Grid>

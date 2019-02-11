@@ -16,8 +16,8 @@ import Tooltip from '../Tooltip';
 const b = bemify('coins-in-circulation');
 
 const categoryNames = {
-  coinsInCollateral: 'Coins in Collateral',
-  liquidCoins: 'Liquid Coins',
+  coinsInCollateral: 'Tokens in Collateral',
+  liquidCoins: 'Liquid Tokens',
 };
 
 

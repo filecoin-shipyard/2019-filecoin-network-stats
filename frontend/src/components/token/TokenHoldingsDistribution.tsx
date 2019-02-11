@@ -26,7 +26,7 @@ export class TokenHoldingsDistribution extends React.Component<TokenHoldingsDist
       <div>
         <ContentHeader title={this.renderTitle()} />
         <HistogramChart
-          label="Token Addresses"
+          label="Total Token Addresses"
           summaryNumber={new Currency(new BigNumber(summary)).toDisplay(0)}
           data={this.props.data}
           dataTransformer={this.dataTransformer}
