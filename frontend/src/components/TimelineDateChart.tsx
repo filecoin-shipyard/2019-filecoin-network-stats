@@ -60,11 +60,13 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
 
     const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
     yAxis.min = 0;
+    yAxis.cursorTooltipEnabled = false;
 
     if (this.props.barData.length) {
       const axis = chart.yAxes.push(new am4charts.ValueAxis());
       axis.renderer.opposite = true;
       axis.min = 0;
+      axis.cursorTooltipEnabled = false;
     }
 
     chart.cursor = new am4charts.XYCursor();
