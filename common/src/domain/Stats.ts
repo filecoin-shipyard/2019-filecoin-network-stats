@@ -78,7 +78,10 @@ export interface StorageStats {
     data: TimeseriesDatapoint[]
   },
   historicalCollateral: TimeseriesDatapoint[]
-  historicalCollateralPerGB: TimeseriesDatapoint[]
+  historicalCollateralPerGB: {
+    average: BigNumber,
+    data: TimeseriesDatapoint[]
+  }
   historicalMinerCounts: TimeseriesDatapoint[]
   capacityHistogram: HistogramDatapoint[]
   miners: MinerStat[]
@@ -100,7 +103,10 @@ export interface StorageStatsJSON {
     data: TimeseriesDatapointJSON[]
   },
   historicalCollateral: TimeseriesDatapointJSON[]
-  historicalCollateralPerGB: TimeseriesDatapointJSON[]
+  historicalCollateralPerGB: {
+    average: string
+    data: TimeseriesDatapointJSON[]
+  }
   historicalMinerCounts: TimeseriesDatapointJSON[]
   capacityHistogram: HistogramDatapointJSON[]
   miners: MinerStat[]
@@ -123,7 +129,10 @@ export function storageStatsToJSON (stats: StorageStats): StorageStatsJSON {
       data: stats.storageCost.data.map(timeseriesDatapointToJSON),
     },
     historicalCollateral: stats.historicalCollateral.map(timeseriesDatapointToJSON),
-    historicalCollateralPerGB: stats.historicalCollateralPerGB.map(timeseriesDatapointToJSON),
+    historicalCollateralPerGB: {
+      average: stats.historicalCollateralPerGB.average.toFixed(18),
+      data: stats.historicalCollateralPerGB.data.map(timeseriesDatapointToJSON)
+    },
     historicalMinerCounts: stats.historicalMinerCounts.map(timeseriesDatapointToJSON),
     capacityHistogram: stats.capacityHistogram.map(histogramDatapointToJSON),
     miners: stats.miners,
@@ -150,7 +159,10 @@ export function storageStatsFromJSON (stats: StorageStatsJSON): StorageStats {
       data: stats.storageCost.data.map(timeseriesDatapointFromJSON),
     },
     historicalCollateral: stats.historicalCollateral.map(timeseriesDatapointFromJSON),
-    historicalCollateralPerGB: stats.historicalCollateralPerGB.map(timeseriesDatapointFromJSON),
+    historicalCollateralPerGB: {
+      average: new BigNumber(stats.historicalCollateralPerGB.average),
+      data: stats.historicalCollateralPerGB.data.map(timeseriesDatapointFromJSON)
+    },
     historicalMinerCounts: stats.historicalMinerCounts.map(timeseriesDatapointFromJSON),
     capacityHistogram: stats.capacityHistogram.map(histogramDatapointFromJSON),
     miners: stats.miners,

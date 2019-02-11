@@ -1,7 +1,7 @@
 import {StorageStats} from 'filecoin-network-stats-common/lib/domain/Stats';
 import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
 import {HistogramDatapoint} from 'filecoin-network-stats-common/lib/domain/HistogramDatapoint';
-import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
+import ChartDuration from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 import {CategoryDatapoint} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
 import {MinerStat} from 'filecoin-network-stats-common/lib/domain/MinerStat';
 import {CostCapacityForMinerStat} from 'filecoin-network-stats-common/lib/domain/CostCapacityForMinerStat';
@@ -54,7 +54,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         storageAmount: await this.cs.wrapMethod('storage-stats-storage-amount', DEFAULT_CACHE_TIME, () => this.getAmountStats(client)),
         storageCost: await this.cs.wrapMethod('storage-stats-storage-cost', DEFAULT_CACHE_TIME, () => this.getCostStats(client)),
         historicalCollateral: await this.cs.wrapMethod('storage-stats-historical-collateral', DEFAULT_CACHE_TIME, () => this.getHistoricalCollateral(client, ChartDuration.MONTH)),
-        historicalCollateralPerGB: await this.cs.wrapMethod('storage-stats-historical-collateral-per-gb', DEFAULT_CACHE_TIME, () => this.getHistoricalCollateralPerGB(client, ChartDuration.MONTH)),
+        historicalCollateralPerGB: await this.cs.wrapMethod('storage-stats-historical-collateral-per-gb', DEFAULT_CACHE_TIME, () => this.getHistoricalCollateralPerGBStats()),
         historicalMinerCounts: await this.cs.wrapMethod('storage-stats-historical-miner-counts', DEFAULT_CACHE_TIME, () => this.getHistoricalMinerCounts(client, ChartDuration.MONTH)),
         capacityHistogram: await this.cs.wrapMethod('storage-stats-capacity-histogram', DEFAULT_CACHE_TIME, () => this.getCapacityHistogram(client)),
         miners: await this.getMiners(client),
@@ -71,6 +71,36 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   getMinerStats (): Promise<MinerStat[]> {
     return this.client.execute((client: PoolClient) => this.getMiners(client));
+  }
+
+  getHistoricalCollateralPerGBStats() {
+    return this.client.execute(async (client: PoolClient) => {
+      const data = await this.getHistoricalCollateralPerGB(client, ChartDuration.MONTH);
+
+      const average = await client.query(`
+        WITH m AS (SELECT sum(m.value)                                                       AS collateral,
+                          sum(cast(m.params->>0 AS bigint))                                  AS gb,
+                          extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS date
+                   FROM messages m
+                          JOIN blocks b ON m.height = b.height
+                   WHERE m.method = 'createMiner'
+                   GROUP BY date),
+             amounts AS (SELECT m.date,
+                                coalesce(m.collateral, 0) AS collateral,
+                                coalesce(gb, 0)           AS gb,
+                                (CASE
+                                   WHEN gb > 0 THEN collateral / gb
+                                   ELSE 0 END)            AS amount
+                         FROM m)
+        SELECT avg(a.amount) AS avg
+        FROM amounts a;
+      `);
+
+      return {
+        data: data,
+        average: new BigNumber(average.rows[0].avg),
+      };
+    });
   }
 
   historicalMinerCountStats (dur: ChartDuration): Promise<TimeseriesDatapoint[]> {
@@ -157,13 +187,16 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   private async getCostStats (client: PoolClient) {
     const data = await this.getHistoricalStoragePrice(client, ChartDuration.MONTH);
-    let average = new BigNumber(0);
-    if (data.length) {
-      for (const point of data) {
-        average = average.plus(point.amount);
-      }
-      average = average.div(data.length);
-    }
+
+    const avgRes = await client.query(`
+      SELECT coalesce(avg(a.price), 0) / 1000000000000000000 AS avg
+      FROM asks a
+             JOIN messages m ON a.message_id = m.id
+             JOIN blocks b ON b.height = m.height
+      WHERE b.ingested_at > extract(EPOCH FROM (date_trunc('day', current_timestamp) - INTERVAL '30 days'));
+    `);
+
+    const average = new BigNumber(avgRes.rows[0].avg);
 
     const trend = this.calculateTrend(data);
 

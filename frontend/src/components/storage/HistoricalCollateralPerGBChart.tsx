@@ -11,9 +11,11 @@ import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
 import LabelledTooltip from '../LabelledTooltip';
 import Tooltip from '../Tooltip';
+import BigNumber from 'bignumber.js';
 
 export interface HistoricalCollateralPerGBChartStateProps {
   data: TimeseriesDatapoint[]
+  average: BigNumber
   overrideData: TimeseriesDatapoint[]
 }
 
@@ -35,8 +37,8 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
       <TimelineDateChart
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
-        summaryNumber={new Currency(this.props.data[this.props.data.length - 1].amount).toDisplay(2)}
-        label="Current Storage Collateral Per GB"
+        summaryNumber={new Currency(this.props.average).toDisplay(2)}
+        label="Avg. Storage Collateral Per GB"
         tooltip="{amount0.formatNumber('#,###.00')} FIL/GB"
         yAxisLabels={['FIL/GB']}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
@@ -67,7 +69,8 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
 
 function mapStateToProps (state: AppState) {
   return {
-    data: state.stats.stats.storage.historicalCollateralPerGB,
+    data: state.stats.stats.storage.historicalCollateralPerGB.data,
+    average: state.stats.stats.storage.historicalCollateralPerGB.average,
     overrideData: state.overrides.storage.historicalCollateralPerGB,
   };
 }
