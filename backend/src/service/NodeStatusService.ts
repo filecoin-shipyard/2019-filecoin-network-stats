@@ -14,6 +14,8 @@ const FIVE_MINUTES = 5 * 60;
 
 const logger = makeLogger('NodeStatusService');
 
+const ZERO_ADDRESS = 'fcqqqqqqqqqqqqqqqqqqqqqyptunp';
+
 export interface INodeStatusService extends IService {
   consumeHeartbeat (heartbeat: Heartbeat): Promise<void>
 
@@ -75,7 +77,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
       if (lastSeen - oldLastSeen > FIVE_MINUTES) {
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
-        old.power = power.miner/power.total;
+        old.power = power.miner / power.total;
         old.capacity = power.miner;
       }
     } else {
@@ -85,13 +87,13 @@ export class MemoryNodeStatusService implements INodeStatusService {
         ip: heartbeat.ip,
         peerId: heartbeat.peerId,
         nickname: heartbeat.nickname,
-        nodeCOunt: this.nodeCount,
+        nodeCount: this.nodeCount,
       });
 
       const loc = await this.gDao.locateIp(heartbeat.ip);
       const power = heartbeat.minerAddress ? await this.mps.getRawMinerPower(heartbeat.minerAddress) : {
         miner: 0,
-        total: 1
+        total: 1,
       };
       this.data[heartbeat.peerId] = {
         lastSeen,
@@ -102,7 +104,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         nickname: heartbeat.nickname,
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
-        power: power.miner/power.total,
+        power: power.miner / power.total,
         // power.miner is in MB, so multiply by 1000 to get GB
         capacity: power.miner * 1000,
       };
@@ -143,7 +145,8 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   async getMinerByAddress (address: string): Promise<Node | null> {
-    return this.addressMap[address] ? this.data[this.addressMap[address]] : null;
+    const miner = this.addressMap[address] ? this.data[this.addressMap[address]] : null;
+    return miner && miner.minerAddress !== ZERO_ADDRESS ? miner : null;
   }
 
   getMinerCounts (): number {
@@ -151,7 +154,10 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   async listMiners (): Promise<Node[]> {
-    return this.listNodes();
+    const nodes = await this.listNodes();
+    return nodes.filter((n: Node) => {
+      return n.minerAddress !== ZERO_ADDRESS;
+    });
   }
 
   private makeLRUKey (peerId: string, time: number) {
