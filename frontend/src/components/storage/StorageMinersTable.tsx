@@ -159,7 +159,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderLastBlockHeader () {
-    const explainer = `Last block processed by each unique miner.`;
+    const explainer = `Last block mined by each unique miner.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Last Block" />
