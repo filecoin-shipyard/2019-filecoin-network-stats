@@ -32,11 +32,6 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
       }, {}),
     }));
 
-    chart.paddingTop = 0;
-    chart.paddingBottom = 12;
-    chart.paddingLeft = 24;
-    chart.paddingRight = 36;
-
     if (this.props.greyscale) {
       chart.colors.list = [
         am4core.color('#777'),
@@ -113,6 +108,7 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
       <div className={b()}>
         <Chart
           {...this.props}
+          padding={[24, 24, 12, 12]}
           summaryNumber={this.props.summaryNumber}
           label={this.props.label}
           createChart={this.createChart}

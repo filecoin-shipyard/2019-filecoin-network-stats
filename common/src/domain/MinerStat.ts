@@ -8,6 +8,6 @@ export interface MinerStat {
   lastBlockMined: number
   blockPercentage: number
   height: number
-  lastSeen: number
+  lastBlockTime: number
   isInConsensus: boolean
 }

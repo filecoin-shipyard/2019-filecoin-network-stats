@@ -289,19 +289,20 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                       FROM blocks b
                       WHERE b.miner = ANY($1::varchar[])
                       GROUP BY b.miner)
-      SELECT m.*, b.parent_hashes
+      SELECT m.*, b.parent_hashes, b.ingested_at as last_block_time
       FROM miners m
              JOIN blocks b ON b.height = m.last_block_mined
     `, [
       addresses,
     ]);
-    type BlockIndex = { [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[] } };
+    type BlockIndex = { [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[], lastBlockTime: number } };
     const index = enriched.rows.reduce((acc: BlockIndex, curr: any) => {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
         lastBlockMined: curr.last_block_mined,
         blocksInTipset: curr.parent_hashes,
         address: curr.address,
+        lastBlockTime: curr.last_block_time
       };
       return acc;
     }, {} as BlockIndex);
@@ -325,7 +326,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         lastBlockMined,
         blockPercentage: indexed ? indexed.blockPercentage : 0,
         height: node.height,
-        lastSeen: node.lastSeen,
+        lastBlockTime: indexed ? indexed.lastBlockTime : 0,
         isInConsensus: false,
       });
     }
