@@ -117,7 +117,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
-              m.height,
+              m.lastBlockMined,
               m.lastBlockTime === 0 ? 'UNKNOWN' : <FloatTimeago date={secToMillis(m.lastBlockTime)} />,
               PercentageNumber.create(m.blockPercentage).toDisplay(true),
             ]);
