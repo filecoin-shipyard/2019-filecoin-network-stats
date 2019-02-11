@@ -172,6 +172,7 @@ export default class StorageDeals extends React.Component {
               data={durationHistogram}
               yAxisLabels={['Number of Deals']}
               dataTransformer={this.durationDataTransformer}
+              barColor={GraphColors.LIGHT_GREY}
               noTooltip
             />
           </Col>
@@ -183,6 +184,7 @@ export default class StorageDeals extends React.Component {
               data={sizeHistogram}
               yAxisLabels={['Number of Deals']}
               dataTransformer={this.sizeDataTransformer}
+              barColor={GraphColors.LIGHT_GREY}
               noTooltip
             />
           </Col>

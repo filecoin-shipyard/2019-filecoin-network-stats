@@ -8,7 +8,8 @@ export const GraphColors = {
   TURQUOISE: am4core.color('#6DDFDF'),
   PURPLE: am4core.color('#748CF9'),
   DARK_GREEN: am4core.color('#0E9692'),
-  GREY: am4core.color('#aaa')
+  GREY: am4core.color('#aaa'),
+  LIGHT_GREY: am4core.color('#CCCFE0'),
 };
 
 export default GraphColors;

@@ -12,6 +12,7 @@ const b = bemify('histogram-chart');
 export interface AugmentedHistogramDatapoint extends HistogramDatapoint {
   label: string
   tooltipText: string
+  fill?: am4core.Color
 }
 
 export interface HistogramChartProps extends BaseChartProps {
@@ -20,7 +21,7 @@ export interface HistogramChartProps extends BaseChartProps {
   showAverage?: boolean
   showBarLabels?: boolean
   barColor?: am4core.Color
-  heatMapped?: boolean
+  highlightMax?: boolean
   noTooltip?: boolean
 }
 
@@ -33,13 +34,25 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     }),
     showAverage: false,
     showBarLabels: false,
-    heatMapped: false,
+    highlightMax: false,
     noTooltip: false
   };
 
   createChart = (id: string) => {
     const chart = am4core.create(id, am4charts.XYChart);
-    chart.data = this.props.data.map(this.props.dataTransformer);
+    let max = 0;
+    let maxIndex = 0;
+    const enrichedData = this.props.data.map((d: HistogramDatapoint, i: number) => {
+      const point = this.props.dataTransformer(d);
+      if (point.count > max) {
+        max = point.count;
+        maxIndex = i;
+      }
+      point.fill = am4core.color('#CCCFE0');
+      return point;
+    }) as any[];
+    enrichedData[maxIndex].fill = GraphColors.DARK_GREEN;
+    chart.data = enrichedData;
 
     const xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     xAxis.dataFields.category = 'label';
@@ -62,28 +75,17 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     series.zIndex = 20;
 
     const columnTemplate = series.columns.template;
-    if (this.props.heatMapped) {
-      series.heatRules.push({
-        min: 0.1,
-        max: 0.8,
-        property: 'fillOpacity',
-        target: columnTemplate,
-        dataField: 'valueY',
-      });
-    } else {
-      columnTemplate.fillOpacity = 0.5;
-    }
+    columnTemplate.fillOpacity = 0.5;
 
     if (!this.props.noTooltip) {
       columnTemplate.tooltipText = '{tooltipText}';
     }
 
+    columnTemplate.strokeOpacity = 0;
     if (this.props.barColor) {
-      columnTemplate.fill = columnTemplate.stroke = this.props.barColor;
-      columnTemplate.strokeWidth = 0.5;
+      columnTemplate.fill = this.props.barColor;
     } else {
-      columnTemplate.strokeOpacity = 0;
-      columnTemplate.fill = am4core.color('#CCCFE0');
+      columnTemplate.propertyFields.fill = 'fill';
     }
 
     if (this.props.showAverage) {

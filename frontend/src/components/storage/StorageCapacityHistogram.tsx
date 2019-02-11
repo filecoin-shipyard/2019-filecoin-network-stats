@@ -24,7 +24,7 @@ export class StorageCapacityHistogram extends React.Component<MinerCountChartPro
           barColor={GraphColors.DARK_GREEN}
           yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter()]}
           xAxisLabels={['Avg. Storage Capacity/Miner']}
-          heatMapped
+          highlightMax
         />
       </div>
     );
