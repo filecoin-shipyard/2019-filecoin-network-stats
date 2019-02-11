@@ -64,7 +64,6 @@ export default class Retrieval extends React.Component<{}, {}> {
               summaryNumber="--"
               label="Retrieval Miners"
               yAxisLabels={['# of Miners']}
-              tooltip="{amount0.formatNumber(#,###)} Miners"
               lineColor={GraphColors.GREY}
             />
           </Col>
@@ -76,7 +75,6 @@ export default class Retrieval extends React.Component<{}, {}> {
               data={nodesOverTime}
               summaryNumber="--"
               label="Current Avg. # of Retrieval Asks"
-              tooltip="{amount0.formatNumber(#,###)} Asks/Hour"
               yAxisLabels={['# of Bids']}
               lineColor={GraphColors.GREY}
             />

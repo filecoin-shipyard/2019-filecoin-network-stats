@@ -133,14 +133,12 @@ export default class StorageDeals extends React.Component {
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
                   yAxisLabels={['Number of Deals']}
-                  tooltip="{amount0.formatNumber('#,###')} Deals"
                 />
               </React.Fragment>
               <React.Fragment>
                 <TimelineDateChart
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
-                  tooltip="{amount0.formatNumber('#,###.00')}FIL"
                   yAxisLabels={['FIL']}
                 />
               </React.Fragment>
@@ -148,7 +146,6 @@ export default class StorageDeals extends React.Component {
                 <TimelineDateChart
                   data={fakeSineWave()}
                   lineColor={GraphColors.GREY}
-                  tooltip="{amount0.formatNumber('#,###')} GB"
                   yAxisLabels={['GB Stored In Deals']}
                 />
               </React.Fragment>
@@ -162,6 +159,7 @@ export default class StorageDeals extends React.Component {
               data={fakeEvolution(['<10 TB', '10TB-1PB', '1PB-10PB', '>10PB'])}
               yAxisLabels={['% of All Deals']}
               greyscale
+              noTooltip
             />
           </Col>
         </Grid>
@@ -174,7 +172,7 @@ export default class StorageDeals extends React.Component {
               data={durationHistogram}
               yAxisLabels={['Number of Deals']}
               dataTransformer={this.durationDataTransformer}
-              showBarLabels
+              noTooltip
             />
           </Col>
           <Col unsupported>
@@ -185,7 +183,7 @@ export default class StorageDeals extends React.Component {
               data={sizeHistogram}
               yAxisLabels={['Number of Deals']}
               dataTransformer={this.sizeDataTransformer}
-              showBarLabels
+              noTooltip
             />
           </Col>
         </Grid>

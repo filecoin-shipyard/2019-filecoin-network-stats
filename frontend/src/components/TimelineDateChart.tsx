@@ -21,8 +21,8 @@ export interface LineChartProps extends BaseChartProps {
 
 export default class TimelineDateChart extends React.Component<LineChartProps, {}> {
   static defaultProps = {
-    tooltip: '{amount0}',
-    barTooltip: '{amount1}',
+    tooltip: '',
+    barTooltip: '',
     lineColor: GraphColors.TURQUOISE,
     barColor: GraphColors.TURQUOISE,
     datapointProcessor: (p: TimeseriesDatapoint) => p,
@@ -55,8 +55,13 @@ export default class TimelineDateChart extends React.Component<LineChartProps, {
 
     const xAxis = chart.xAxes.push(new am4charts.DateAxis());
     xAxis.dateFormatter = new am4core.DateFormatter();
+    xAxis.dateFormats.setKey('month', 'MMM yyyy');
     xAxis.startLocation = 0.5;
     xAxis.endLocation = 0.5;
+    xAxis.renderer.minGridDistance = 50;
+    if (!this.props.tooltip) {
+      xAxis.cursorTooltipEnabled = false;
+    }
 
     const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
     yAxis.min = 0;

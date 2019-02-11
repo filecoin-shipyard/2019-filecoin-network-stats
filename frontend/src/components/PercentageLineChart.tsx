@@ -12,11 +12,13 @@ const b = bemify('percentage-line-chart');
 export interface PercentageLineChartProps extends BaseChartProps {
   data: CategoryDatapoint[]
   greyscale?: boolean
+  noTooltip?: boolean
 }
 
 export default class PercentageLineChart extends React.Component<PercentageLineChartProps> {
   static defaultProps = {
-    greyscale: false
+    greyscale: false,
+    noTooltip: false
   };
 
   createChart = (id: string) => {
@@ -54,6 +56,9 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.startLocation = 0.5;
     dateAxis.endLocation = 0.5;
+    if (this.props.noTooltip) {
+      dateAxis.cursorTooltipEnabled = false;
+    }
 
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
     valueAxis.min = 0;
@@ -89,7 +94,10 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
       series.fillOpacity = 0.5;
       series.strokeWidth = 1;
       series.strokeOpacity = 1;
-      series.tooltipText = `[bold]{name}[/]\n[font-size:12px]{valueY}%`;
+
+      if (!this.props.noTooltip) {
+        series.tooltipText = `[bold]{name}[/]\n[font-size:12px]{valueY}%`;
+      }
     }
 
     chart.yAxes.getIndex(0).numberFormatter.numberFormat = '###\'%\'';

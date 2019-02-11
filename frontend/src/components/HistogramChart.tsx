@@ -21,6 +21,7 @@ export interface HistogramChartProps extends BaseChartProps {
   showBarLabels?: boolean
   barColor?: am4core.Color
   heatMapped?: boolean
+  noTooltip?: boolean
 }
 
 export default class HistogramChart extends React.Component<HistogramChartProps> {
@@ -32,7 +33,8 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     }),
     showAverage: false,
     showBarLabels: false,
-    heatMapped: false
+    heatMapped: false,
+    noTooltip: false
   };
 
   createChart = (id: string) => {
@@ -59,9 +61,6 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     series.name = 'Storage Distribution';
     series.zIndex = 20;
 
-    const xAxis = chart.xAxes.getIndex(0);
-    // xAxis.renderer.minLabelPosition = -0.05;
-
     const columnTemplate = series.columns.template;
     if (this.props.heatMapped) {
       series.heatRules.push({
@@ -75,7 +74,10 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
       columnTemplate.fillOpacity = 0.5;
     }
 
-    columnTemplate.tooltipText = '{tooltipText}';
+    if (!this.props.noTooltip) {
+      columnTemplate.tooltipText = '{tooltipText}';
+    }
+
     if (this.props.barColor) {
       columnTemplate.fill = columnTemplate.stroke = this.props.barColor;
       columnTemplate.strokeWidth = 0.5;
