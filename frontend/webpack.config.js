@@ -70,7 +70,7 @@ module.exports = {
       from: path.join(__dirname, 'src', 'assets'),
       to: 'assets'
     }]),
-    new EnvironmentPlugin(['BACKEND_URL', 'SENTRY_DSN'])
+    new EnvironmentPlugin(['BACKEND_URL', 'SENTRY_DSN', 'GA_TRACKING_ID'])
   ]
 };
 

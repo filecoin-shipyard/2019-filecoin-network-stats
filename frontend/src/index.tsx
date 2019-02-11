@@ -19,6 +19,11 @@ if (process.env.SENTRY_DSN) {
   (window as any).Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
+if (process.env.GA_TRACKING_ID && 'ga' in window) {
+  (window as any).ga('create', process.env.GA_TRACKING_ID, 'auto');
+  (window as any).ga('send', 'pageview');
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <Router>
