@@ -17,6 +17,12 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
     clearTimeout(this.timer);
   }
 
+  componentDidUpdate(lastProps: FloatTimeagoProps) {
+    if (this.props.date !== lastProps.date) {
+      this.tick();
+    }
+  }
+
   tick = () => {
     const diff = Date.now() - this.props.date;
 
