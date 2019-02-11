@@ -2,6 +2,7 @@
 
 .click-copyable {
   position: relative;
+  cursor: pointer;
 
   &:before {
     position: absolute;

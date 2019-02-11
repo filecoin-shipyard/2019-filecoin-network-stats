@@ -14,7 +14,6 @@ import Tooltip from '../Tooltip';
 import PowerTooltip from '../PowerTooltip';
 import LabelledTooltip from '../LabelledTooltip';
 import BaseDropdown from '../BaseDropdown';
-import copy = require('copy-to-clipboard');
 import ClickCopyable from '../ClickCopyable';
 import PercentageNumber from '../../utils/PercentageNumber';
 
@@ -114,7 +113,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
               m.nickname,
-              ellipsify(m.peerId, 12),
+              this.renderPeerID(m),
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
@@ -126,6 +125,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           keyGetter={(i) => this.props.miners[i].peerId}
         />
       </div>
+    );
+  }
+
+  renderPeerID (m: MinerStat) {
+    return (
+      <ClickCopyable copyData={m.peerId}>
+        {ellipsify(m.peerId, 12)}
+      </ClickCopyable>
     );
   }
 
