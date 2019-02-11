@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "BACKEND_URL=http://localhost:8081 webpack-dev-server --hot",
+    "dev": "BACKEND_URL=https://filecoin-infra.dev.kyokan.io webpack-dev-server --hot",
     "build": "webpack"
   },
   "author": "",
@@ -28,7 +28,7 @@
     "webpack-dev-server": "3.1.10"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "4.0.10",
+    "@amcharts/amcharts4": "4.1.2",
     "@amcharts/amcharts4-geodata": "4.0.24",
     "@types/c3": "0.6.2",
     "@types/classnames": "2.2.6",
