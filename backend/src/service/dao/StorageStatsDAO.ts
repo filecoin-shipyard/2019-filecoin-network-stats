@@ -34,7 +34,14 @@ export interface IStorageStatsDAO {
 }
 
 interface BlockIndex {
-  [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[], lastBlockTime: number, capacity: number }
+  [k: string]: {
+    blockPercentage: number,
+    address: string,
+    lastBlockMined: number,
+    blocksInTipset: string[],
+    lastBlockTime: number,
+    amount: number
+  }
 }
 
 const ONE_PB = 1000000;
@@ -339,7 +346,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         blocksInTipset: curr.parent_hashes,
         address: curr.address,
         lastBlockTime: curr.last_block_time,
-        capacity: Number(curr.capacity),
+        amount: Number(curr.amount),
       };
       return acc;
     }, {} as BlockIndex);
@@ -361,7 +368,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         power: node.power,
         // use the node's committed storage as fallback if we
         // can't find a pledge. shouldn't happen in practice
-        capacity: indexed ? indexed.capacity : node.capacity,
+        capacity: indexed ? indexed.amount : node.capacity,
         lastBlockMined,
         blockPercentage: indexed ? indexed.blockPercentage : 0,
         height: node.height,
