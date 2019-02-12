@@ -327,15 +327,16 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const nodes = await this.nss.listMiners();
     const addresses = nodes.map((m: Node) => m.minerAddress);
     const enriched = await client.query(`
-      WITH miners AS (SELECT b.miner                                               AS address,
-                             max(b.height)                                         AS last_block_mined,
-                             (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
-                      FROM blocks b
-                      WHERE b.miner = ANY($1::varchar[])
-                      GROUP BY b.miner)
-      SELECT m.*, b.parent_hashes, b.ingested_at as last_block_time
-      FROM miners m
-             JOIN blocks b ON b.height = m.last_block_mined
+      WITH miners_blocks AS (SELECT b.miner                                             AS address,
+                                    max(b.height)                                       AS last_block_mined,
+                                    (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
+                             FROM blocks b
+                             WHERE b.miner = ANY($1::varchar[])
+                             GROUP BY b.miner)
+      SELECT mb.*, m.amount, b.parent_hashes, b.ingested_at AS last_block_time
+      FROM miners_blocks mb
+             JOIN blocks b ON b.height = mb.last_block_mined
+             JOIN miners m ON m.miner_address = mb.address;
     `, [
       addresses,
     ]);
