@@ -63,3 +63,4 @@ typings/
 **/dist
 
 dump.rdb
+peerId.json
