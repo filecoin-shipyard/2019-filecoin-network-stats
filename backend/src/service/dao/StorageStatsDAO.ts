@@ -33,6 +33,10 @@ export interface IStorageStatsDAO {
   materializeUtilizationStats (): Promise<void>
 }
 
+interface BlockIndex {
+  [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[], lastBlockTime: number, capacity: number }
+}
+
 const ONE_PB = 1000000;
 
 export class PostgresStorageStatsDAO implements IStorageStatsDAO {
@@ -328,14 +332,14 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     `, [
       addresses,
     ]);
-    type BlockIndex = { [k: string]: { blockPercentage: number, address: string, lastBlockMined: number, blocksInTipset: string[], lastBlockTime: number } };
     const index = enriched.rows.reduce((acc: BlockIndex, curr: any) => {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
         lastBlockMined: curr.last_block_mined,
         blocksInTipset: curr.parent_hashes,
         address: curr.address,
-        lastBlockTime: curr.last_block_time
+        lastBlockTime: curr.last_block_time,
+        capacity: Number(curr.capacity),
       };
       return acc;
     }, {} as BlockIndex);
