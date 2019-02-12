@@ -73,7 +73,8 @@ export class MemoryNodeStatusService implements INodeStatusService {
       if (lastSeen - oldLastSeen > FIVE_MINUTES) {
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
         old.power = power.miner / power.total;
-        old.capacity = power.miner;
+        // power.miner is in GB sectors, so multiply by 1000 to get GB
+        old.capacity = power.miner * 1000;
       }
     } else {
       this.nodeCount++;
@@ -99,7 +100,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
         power: power.miner / power.total,
-        // power.miner is in MB, so multiply by 1000 to get GB
+        // power.miner is in GB sectors, so multiply by 1000 to get GB
         capacity: power.miner * 1000,
       };
 

@@ -71,7 +71,7 @@ export default class Filesize {
   smartUnit (): { size: BigNumber, unit: SizeUnit } {
     for (const unit of UNITS_IN_ORDER) {
       const size = this.toBigNumber(unit);
-      if (size.gt(1)) {
+      if (size.gte(1)) {
         return {
           size,
           unit,
