@@ -1,6 +1,9 @@
 import BigNumber from 'bignumber.js';
 import HTTPClient, {CurriedCall} from './HTTPClient';
 import {MiningPower} from '../domain/MiningPower';
+import makeLogger from '../util/logger';
+
+const logger = makeLogger('MinerClient');
 
 export interface IMinerClient {
   pledge (address: string): Promise<BigNumber>
@@ -17,11 +20,21 @@ export class MinerClientImpl implements IMinerClient {
 
   async pledge (address: string): Promise<BigNumber> {
     const amount = await this.callAPI<string>('pledge', [address]);
+    logger.info('got pledge response', {
+      amount,
+      address,
+    });
+
     return new BigNumber(amount);
   }
 
   async power (address: string): Promise<MiningPower> {
-    const [ power ] = await this.callAPI<[string]>('power', [address]);
+    const [power] = await this.callAPI<[string]>('power', [address]);
+    logger.info('got power response', {
+      power,
+      address,
+    });
+
     const splits = power.split('/').map((s) => s.trim());
     return {
       miner: Number(splits[0]),
