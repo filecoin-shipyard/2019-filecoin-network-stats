@@ -1,6 +1,6 @@
 # filecoin-network-stats
 
-`filecoin-network-stats` is a visual interface for tracking that state of the Filecoin network. This repository contains two sub projects: the dashboard itself (located in `frontend`), and a stat collection server (located in `backend`).
+`filecoin-network-stats` is a visual interface for tracking the state of the Filecoin network. This repository contains two sub projects: the dashboard itself (located in `frontend`), and a stat collection server (located in `backend`).
 
 ## frontend
 
