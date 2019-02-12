@@ -1,0 +1,33 @@
+@import "../variables";
+
+.ReactModal__Overlay {
+  z-index: 1000;
+}
+
+.disclaimer-modal {
+  &__content {
+    padding: 0 ($base * 1.5);
+  }
+
+  p {
+    font-size: $base * 1.2;
+    line-height: 1.2;
+    margin-bottom: $base * 1.5;
+  }
+
+  &__ok {
+    margin-bottom: $base;
+    padding: ($base * 0.75) ($base * 1.5);
+    background: $blue;
+    border: 0;
+    color: white;
+    border-radius: 3px;
+    font-size: $base * 1.2;
+    text-align: right;
+    cursor: pointer;
+
+    &:hover {
+      background: lighten($blue, 10%);
+    }
+  }
+}

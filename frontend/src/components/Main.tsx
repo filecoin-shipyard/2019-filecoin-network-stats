@@ -15,6 +15,7 @@ import StorageMining from './storage/StorageMining';
 import Warning from './Warning';
 import StorageDeals from './storage/StorageDeals';
 import StorageCostCapacity from './storage/StorageCostCapacity';
+import DisclaimerModal from './DisclaimerModal';
 
 const b = bemify('main');
 
@@ -55,6 +56,7 @@ export class Main extends React.Component<MainProps> {
             <Route exact path="/" render={this.wrapWithContentArea(Home, false)} />
           </Switch>
         </div>
+        <DisclaimerModal />
       </div>
     );
   }
