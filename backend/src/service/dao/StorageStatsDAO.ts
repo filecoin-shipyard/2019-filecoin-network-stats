@@ -355,7 +355,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         peerId: node.peerId,
         parentHashes: indexed ? indexed.blocksInTipset : [],
         power: node.power,
-        capacity: node.capacity,
+        // use the node's committed storage as fallback if we
+        // can't find a pledge. shouldn't happen in practice
+        capacity: indexed ? indexed.capacity : node.capacity,
         lastBlockMined,
         blockPercentage: indexed ? indexed.blockPercentage : 0,
         height: node.height,
