@@ -38,3 +38,29 @@
     margin-left: auto;
   }
 }
+
+@include smartphones() {
+  .switchable-content {
+    &__header-wrapper {
+      flex-wrap: wrap;
+
+      .switchable-content__header-title {
+        width: 100%;
+        margin-bottom: $base;
+      }
+
+      .switchable-content__header-links {
+        width: 100%;
+      }
+
+      .switchable-content__header-link:first-child {
+        margin-left: 0;
+      }
+
+      .dropdown {
+        width: 100%;
+        margin-left: 0 !important;
+      }
+    }
+  }
+}

@@ -113,3 +113,32 @@
     border-bottom: 0;
   }
 }
+
+@include smartphones() {
+  .table {
+    &__search-download {
+      flex-direction: column;
+
+      input {
+        width: 100%;
+      }
+    }
+
+    &__download, &__pager, &__sort, &__search {
+      width: 100%;
+    }
+
+    &__search {
+      margin-bottom: $base;
+    }
+
+    &__download {
+      margin-bottom: $base;
+    }
+
+    &__table-wrapper {
+      max-width: 100%;
+      overflow-x: scroll;
+    }
+  }
+}

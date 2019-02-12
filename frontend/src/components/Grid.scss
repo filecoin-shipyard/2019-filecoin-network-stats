@@ -74,6 +74,10 @@ $gutter: $base * 2;
     flex-direction: column;
     margin: 0 0 $gutter 0;
 
+    &--no-margin {
+      margin-bottom: 0;
+    }
+
     .grid__col {
       flex: 1 1 100%;
       margin: 0 0 $gutter 0;

@@ -33,3 +33,21 @@
   font-size: $base * 1.2;
   color: $grey;
 }
+
+@include smartphones() {
+  .mining-summary {
+    flex-wrap: wrap;
+  }
+
+  .mining-summary__left {
+    width: 100%;
+    border-bottom: 1px solid $border;
+    padding-top: $base;
+    padding-bottom: $base;
+  }
+
+  .mining-summary__right {
+    width: 100%;
+    border-left: 0;
+  }
+}

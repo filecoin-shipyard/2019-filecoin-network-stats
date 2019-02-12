@@ -20,3 +20,15 @@
     }
   }
 }
+
+@include smartphones() {
+  .switchable-date-switching-chart {
+    .switchable-content__header-links {
+      margin-bottom: $base;
+    }
+
+    .switchable-content .dropdown {
+      margin-left: 0;
+    }
+  }
+}
