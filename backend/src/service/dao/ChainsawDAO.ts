@@ -45,10 +45,9 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         }, []);
 
         await client.query(
-          'INSERT INTO blocks(height, cid, miner, parent_weight, nonce, ingested_at, blocks_in_tipset, parent_hashes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+          'INSERT INTO blocks(height, miner, parent_weight, nonce, ingested_at, blocks_in_tipset, parent_hashes) VALUES ($1, $2, $3, $4, $5, $6, $7)',
           [
             block.height,
-            block.cid,
             block.miner,
             block.parentWeight,
             block.nonce,

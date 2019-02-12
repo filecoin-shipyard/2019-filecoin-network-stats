@@ -50,7 +50,6 @@ export class PostgresBlocksDAO implements IBlocksDAO {
   inflateBlock (row: any): Block {
     return {
       height: row.height,
-      cid: row.cid,
       miner: row.miner,
       parentWeight: row.parent_weight,
       nonce: row.nonce,

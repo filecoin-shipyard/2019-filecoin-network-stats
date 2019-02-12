@@ -73,8 +73,8 @@ export default class Chainsaw implements IService {
     logger.info('processed blocks', {
       height: this.lastHeight,
       count: unseenBlocks.length,
-      topCid: unseenBlocks[0].cid,
-      bottomCid: unseenBlocks[unseenBlocks.length - 1].cid,
+      top: unseenBlocks[0].height,
+      bottom: unseenBlocks[unseenBlocks.length - 1].height,
     });
   }
 

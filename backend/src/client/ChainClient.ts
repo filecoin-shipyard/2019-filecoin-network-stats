@@ -30,12 +30,15 @@ export class ChainClientImpl implements IChainClient {
       [],
       {},
       (d: [BlockJSON]) => {
-        blockData.push(d);
-
-        if (leb128Base642Number(d[0].height) === toBlock) {
+        const height = leb128Base642Number(d[0].height);
+        if (height === toBlock) {
           return false;
         }
+        if (height < toBlock) {
+          throw new Error(`block height ${height} not found!`);
+        }
 
+        blockData.push(d);
         return true;
       },
       (e: any) => {
@@ -48,8 +51,8 @@ export class ChainClientImpl implements IChainClient {
 
     const out: BlockFromClientWithMessages[] = [];
 
-    // allow 4 blocks to confirm, plus one to take into account parent
-    if (blockData.length <= CONFIRMATION_COUNT + 1) {
+    // allow 4 blocks to confirm
+    if (blockData.length <= CONFIRMATION_COUNT) {
       logger.info('returning no blocks until confirmations met', {
         blocks: blockData.length,
         confirmationCount: CONFIRMATION_COUNT,
@@ -72,7 +75,6 @@ export class ChainClientImpl implements IChainClient {
         stateRoot: json.stateRoot,
         messageReceipts: json.messageReceipts,
         proof: json.proof,
-        cid: blockData[i + 1][0].parents[0]['/'],
         messages: this.inflateMessages(json.messages, height),
       });
 

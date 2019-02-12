@@ -59,7 +59,17 @@ export default class HTTPClient {
     }).on('error', handleError);
 
     r.pipe(split2(JSON.parse)).on('data', (data: T) => {
-      const shouldFinishData = onData(data as T);
+      let shouldFinishData;
+      try {
+        shouldFinishData = onData(data as T);
+      } catch (err) {
+        logger.error('aborted due to error in data processor', {
+          err,
+        });
+        handleError(err);
+        return;
+      }
+
       if (!shouldFinishData) {
         dataFinished = true;
         onComplete();

@@ -3,7 +3,6 @@ export interface Node {
   lat: number|null
   long: number|null
   height: number
-  tipsetHash: string|null
   peerId: string
   nickname: string|null
   minerAddress: string

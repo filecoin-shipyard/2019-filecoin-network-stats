@@ -18,8 +18,6 @@ export interface BlockFromClient {
   messageReceipts: any[]
 
   proof: any[]
-
-  cid: string
 }
 
 export type BlockFromClientWithMessages = BlockFromClient & {

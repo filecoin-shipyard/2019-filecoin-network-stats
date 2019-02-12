@@ -70,11 +70,6 @@ export class MemoryNodeStatusService implements INodeStatusService {
       old.height = heartbeat.height;
       old.lastSeen = lastSeen;
 
-      const block = await this.blocksDao.byHeight(heartbeat.height);
-      if (block) {
-        old.tipsetHash = block.cid;
-      }
-
       if (lastSeen - oldLastSeen > FIVE_MINUTES) {
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
         old.power = power.miner / power.total;
@@ -100,7 +95,6 @@ export class MemoryNodeStatusService implements INodeStatusService {
         lat: (loc && loc.lat) || null,
         long: (loc && loc.long) || null,
         height: heartbeat.height,
-        tipsetHash: heartbeat.head.replace(/(\{|\}|\s)/ig, ''),
         nickname: heartbeat.nickname,
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
