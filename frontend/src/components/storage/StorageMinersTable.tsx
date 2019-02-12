@@ -137,7 +137,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderTipsetHeader () {
-    const explainer = `List of blocks in the current best block's tipset. A tipset is a collection of blocks mined by different miners.`;
+    const explainer = `List of blocks in the current best block's tipset. A tipset is a set of blocks at the same height that share the same parent set.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Blocks in Tipset" />
