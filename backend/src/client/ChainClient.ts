@@ -6,6 +6,11 @@ import {MessageJSON} from '../domain/MessageJSON';
 import {Message} from '../domain/Message';
 import BigNumber from 'bignumber.js';
 import {methodDecoders} from './ABI';
+import makeLogger from '../util/logger';
+
+const CONFIRMATION_COUNT = 4;
+
+const logger = makeLogger('ChainClient');
 
 export interface IChainClient {
   ls (toBlock: number): Promise<BlockFromClientWithMessages[]>
@@ -41,17 +46,18 @@ export class ChainClientImpl implements IChainClient {
     ));
 
     const out: BlockFromClientWithMessages[] = [];
-    let lastCid = '';
-    for (let i = 0; i < blockData.length; i++) {
-      const json = blockData[i][0];
 
-      // use parent CID for now until we can perform
-      // CID generation client side or include it in
-      // blocks via the API.
-      if (i === 0) {
-        lastCid = json.parents[0]['/'];
-        continue;
-      }
+    // allow 4 blocks to confirm
+    if (blockData.length <= CONFIRMATION_COUNT) {
+      logger.info('returning no blocks until confirmations met', {
+        blocks: blockData.length,
+        confirmationCount: CONFIRMATION_COUNT,
+      });
+      return [];
+    }
+
+    for (let i = 3; i < blockData.length; i++) {
+      const json = blockData[i][0];
 
       const height = leb128Base642Number(json.height);
       out.push({
@@ -64,17 +70,13 @@ export class ChainClientImpl implements IChainClient {
         stateRoot: json.stateRoot,
         messageReceipts: json.messageReceipts,
         proof: json.proof,
-        cid: lastCid,
+        cid: blockData[i - 1][0].parents[0]['/'],
         messages: this.inflateMessages(json.messages, height),
       });
 
-      const isGenesis = i === blockData.length - 1;
+      const isGenesis = height === 1;
       if (!isGenesis && !json.parents) {
         throw new Error('block other than genesis without parents - implies bug');
-      }
-
-      if (!isGenesis) {
-        lastCid = json.parents[0]['/'];
       }
     }
     return out;
