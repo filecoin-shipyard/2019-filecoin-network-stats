@@ -30,11 +30,12 @@ export class ChainClientImpl implements IChainClient {
       [],
       {},
       (d: [BlockJSON]) => {
+        blockData.push(d);
+
         if (leb128Base642Number(d[0].height) === toBlock) {
           return false;
         }
 
-        blockData.push(d);
         return true;
       },
       (e: any) => {
@@ -47,8 +48,8 @@ export class ChainClientImpl implements IChainClient {
 
     const out: BlockFromClientWithMessages[] = [];
 
-    // allow 4 blocks to confirm
-    if (blockData.length <= CONFIRMATION_COUNT) {
+    // allow 4 blocks to confirm, plus one to take into account parent
+    if (blockData.length <= CONFIRMATION_COUNT + 1) {
       logger.info('returning no blocks until confirmations met', {
         blocks: blockData.length,
         confirmationCount: CONFIRMATION_COUNT,
@@ -56,7 +57,8 @@ export class ChainClientImpl implements IChainClient {
       return [];
     }
 
-    for (let i = 3; i < blockData.length; i++) {
+    // subtract one to allow parent
+    for (let i = 3; i < blockData.length - 1; i++) {
       const json = blockData[i][0];
 
       const height = leb128Base642Number(json.height);
@@ -70,7 +72,7 @@ export class ChainClientImpl implements IChainClient {
         stateRoot: json.stateRoot,
         messageReceipts: json.messageReceipts,
         proof: json.proof,
-        cid: blockData[i - 1][0].parents[0]['/'],
+        cid: blockData[i + 1][0].parents[0]['/'],
         messages: this.inflateMessages(json.messages, height),
       });
 
