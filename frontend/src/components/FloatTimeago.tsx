@@ -56,10 +56,11 @@ export default class FloatTimeago extends React.Component<FloatTimeagoProps> {
   }
 
   formatTime = (value: number, unit: string, suffix: string) => {
+    const plural = value === 0 || value > 1 ? 's' : '';
     if (unit === 'minute') {
-      return `${value} mins ${suffix}`
+      return `${value} min${plural} ${suffix}`
     }
 
-    return `${value} ${unit}${value === 0 || value > 1 ? 's' : ''} ${suffix}`
+    return `${value} ${unit}${plural} ${suffix}`
   }
 }
