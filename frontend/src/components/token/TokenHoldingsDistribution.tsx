@@ -53,7 +53,7 @@ ${start}${end}`,
   }
 
   renderTitle () {
-    const explainer = `This is the distribution of all token addresses, distributed into even buckets between the smallest balance and largest balances. Zero-balance addresses are excluded.`;
+    const explainer = `Distribution of all FIL token addresses, distributed into even buckets between the smallest balance and largest balances. Zero-balance addresses are excluded.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Total FIL Token Addresses" />

@@ -151,10 +151,10 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderStorageCapacityHeader () {
-    const explainer = `Sum of pledged sectors for each unique miner.`;
+    const explainer = `Sum of committed sectors for each unique miner. Committed sectors sectors that a miner has posted a Proof of Spacetime for.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Capacity" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Proven Storage" />
     );
   }
 

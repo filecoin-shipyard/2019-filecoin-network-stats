@@ -131,10 +131,10 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderTitle () {
-    const explainer = `The block mined with the most storage power.`;
+    const explainer = `A tipset is a set of blocks at the same height that share the same parent set.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Best Block" />
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Best Tipset" />
     );
   }
 
@@ -145,7 +145,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderBlocksInTipsetLabel () {
-    const explainer = `Number of blocks in the current best block's tipset. A tipset is a collection of blocks mined by different miners.`;
+    const explainer = `Number of blocks in the current best tipset. A tipset is a set of blocks at the same height that share the same parent set.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text={'Blocks in Tipset'} inline />

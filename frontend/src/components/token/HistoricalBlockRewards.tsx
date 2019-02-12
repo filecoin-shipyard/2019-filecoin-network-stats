@@ -66,7 +66,7 @@ export class HistoricalBlockRewards extends React.Component<HistoricalBlockRewar
   }
 
   renderTitle () {
-    const explainer = `Block rewards for each block plotted against the date of block ingestion.`;
+    const explainer = `Cumulative sum of block rewards.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Cumulative Block Rewards Over Time" />

@@ -68,7 +68,7 @@ export class HistoricalCollateralChart extends React.Component<HistoricalCollate
   }
 
   renderTitle () {
-    const explainer = `This chart is a snapshot of all FIL deposited in pledges, taken every five minutes.`;
+    const explainer = `All FIL deposited in pledges over the provided time window.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Total FIL Held In Storage Collateral" />
