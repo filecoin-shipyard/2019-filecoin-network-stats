@@ -47,13 +47,13 @@ export class Home extends React.Component<HomeProps, {}> {
     const utilization = this.props.storageStats.networkUtilization;
     const currentUtilization = utilization[utilization.length - 1].amount;
     let utilizationTrend;
-
     if (utilization.length > 1) {
       utilizationTrend = (currentUtilization.gt(0) ? currentUtilization.minus(utilization[utilization.length - 2].amount)
         .div(currentUtilization) : new BigNumber(1)).multipliedBy(100);
     } else {
       utilizationTrend = new BigNumber(100);
     }
+    const utilizationTrendNum = Number(utilizationTrend.toFixed(1));
 
     return (
       <div className={b()}>
@@ -85,7 +85,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 value={PercentageNumber.create(currentUtilization).toDisplay(false)}
                 unit={'%'}
                 tooltip={<UtilizationTooltip />}
-                trend={utilizationTrend.toNumber()}
+                trend={utilizationTrendNum}
                 subtitle={'Current Network Utilization'}
                 duration="24 hrs"
               />
