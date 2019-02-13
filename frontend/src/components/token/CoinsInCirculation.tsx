@@ -16,10 +16,11 @@ import Tooltip from '../Tooltip';
 const b = bemify('coins-in-circulation');
 
 const categoryNames = {
-  liquidCoins: 'Liquid Tokens',
   coinsInCollateral: 'Tokens in Collateral',
+  liquidCoins: 'Liquid Tokens',
 };
 
+const categoryOrder = ['liquidCoins', 'coinsInCollateral'];
 
 export interface CoinsInCirculationStateProps {
   data: CategoryDatapoint[]
@@ -55,6 +56,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
         data={isOverride ? this.props.overrideData : this.props.data}
         isPercentage={false}
         categoryNames={categoryNames}
+        categoryOrder={categoryOrder}
         yAxisLabels={['Total FIL in Circulation']}
         showBarLabels={false}
         colors={[GraphColors.BLUE, GraphColors.ORANGE]}

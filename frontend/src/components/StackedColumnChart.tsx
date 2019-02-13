@@ -5,7 +5,6 @@ import Chart, {BaseChartProps} from './Chart';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import ellipsify from '../utils/ellipsify';
-import el from 'react-timeago';
 
 const b = bemify('stacked-column-chart');
 
@@ -14,7 +13,8 @@ export interface StackedColumnChartProps extends BaseChartProps {
   isPercentage?: boolean
   isDate?: boolean
   showBarLabels?: boolean
-  categoryNames?: { [k: string]: string }
+  categoryNames: { [k: string]: string }
+  categoryOrder: string[]
   colors?: am4core.Color[]
 }
 
@@ -41,10 +41,9 @@ function rawMapper (isDate: boolean, point: CategoryDatapoint) {
 }
 
 export default class StackedColumnChart extends React.Component<StackedColumnChartProps, {}> {
-  static defaultProps = {
+  static defaultProps: Partial<StackedColumnChartProps> = {
     isPercentage: true,
     isDate: false,
-    categoryNames: {},
     showBarLabels: true,
   };
 
@@ -112,16 +111,8 @@ export default class StackedColumnChart extends React.Component<StackedColumnCha
       return series;
     };
 
-    const handled = new Set<string>();
-    for (const point of chart.data) {
-      for (const value of Object.keys(point)) {
-        if (value === 'category' || handled.has(value)) {
-          continue;
-        }
-
-        handled.add(value);
-        createSeries(value);
-      }
+    for (const value of this.props.categoryOrder) {
+      createSeries(value);
     }
   };
 
