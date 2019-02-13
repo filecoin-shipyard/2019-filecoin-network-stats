@@ -90,8 +90,8 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
     try {
       peerInfo = await promisify((cb) => conn.getPeerInfo(cb));
     } catch (err) {
-      logger.error('failed to get peer info', {
-        err
+      logger.warn('failed to get peer info', {
+        err,
       });
       return;
     }
@@ -114,6 +114,12 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
     } catch (err) {
       logger.error('error thrown getting observed addrs', {err});
       return;
+    }
+
+    if (!data.Head || !data.Height || !data.MinerAddress) {
+      logger.info('received invalid heartbeat packet', {
+        packet: data,
+      });
     }
 
     this.consumer.handle({
