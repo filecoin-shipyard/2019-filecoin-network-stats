@@ -1,6 +1,6 @@
 import {ThunkAction} from 'redux-thunk';
-import {TimeseriesDatapoint} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
-import {CategoryDatapoint} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
+import {TimeseriesDatapoint, TimeseriesDatapointJSON, timeseriesDatapointFromJSON} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
+import {CategoryDatapoint, CategoryDatapointJSON, categoryDatapointFromJSON} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
 import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 import {getBackendJSON} from '../utils/net';
 import {Action} from './Action';
@@ -32,8 +32,20 @@ const minDelay = 500;
 export function setOverride (statType: keyof OverridesState, statName: StatName, duration: ChartDuration): ThunkAction<Promise<void>, OverridesState, any, any> {
   return async (dispatch) => {
     const start = Date.now();
-    const data = await getBackendJSON(`stats/${statType}/${statName}/${duration}`);
+    const data = await getBackendJSON(`stats/${statType}/${statName}/${duration}`) as any[];
     const elapsed = Date.now() - start;
+    let parsedData: TimeseriesDatapoint[]|CategoryDatapoint[];
+
+    if (data.length > 0) {
+      if (data[0].amount) {
+        parsedData = (data as TimeseriesDatapointJSON[]).map(timeseriesDatapointFromJSON)
+      } else if (data[0].category) {
+        parsedData = (data as CategoryDatapointJSON[]).map(categoryDatapointFromJSON)
+      }
+    } else {
+      parsedData = [];
+    }
+
     // introduce a small delay if elapsed time is under 500ms to allow
     // loading animations to fire. looks jerky without it.
     return new Promise((resolve) => setTimeout(() => {
@@ -42,7 +54,7 @@ export function setOverride (statType: keyof OverridesState, statName: StatName,
         payload: {
           statType,
           statName,
-          data,
+          data: parsedData,
         },
       });
       resolve();
