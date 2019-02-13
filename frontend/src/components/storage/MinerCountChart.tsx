@@ -34,7 +34,7 @@ export class MinerCountChart extends React.Component<MinerCountChartProps> {
         tooltip="{amount0.formatNumber('#,###')} Miners"
         summaryNumber={this.props.data[this.props.data.length - 1].amount.toFixed(0)}
         label="Active Storage Miners"
-        yAxisLabels={['Number of Miners']}
+        yAxisLabels={['Number of Storage Miners']}
         yAxisNumberFormatters={[new OrderMagnitudeNumberFormatter()]}
       />
     );

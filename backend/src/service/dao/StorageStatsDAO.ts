@@ -477,27 +477,6 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       return [];
     }
 
-    // miners can use the same nickname a whole bunch, so use the
-    // set below to make them distinct.
-    const seenNicks: {[k:string]: number} = {};
-    // create an index of addresses to nicknames
-    // (with a fallback to the address if no nickname is available.)
-    const nodeMap: { [k: string]: string } = {};
-    for (const miner of topMinerRes.rows) {
-      const node = await this.nss.getMinerByAddress(miner.address);
-      const nick = node ? node.nickname : miner.address;
-      let suffix = '';
-      if (seenNicks[nick]) {
-        const disamb = node ? node.peerId.substr(node.peerId.length - 4) :
-          miner.address.substr(miner.address.length - 4);
-        seenNicks[nick]++;
-        suffix = ` (${disamb})`;
-      } else {
-        seenNicks[nick] = 1;
-      }
-      nodeMap[miner.address] = `${nick}${suffix}`;
-    }
-
     const addresses = topMinerRes.rows.map((r: any) => r.address);
     const topDailyCountsRes = await client.query(`
       with totals as (select count(*), extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
@@ -519,7 +498,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
     type CategoryDatapointData = { [k: string]: number }
     const generateData = () => addresses.reduce((acc: CategoryDatapointData, curr: string) => {
-      acc[nodeMap[curr]] = 0;
+      acc[curr] = 0;
       return acc;
     }, {});
 
@@ -533,7 +512,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       }
 
       const cat = points[points.length - 1];
-      cat.data[nodeMap[dailyCount.address]] = new BigNumber(dailyCount.percentage);
+      cat.data[dailyCount.address] = new BigNumber(dailyCount.percentage);
     }
 
     let date = Number(points[0].category);
