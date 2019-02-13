@@ -42,16 +42,24 @@ export default class HistogramChart extends React.Component<HistogramChartProps>
     const chart = am4core.create(id, am4charts.XYChart);
     let max = 0;
     let maxIndex = 0;
+    let nonZero = 0;
     const enrichedData = this.props.data.map((d: HistogramDatapoint, i: number) => {
       const point = this.props.dataTransformer(d);
       if (point.count > max) {
         max = point.count;
         maxIndex = i;
       }
+      // we don't highlight max if there are fewer than 2
+      // nonzero bars.
+      if (point.count > 0) {
+        nonZero++;
+      }
       point.fill = am4core.color('#CCCFE0');
       return point;
     }) as any[];
-    enrichedData[maxIndex].fill = GraphColors.DARK_GREEN;
+    if (nonZero > 2) {
+      enrichedData[maxIndex].fill = GraphColors.DARK_GREEN;
+    }
     chart.data = enrichedData;
 
     const xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
