@@ -19,7 +19,7 @@ export default class PercentageNumber {
   }
 
   public toNumber(): number {
-    return this.num.multipliedBy(100).toNumber();
+    return Number(this.num.multipliedBy(100).toFixed(1));
   }
 
   static create (val: number | string | BigNumber): PercentageNumber {
