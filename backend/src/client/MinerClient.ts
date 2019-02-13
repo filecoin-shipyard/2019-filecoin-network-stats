@@ -35,6 +35,17 @@ export class MinerClientImpl implements IMinerClient {
       address,
     });
 
+    if (typeof power === 'object') {
+      logger.warn('failed to query miner power', {
+        address,
+        message: (power as any).Message
+      });
+      return {
+        miner: 0,
+        total: 1,
+      };
+    }
+
     const splits = power.split('/').map((s) => s.trim());
     return {
       miner: Number(splits[0]),
