@@ -16,8 +16,8 @@ import Tooltip from '../Tooltip';
 const b = bemify('coins-in-circulation');
 
 const categoryNames = {
-  coinsInCollateral: 'Tokens in Collateral',
   liquidCoins: 'Liquid Tokens',
+  coinsInCollateral: 'Tokens in Collateral',
 };
 
 
@@ -57,7 +57,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
         categoryNames={categoryNames}
         yAxisLabels={['Total FIL in Circulation']}
         showBarLabels={false}
-        colors={[GraphColors.ORANGE, GraphColors.BLUE]}
+        colors={[GraphColors.BLUE, GraphColors.ORANGE]}
         yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
         isDate
       />
