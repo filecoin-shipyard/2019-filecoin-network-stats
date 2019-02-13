@@ -8,6 +8,7 @@ import {Node} from 'filecoin-network-stats-common/lib/domain/Node';
 import * as am4maps from '@amcharts/amcharts4/maps';
 import * as am4core from '@amcharts/amcharts4/core';
 import ContentHeader from './ContentHeader';
+import ellipsify from '../utils/ellipsify';
 
 const b = bemify('node-map');
 
@@ -69,7 +70,7 @@ export class NodeMap extends React.Component<NodeMapProps> {
     for (const latLong of Object.keys(nodeIndex)) {
       const idxNodes = nodeIndex[latLong];
       const city = this.cityPoints.mapImages.create();
-      const nodeList = idxNodes.map((n: Node) => `<li>${escape(n.nickname)}</li>`).join('');
+      const nodeList = idxNodes.map((n: Node) => `<li>${escape(ellipsify(n.peerId, 20))}</li>`).join('');
       (city.children.getIndex(0) as am4core.Circle).scale = 1 + 3 * ((idxNodes.length) / nodes.length);
       city.latitude = idxNodes[0].lat;
       city.longitude = idxNodes[0].long;
