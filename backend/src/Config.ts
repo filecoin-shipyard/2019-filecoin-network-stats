@@ -1,3 +1,6 @@
+export const SECTOR_SIZE_BYTES = 256 * 1048576;
+export const SECTOR_SIZE_GB = SECTOR_SIZE_BYTES * 1e-9;
+
 export interface Config {
   dbUrl: string
   redisUrl: string

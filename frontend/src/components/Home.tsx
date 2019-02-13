@@ -65,6 +65,7 @@ export class Home extends React.Component<HomeProps, {}> {
                 value={averageCost.toDisplay()}
                 unit="FIL/GB/Month"
                 subtitle="Avg. Price of Storage"
+                rolloverValue={`${averageCost.toFullPrecision()} FIL/GB/Month`}
                 trend={PercentageNumber.create(this.props.storageStats.storageCost.trend).toNumber()}
                 duration="24 hrs"
                 tooltip={<AveragePriceTooltip />}

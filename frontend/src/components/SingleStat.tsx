@@ -3,6 +3,7 @@ import './SingleStat.scss';
 import bemify from '../utils/bemify';
 import classnames from 'classnames';
 import LabelledTooltip from './LabelledTooltip';
+import Rollover from './Rollover';
 
 const b = bemify('single-stat');
 
@@ -13,6 +14,7 @@ export interface SingleStatProps {
   trend?: number
   duration?: string
   tooltip?: React.ReactNode
+  rolloverValue?: React.ReactChild
 }
 
 export class SingleStat extends React.Component<SingleStatProps, {}> {
@@ -29,7 +31,8 @@ export class SingleStat extends React.Component<SingleStatProps, {}> {
           {this.renderSubtitle()}
         </div>
         <div className={b('name')}>
-          {this.props.value} <span className={b('unit')}>{this.props.unit}</span>
+          {this.renderValue()}{ ' ' }
+          <span className={b('unit')}>{this.props.unit}</span>
         </div>
         <div className={b('bottom')}>
           <div className={trendClass}>
@@ -39,6 +42,18 @@ export class SingleStat extends React.Component<SingleStatProps, {}> {
         </div>
       </div>
     );
+  }
+
+  renderValue () {
+    if (!this.props.rolloverValue) {
+      return this.props.value
+    }
+
+    return (
+      <Rollover content={this.props.rolloverValue}>
+        {this.props.value}
+      </Rollover>
+    )
   }
 
   renderDuration () {

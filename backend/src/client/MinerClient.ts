@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import HTTPClient, {CurriedCall} from './HTTPClient';
 import {MiningPower} from '../domain/MiningPower';
 import makeLogger from '../util/logger';
+import {SECTOR_SIZE_GB} from '../Config';
 
 const logger = makeLogger('MinerClient');
 
@@ -25,7 +26,7 @@ export class MinerClientImpl implements IMinerClient {
       address,
     });
 
-    return new BigNumber(amount);
+    return new BigNumber(amount).multipliedBy(SECTOR_SIZE_GB);
   }
 
   async power (address: string): Promise<MiningPower> {

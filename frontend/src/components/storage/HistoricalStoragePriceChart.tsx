@@ -7,11 +7,14 @@ import {AppState} from '../../ducks/store';
 import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
-import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
+import Currency, {createCurrencyNumberFormatter} from '../../utils/Currency';
 import BigNumber from 'bignumber.js';
 import LabelledTooltip from '../LabelledTooltip';
 import AveragePriceTooltip from '../AveragePriceTooltip';
 import Tooltip from '../Tooltip';
+import Rollover from '../Rollover';
+import {currencyTimeseriesRenderOpts} from '../../utils/timeseriesUnits';
+import CurrencyWithTooltip from '../CurrencyWithTooltip';
 
 export interface HistoricalStoragePriceChartStateProps {
   data: TimeseriesDatapoint[]
@@ -23,7 +26,9 @@ export interface HistoricalStoragePriceChartDispatchProps {
   setOverride: (dur: ChartDuration) => any
 }
 
-export type HistoricalStoragePriceChartProps = HistoricalStoragePriceChartStateProps & HistoricalStoragePriceChartDispatchProps
+export type HistoricalStoragePriceChartProps =
+  HistoricalStoragePriceChartStateProps
+  & HistoricalStoragePriceChartDispatchProps
 
 export class HistoricalStoragePriceChart extends React.Component<HistoricalStoragePriceChartProps> {
   onChangeDuration = async (dur: ChartDuration) => {
@@ -31,17 +36,26 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
   };
 
   renderContent = (isOverride: boolean) => {
+    const data = isOverride ? this.props.overrideData : this.props.data;
+    const { tooltipNum, numberFormatter } = currencyTimeseriesRenderOpts(data);
+
     return (
       <TimelineDateChart
         data={isOverride ? this.props.overrideData : this.props.data}
-        summaryNumber={new Currency(this.props.average).toDisplay()}
-        yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
-        tooltip="{amount0.formatNumber('#,###.00')} FIL"
-        label={<LabelledTooltip tooltip={<AveragePriceTooltip/>} text="Current Avg. Price of Storage" />}
+        summaryNumber={this.renderSummaryNumber()}
+        yAxisNumberFormatters={[numberFormatter]}
+        tooltip={`${tooltipNum} FIL`}
+        label={<LabelledTooltip tooltip={<AveragePriceTooltip />} text="Current Avg. Price of Storage" />}
         yAxisLabels={['Price (FIL)']}
       />
     );
   };
+
+  renderSummaryNumber () {
+    return (
+      <CurrencyWithTooltip amount={this.props.average} />
+    )
+  }
 
   render () {
     return (
@@ -59,7 +73,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
     const explainer = `Average of all outstanding storage asks over the provided time window.`;
 
     return (
-      <LabelledTooltip tooltip={<Tooltip content={explainer}/>} text="Storage Price"/>
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Price" />
     );
   }
 }

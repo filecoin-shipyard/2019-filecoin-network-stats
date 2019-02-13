@@ -15,6 +15,7 @@ import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 import {IBlocksDAO} from './BlocksDAO';
 import {Block} from '../../domain/Block';
 import makeLogger from '../../util/logger';
+import {SECTOR_SIZE_BYTES, SECTOR_SIZE_GB} from '../../Config';
 
 const logger = makeLogger('StorageStatsDAO');
 
@@ -93,7 +94,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
       const average = await client.query(`
         WITH m AS (SELECT sum(m.value)                                                       AS collateral,
-                          sum(cast(m.params->>0 AS bigint))                                  AS gb,
+                          sum(cast(m.params->>0 AS bigint)) * ${SECTOR_SIZE_GB}              AS gb,
                           extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS date
                    FROM messages m
                           JOIN blocks b ON m.height = b.height
@@ -151,8 +152,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
            total_pledges AS (SELECT sum(cast(m.params->>0 AS integer)) AS total
                              FROM messages m
                              WHERE method = 'createMiner'),
-           vals AS (SELECT coalesce(s.total, 0) AS total_committed_gb,
-                           coalesce(p.total, 0) AS total_pledges_gb,
+           vals AS (SELECT coalesce(s.total * ${SECTOR_SIZE_GB}, 0) AS total_committed_gb,
+                           coalesce(p.total * ${SECTOR_SIZE_GB}, 0) AS total_pledges_gb,
                            extract(EPOCH FROM current_timestamp)
                     FROM total_sectors s,
                          total_pledges p)
@@ -265,8 +266,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
     const dailyPoints = await client.query(`
       with d as (${durSeq}),
-           m as (select sum(m.value)                                                       as collateral,
-                        sum(cast(m.params->>0 as bigint))                                  as gb,
+           m as (select sum(m.value)                                                              as collateral,
+                        sum(cast(m.params->>0 as bigint)) * ${SECTOR_SIZE_GB}                     as gb,
                         extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from messages m
                         join blocks b on m.height = b.height
@@ -531,7 +532,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   private async getCostCapacityBySize (client: PoolClient, size: number, op: 'lt' | 'gte'): Promise<CostCapacityForMinerStat> {
     const countCapRes = await client.query(`
-      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) as gb
+      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) * ${SECTOR_SIZE_GB} as gb
                           from messages m
                           where m.method = 'createMiner'
                           group by m.from_address)
@@ -552,7 +553,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }
 
     const priceRes = await client.query(`
-      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) as gb
+      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) * ${SECTOR_SIZE_GB} as gb
                           from messages m
                           where m.method = 'createMiner'
                           group by m.from_address)
@@ -568,7 +569,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     ]);
 
     const utilizationRes = await client.query(`
-      WITH capacities AS (SELECT m.from_address AS address, sum(cast(m.params->>0 AS decimal)) AS gb
+      WITH capacities AS (SELECT m.from_address AS address, sum(cast(m.params->>0 AS decimal)) * ${SECTOR_SIZE_GB} AS gb
                           FROM messages m
                           WHERE m.method = 'createMiner'
                           GROUP BY m.from_address),

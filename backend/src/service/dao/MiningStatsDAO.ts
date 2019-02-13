@@ -2,7 +2,6 @@ import {MiningStats} from 'filecoin-network-stats-common/lib/domain/Stats';
 import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import {INodeStatusService} from '../NodeStatusService';
-import {min} from 'moment';
 
 export interface IMiningStatsDAO {
   getStats (): Promise<MiningStats>

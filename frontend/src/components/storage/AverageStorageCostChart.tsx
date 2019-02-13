@@ -6,10 +6,13 @@ import {AppState} from '../../ducks/store';
 import {connect} from 'react-redux';
 import GraphColors from '../GraphColors';
 import {makeAverage} from '../../utils/averages';
-import Currency, {CurrencyNumberFormatter} from '../../utils/Currency';
+import Currency, {createCurrencyNumberFormatter, CurrencyNumberFormatter} from '../../utils/Currency';
 import LabelledTooltip from '../LabelledTooltip';
 import AveragePriceTooltip from '../AveragePriceTooltip';
 import BigNumber from 'bignumber.js';
+import Rollover from '../Rollover';
+import {currencyTimeseriesRenderOpts} from '../../utils/timeseriesUnits';
+import CurrencyWithTooltip from '../CurrencyWithTooltip';
 
 export interface AverageStorageCostChartProps {
   data: TimeseriesDatapoint[]
@@ -23,10 +26,14 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
   render () {
     const summary = (
       <React.Fragment>
-        {new Currency(this.props.average).toDisplay()}{' '}
+       <CurrencyWithTooltip amount={this.props.average}/>
+        {' '}
         <small>FIL/GB/Month</small>
       </React.Fragment>
     );
+
+    const data = this.props.isOverride ? this.props.overrideData : this.props.data;
+    const { tooltipNum, numberFormatter } = currencyTimeseriesRenderOpts(data);
 
     return (
       <div>
@@ -34,10 +41,10 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
           data={this.props.isOverride ? this.props.overrideData : this.props.data}
           lineColor={this.props.overrideColor || GraphColors.GREEN}
           summaryNumber={summary}
-          tooltip="{amount0.formatNumber('#,###.00')} FIL/GB/Month"
+          tooltip={`${tooltipNum} FIL/GB/Month`}
           label={<LabelledTooltip tooltip={<AveragePriceTooltip />} text="Current Avg. Price of Storage"/>}
           yAxisLabels={['Price (FIL)']}
-          yAxisNumberFormatters={[new CurrencyNumberFormatter(false)]}
+          yAxisNumberFormatters={[numberFormatter]}
         />
       </div>
     );

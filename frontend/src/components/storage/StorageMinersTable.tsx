@@ -109,14 +109,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['Block Height', 'Storage Power', 'Proven Storage', '% of Blocks Mined']}
-          headers={['Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
+          headers={[this.renderPeerIDHeader(), this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
               this.renderPeerID(m),
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
-              new Filesize(m.capacity).smartUnitString(),
+              Filesize.fromBytes(m.capacity).smartUnitString(),
               m.blockHeight,
               <FloatTimeago date={secToMillis(m.blockTime)} />,
               <FloatTimeago date={secToMillis(m.lastSeen)} />,
@@ -140,6 +140,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           {ellipsify(m.peerId, 12)}
         </span>
       </ClickCopyable>
+    );
+  }
+
+  renderPeerIDHeader () {
+    const explainer = `A highlighted Peer ID indicates the specific node is in consensus with the majority of nodes on the network.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Peer ID" />
     );
   }
 

@@ -6,6 +6,7 @@ import {IBlocksDAO} from './dao/BlocksDAO';
 import IService from './Service';
 import makeLogger from '../util/logger';
 import {IMiningPowerService} from './MiningPowerService';
+import {SECTOR_SIZE_BYTES} from '../Config';
 
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
@@ -73,8 +74,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
       if (lastSeen - oldLastSeen > FIVE_MINUTES) {
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
         old.power = power.miner / power.total;
-        // power.miner is in GB sectors, so multiply by 1000 to get GB
-        old.capacity = power.miner * 1000;
+        old.capacity = power.miner * SECTOR_SIZE_BYTES;
       }
     } else {
       this.nodeCount++;
@@ -100,8 +100,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
         power: power.miner / power.total,
-        // power.miner is in GB sectors, so multiply by 1000 to get GB
-        capacity: power.miner * 1000,
+        capacity: power.miner * SECTOR_SIZE_BYTES,
       };
 
       if (heartbeat.minerAddress) {

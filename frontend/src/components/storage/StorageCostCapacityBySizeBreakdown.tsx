@@ -9,6 +9,7 @@ import Filesize, {SizeUnit} from '../../utils/Filesize';
 import PercentageNumber from '../../utils/PercentageNumber';
 import LabelledTooltip from '../LabelledTooltip';
 import Tooltip from '../Tooltip';
+import CurrencyWithTooltip from '../CurrencyWithTooltip';
 
 const b = bemify('storage-cost-capacity-by-size-breakdown');
 
@@ -39,7 +40,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
         </div>
         <div className={b('split-stats')}>
           {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}
-          {this.renderStat(`${data.averageStoragePrice.div('1e18').toFixed(2)} FIL`, 'Avg. Storage Price')}
+          {this.renderStat(this.renderPrice(data), 'Avg. Storage Price')}
           {this.renderStat(Filesize.fromGB(data.averageCapacityGB).toUnitString(idx === 1 ? SizeUnit.PB : SizeUnit.GB), 'Avg. Storage Capacity')}
           {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(true), 'Avg. Utilization')}
         </div>
@@ -47,7 +48,16 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
     );
   }
 
-  renderStat (value: string, label: string) {
+  renderPrice (data: CostCapacityForMinerStat) {
+    return (
+      <React.Fragment>
+        <CurrencyWithTooltip amount={data.averageStoragePrice.div('1e18')} />
+        {' '}FIL
+      </React.Fragment>
+    );
+  }
+
+  renderStat (value: React.ReactChild, label: string) {
     return (
       <div className={b('stat')}>
         <div className={b('stat-value')}>

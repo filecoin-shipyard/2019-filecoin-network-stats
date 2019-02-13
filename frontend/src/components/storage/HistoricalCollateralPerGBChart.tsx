@@ -12,6 +12,8 @@ import {setOverride} from '../../ducks/overrides';
 import LabelledTooltip from '../LabelledTooltip';
 import Tooltip from '../Tooltip';
 import BigNumber from 'bignumber.js';
+import {currencyTimeseriesRenderOpts} from '../../utils/timeseriesUnits';
+import CurrencyWithTooltip from '../CurrencyWithTooltip';
 
 export interface HistoricalCollateralPerGBChartStateProps {
   data: TimeseriesDatapoint[]
@@ -33,15 +35,18 @@ export class HistoricalCollateralPerGBChart extends React.Component<HistoricalCo
   };
 
   renderContent = (isOverride: boolean) => {
+    const data = isOverride ? this.props.overrideData : this.props.data;
+    const { tooltipNum, numberFormatter } = currencyTimeseriesRenderOpts(data);
+
     return (
       <TimelineDateChart
         lineColor={GraphColors.PURPLE}
         data={isOverride ? this.props.overrideData : this.props.data}
-        summaryNumber={new Currency(this.props.average).toDisplay(2)}
+        summaryNumber={<CurrencyWithTooltip amount={this.props.average} unit="FIL/GB" />}
         label={<LabelledTooltip tooltip={<Tooltip content="Pledged FIL divided by the number of pledged sectors across all storage miners over the past 30 days."/>} text="Current Storage Collateral Per GB" />}
-        tooltip="{amount0.formatNumber('#,###.00')} FIL/GB"
+        tooltip={`${tooltipNum} FIL/GB`}
         yAxisLabels={['FIL/GB']}
-        yAxisNumberFormatters={[new CurrencyNumberFormatter(true)]}
+        yAxisNumberFormatters={[numberFormatter]}
       />
     );
   };

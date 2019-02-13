@@ -90,8 +90,12 @@ export default class Filesize {
     return `${smartUnit.size.toFixed(0)} ${UNITS_TO_STRINGS[smartUnit.unit]}`;
   }
 
+  static fromBytes(bytes: number|BigNumber) {
+    return new Filesize(new BigNumber(bytes).dividedBy(1000000))
+  }
+
   static fromGB (gb: number | BigNumber) {
-    return new Filesize(new BigNumber(gb).times(1024));
+    return new Filesize(new BigNumber(gb).times(1000));
   }
 
   static fromMB (mb: number | BigNumber) {
@@ -99,6 +103,6 @@ export default class Filesize {
   }
 
   static fromTB (tb: number | BigNumber) {
-    return this.fromGB(new BigNumber(tb).times(1024));
+    return this.fromGB(new BigNumber(tb).times(1000));
   }
 }

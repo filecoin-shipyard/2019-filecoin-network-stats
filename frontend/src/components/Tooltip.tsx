@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './Tooltip.scss';
 import bemify from '../utils/bemify';
-import * as c from 'classnames';
+import Rollover from './Rollover';
 
 const b = bemify('tooltip');
 
@@ -14,20 +14,15 @@ export interface TooltipProps {
 export default class Tooltip extends React.Component<TooltipProps> {
   static defaultProps = {
     greyscale: false,
-    bottom: false
+    bottom: false,
   };
 
-  render() {
-    const names = c(b(), {
-      [b(null, 'bottom')]: this.props.bottom
-    });
-
+  render () {
     return (
-      <span className={names}>
+      <span className={b()}>
+        <Rollover content={this.props.content} bottom={this.props.bottom}>
         <img src={`/assets/question-mark-${this.props.greyscale ? 'greyscale' : 'normal'}.svg`} alt="?" />
-        <div className={b('content')}>
-          {this.props.content}
-        </div>
+      </Rollover>
       </span>
     );
   }
