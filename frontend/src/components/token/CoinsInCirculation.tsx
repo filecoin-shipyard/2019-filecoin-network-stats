@@ -77,7 +77,7 @@ export class CoinsInCirculation extends React.Component<CoinsInCirculationProps>
   }
 
   renderTitle () {
-    const explainer = `Sum of all FIL on the network, including mining rewards and wallet balances, delineated by FIL that is pledged in storage collateral. Snapshots are taken every 5 minutes.`;
+    const explainer = `Sum of all FIL outstanding on the network, including mining rewards and wallet balances, delineated by FIL that is pledged in storage collateral. Snapshots are taken every 5 minutes.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} bottom />} text="FIL Outstanding" />

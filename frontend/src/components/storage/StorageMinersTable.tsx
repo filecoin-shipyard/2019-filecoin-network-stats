@@ -108,8 +108,8 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           onChangePage={this.onChangePage}
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
-          sortTitles={['Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), 'Last Seen', this.renderPercentageBlocksMinedHeader()]}
+          sortTitles={['Block Height', 'Storage Power', 'Proven Storage', '% of Blocks Mined']}
+          headers={['Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
@@ -131,7 +131,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
 
   renderPeerID (m: MinerStat) {
     const names = c({
-      [b('peer-id', 'consensus')]: m.isInConsensus
+      [b('peer-id', 'consensus')]: m.isInConsensus,
     });
 
     return (
@@ -158,7 +158,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderStorageCapacityHeader () {
-    const explainer = `Sum of committed sectors for each unique miner. Committed sectors sectors that a miner has posted a Proof of Spacetime for.`;
+    const explainer = `Sum of committed sectors for each unique miner. Committed sectors are sectors that a miner has posted a Proof of Spacetime for.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Proven Storage" />
@@ -166,10 +166,18 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderLastBlockHeader () {
-    const explainer = `Last block mined by each unique miner.`;
+    const explainer = `Last block seen by each unique miner.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Last Block" />
+    );
+  }
+
+  renderLastSeenHeader () {
+    const explainer = `Last time each unique miner node heartbeat their IPs to the dashboard.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Last Seen" />
     );
   }
 
@@ -184,7 +192,8 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   renderBlocksInTipset (m: MinerStat) {
     return (
       <div className={b('blocks-in-tipset')}>
-        <BaseDropdown title={`${m.parentHashes.length} block${m.parentHashes.length !== 1 ? 's' : ''}`} ref={(r) => (this.dropdowns[m.peerId] = r)}>
+        <BaseDropdown title={`${m.parentHashes.length} block${m.parentHashes.length !== 1 ? 's' : ''}`}
+                      ref={(r) => (this.dropdowns[m.peerId] = r)}>
           <div className={b('parent-hashes')}>
             <div className={b('parent-hashes-header')}>
               Parent Hashes (Click to Copy)

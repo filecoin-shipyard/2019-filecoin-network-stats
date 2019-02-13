@@ -61,7 +61,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
   }
 
   renderTitle () {
-    const explainer = `Stats calculated across all time for miners in the provided category.`;
+    const explainer = `Stats are calculated across all time for miners included in each category.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Price & Capacity by Miner Size" />
