@@ -232,7 +232,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                         join messages m on a.message_id = m.id
                         join blocks b on b.height = m.height
                  group by date)
-      select d.date, floor(coalesce(a.avg, 0) / 1000000000000000000) as amount
+      select d.date, coalesce(a.avg, 0) / 1000000000000000000 as amount
       from d
              left outer join a on a.date = d.date
       order by d.date asc;
