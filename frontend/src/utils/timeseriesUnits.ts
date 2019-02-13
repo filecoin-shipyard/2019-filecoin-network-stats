@@ -18,7 +18,7 @@ export function currencyTimeseriesRenderOpts (points: TimeseriesDatapoint[]): Ti
   }
 
   const chosenPoint = firstNonZero ? firstNonZero.amount : new BigNumber(0);
-  const tooltipNum = chosenPoint.decimalPlaces() > 2 && chosenPoint.lt(1) ?
+  const tooltipNum = chosenPoint.decimalPlaces() > 2 && chosenPoint.lt(0.01) ?
     `{amount0.formatNumber('#.#e')}` :
     `{amount0.formatNumber('#,###.00')}`;
   const numberFormatter = createCurrencyNumberFormatter(chosenPoint);

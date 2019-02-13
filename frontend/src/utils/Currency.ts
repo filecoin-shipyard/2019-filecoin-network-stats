@@ -3,7 +3,7 @@ import OrderMagnitudeNumber from './OrderMagnitudeNumber';
 import {NumberFormatter} from '@amcharts/amcharts4/core';
 
 export function createCurrencyNumberFormatter (exampleValue: BigNumber): NumberFormatter {
-  if (exampleValue.decimalPlaces() > 2 && exampleValue.lt(1) && exampleValue.gt(0)) {
+  if (exampleValue.decimalPlaces() > 2 && exampleValue.lt(0.01) && exampleValue.gt(0)) {
     return new ScientificNumberFormatter();
   }
 
