@@ -5,9 +5,9 @@ export interface MinerStat {
   parentHashes: string[]
   power: number
   capacity: number
-  lastBlockMined: number
+  blockHeight: number
   blockPercentage: number
-  height: number
-  lastBlockTime: number
+  blockTime: number
   isInConsensus: boolean
+  lastSeen: number
 }

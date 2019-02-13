@@ -1,7 +1,8 @@
 export interface Block {
-  height: number,
+  height: number
   miner: string
-  parentWeight: number,
-  nonce: number,
+  parentWeight: number
+  nonce: number
   ingestedAt: number
+  parents: string[]
 }

@@ -16,6 +16,7 @@ import LabelledTooltip from '../LabelledTooltip';
 import BaseDropdown from '../BaseDropdown';
 import ClickCopyable from '../ClickCopyable';
 import PercentageNumber from '../../utils/PercentageNumber';
+import * as c from 'classnames';
 
 const b = bemify('storage-miners-table');
 
@@ -66,7 +67,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   sort = (m1: MinerStat, m2: MinerStat): number => {
     switch (this.state.sortIndex) {
       case 0:
-        return m2.lastBlockMined - m1.lastBlockMined;
+        return m2.blockHeight - m1.blockHeight;
       case 1:
         return m2.power - m1.power;
       case 2:
@@ -101,24 +102,24 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     return (
       <div className={b()}>
         <Table
-          title="Storage Mining Activity Detail"
+          title="Storage Mining Consensus Detail"
           onChangeFilter={this.onChangeQuery}
           onChangeSort={this.onChangeSort}
           onChangePage={this.onChangePage}
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
-          sortTitles={['Most Recent Block Mined', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
-          headers={['Node Name', 'Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderPercentageBlocksMinedHeader()]}
+          sortTitles={['Block Height', 'Storage Power', 'Storage Capacity', '% of Blocks Mined']}
+          headers={['Peer ID', this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), 'Last Seen', this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
-              m.nickname,
               this.renderPeerID(m),
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,
               new Filesize(m.capacity).smartUnitString(),
-              m.lastBlockMined,
-              m.lastBlockTime === 0 ? 'UNKNOWN' : <FloatTimeago date={secToMillis(m.lastBlockTime)} />,
+              m.blockHeight,
+              <FloatTimeago date={secToMillis(m.blockTime)} />,
+              <FloatTimeago date={secToMillis(m.lastSeen)} />,
               PercentageNumber.create(m.blockPercentage).toDisplay(true),
             ]);
           })}
@@ -129,9 +130,15 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   }
 
   renderPeerID (m: MinerStat) {
+    const names = c({
+      [b('peer-id', 'consensus')]: m.isInConsensus
+    });
+
     return (
       <ClickCopyable copyData={m.peerId}>
-        {ellipsify(m.peerId, 12)}
+        <span className={names}>
+          {ellipsify(m.peerId, 12)}
+        </span>
       </ClickCopyable>
     );
   }
@@ -177,7 +184,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
   renderBlocksInTipset (m: MinerStat) {
     return (
       <div className={b('blocks-in-tipset')}>
-        <BaseDropdown title="1 block" ref={(r) => (this.dropdowns[m.peerId] = r)}>
+        <BaseDropdown title={`${m.parentHashes.length} block${m.parentHashes.length !== 1 ? 's' : ''}`} ref={(r) => (this.dropdowns[m.peerId] = r)}>
           <div className={b('parent-hashes')}>
             <div className={b('parent-hashes-header')}>
               Parent Hashes (Click to Copy)

@@ -69,7 +69,7 @@ export class Main extends React.Component<MainProps> {
             text={
               mocked ?
                 'Heads-up! We’re not able to provide data for this view yet. We will soon.' :
-                'Disclaimer: Filecoin network and token data included on this dashboard are notional and for test and development purposes only.'
+                'Disclaimer: Filecoin network and token data included in this dashboard are notional and for test and development purposes only.'
             } />
           <ContentArea>
             <Component />

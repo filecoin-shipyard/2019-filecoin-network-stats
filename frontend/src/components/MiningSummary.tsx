@@ -131,7 +131,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderTitle () {
-    const explainer = `A tipset is a set of blocks at the same height that share the same parent set.`;
+    const explainer = `A tipset is a set of blocks at the same height that share the same parent set. The best tipset is the head of the best chain`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Best Tipset" />
@@ -145,7 +145,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderBlocksInTipsetLabel () {
-    const explainer = `Number of blocks in the current best tipset. A tipset is a set of blocks at the same height that share the same parent set.`;
+    const explainer = `Number of blocks in the current best block's tipset. A tipset is a collection of blocks mined by different miners.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text={'Blocks in Tipset'} inline />
@@ -153,7 +153,7 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
   }
 
   renderAvgBlockTimeLabel () {
-    const explainer = `Average time between blocks.`;
+    const explainer = `Average time between blocks that are created / mined.`;
 
     return (
       <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Avg. Block Time" inline />

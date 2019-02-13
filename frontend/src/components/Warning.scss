@@ -1,8 +1,14 @@
 @import "../variables";
 
 .warning {
-  background: darken($body, 15%);
-  border-bottom: 1px solid darken($body, 20%);
+  background: #fe988a;
+  border-bottom: 1px solid darken(#fe988a, 8%);
   padding: $base * 2;
-  font-size: $base * 1.2;
+  font-size: $base * 1.4;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  .content-area {
+    margin-left: $base;
+  }
 }

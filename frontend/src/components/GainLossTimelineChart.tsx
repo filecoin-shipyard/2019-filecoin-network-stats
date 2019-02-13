@@ -96,7 +96,7 @@ export class GainLossTimelineChart extends React.Component<GainLossTimelineChart
       <div className={b()}>
         <Chart
           summaryNumber={summary}
-          label={<LabelledTooltip tooltip={<Tooltip content="The average of all daily volume taken over 30 days."/>} text="Avg. Daily Volume" />}
+          label={<LabelledTooltip tooltip={<Tooltip content="Average daily volume taken over the past 30 days."/>} text="Avg. Daily Volume" />}
           createChart={this.createChart}
           styleChart={this.styleChart}
           yAxisLabels={['Number of FIL']}

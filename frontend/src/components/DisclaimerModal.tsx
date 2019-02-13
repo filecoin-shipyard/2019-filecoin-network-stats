@@ -19,7 +19,7 @@ const styles = {
   content: {
     position: 'static',
     padding: '0',
-    maxWidth: '500px',
+    maxWidth: '600px',
     marginLeft: '24px',
     marginRight: '24px',
     boxShadow: '0 1px 16px rgba(0,0,0,0.20)',
@@ -51,7 +51,7 @@ export default class DisclaimerModal extends React.Component<{}, DisclaimerModal
         style={styles}
       >
         <div className={b()}>
-          <ContentHeader title="Disclaimer" />
+          <ContentHeader title="DISCLAIMER: PLEASE READ" />
           <div className={b('content')}>
             <p>
               Filecoin network and token data included on this dashboard are notional and for test and development
@@ -60,9 +60,11 @@ export default class DisclaimerModal extends React.Component<{}, DisclaimerModal
               that
               claims to be selling Filecoin tokens until then is likely fraudulent.
             </p>
-            <button onClick={this.onClickOK} className={b('ok')}>
-              OK
-            </button>
+            <div className={b('button-wrapper')}>
+              <button onClick={this.onClickOK} className={b('ok')}>
+                OK
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

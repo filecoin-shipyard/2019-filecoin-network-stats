@@ -12,6 +12,11 @@ import BigNumber from 'bignumber.js';
 import {INodeStatusService} from '../NodeStatusService';
 import {generateDurationSeries} from '../../util/generateDurationSeries';
 import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
+import {IBlocksDAO} from './BlocksDAO';
+import {Block} from '../../domain/Block';
+import makeLogger from '../../util/logger';
+
+const logger = makeLogger('StorageStatsDAO');
 
 export interface IStorageStatsDAO {
   getStats (): Promise<StorageStats>
@@ -35,12 +40,7 @@ export interface IStorageStatsDAO {
 
 interface BlockIndex {
   [k: string]: {
-    blockPercentage: number,
-    address: string,
-    lastBlockMined: number,
-    blocksInTipset: string[],
-    lastBlockTime: number,
-    amount: number
+    blockPercentage: number
   }
 }
 
@@ -53,10 +53,13 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   private readonly cs: ICacheService;
 
-  constructor (client: PGClient, nss: INodeStatusService, cs: ICacheService) {
+  private readonly bsd: IBlocksDAO;
+
+  constructor (client: PGClient, nss: INodeStatusService, cs: ICacheService, bsd: IBlocksDAO) {
     this.client = client;
     this.nss = nss;
     this.cs = cs;
+    this.bsd = bsd;
   }
 
   async getStats() : Promise<StorageStats> {
@@ -326,7 +329,23 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   private async getMiners (client: PoolClient) {
     const nodes = await this.nss.listMiners();
     const addresses = nodes.map((m: Node) => m.minerAddress);
-    const enriched = await client.query(`
+
+    const topBlock = await this.bsd.top();
+    const topBlockNumber = topBlock.height;
+
+    const blockNums = new Set<number>();
+    blockNums.add(topBlockNumber);
+    for (const node of nodes) {
+      blockNums.add(node.height > topBlockNumber ? topBlockNumber : node.height);
+    }
+    const blockNumsArray = Array.from(blockNums);
+    const blocks = await this.bsd.byHeights(blockNumsArray);
+    const blockIdx: {[n: number]: Block} = {};
+    for (const block of blocks) {
+      blockIdx[block.height] = block;
+    }
+
+    const minerDataRes = await client.query(`
       WITH miners_blocks AS (SELECT b.miner                                             AS address,
                                     max(b.height)                                       AS last_block_mined,
                                     (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
@@ -340,44 +359,42 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     `, [
       addresses,
     ]);
-    const index = enriched.rows.reduce((acc: BlockIndex, curr: any) => {
+    const index = minerDataRes.rows.reduce((acc: BlockIndex, curr: any) => {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
-        lastBlockMined: curr.last_block_mined,
-        blocksInTipset: curr.parent_hashes,
-        address: curr.address,
-        lastBlockTime: curr.last_block_time,
-        amount: Number(curr.amount),
       };
       return acc;
     }, {} as BlockIndex);
 
     const ret: MinerStat[] = [];
-    let maxBlock = 0;
     for (const node of nodes) {
-      const indexed = index[node.minerAddress];
-      const lastBlockMined = indexed ? indexed.lastBlockMined : 0;
-      if (lastBlockMined > maxBlock) {
-        maxBlock = lastBlockMined;
+      const block = blockIdx[node.height > topBlockNumber ? topBlockNumber : node.height];
+      if (!block) {
+        logger.warn('no block found for node', {
+          peerId: node.peerId,
+          nickname: node.nickname,
+          minerAddress: node.minerAddress,
+          topBlockNumber,
+          height: node.height,
+        });
+        continue;
       }
+
+      const indexed = index[node.minerAddress];
 
       ret.push({
         nickname: node.nickname,
         address: node.minerAddress,
         peerId: node.peerId,
-        parentHashes: indexed ? indexed.blocksInTipset : [],
+        parentHashes: block.parents,
         power: node.power,
         capacity: node.capacity,
-        lastBlockMined,
         blockPercentage: indexed ? indexed.blockPercentage : 0,
-        height: node.height,
-        lastBlockTime: indexed ? indexed.lastBlockTime : 0,
-        isInConsensus: false,
+        blockHeight: block.height,
+        blockTime: block.ingestedAt,
+        isInConsensus: node.height >= topBlockNumber,
+        lastSeen: node.lastSeen
       });
-    }
-
-    for (const node of ret) {
-      node.isInConsensus = node.lastBlockMined === maxBlock;
     }
 
     return ret;
