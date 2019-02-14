@@ -12,7 +12,7 @@ import Filter = require('bad-words');
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
 
-const FIVE_MINUTES = 5 * 60;
+const REFRESH_TIME = 60;
 
 const logger = makeLogger('NodeStatusService');
 
@@ -74,7 +74,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
       old.height = heartbeat.height;
       old.lastSeen = lastSeen;
 
-      if (lastSeen - oldLastSeen > FIVE_MINUTES) {
+      if (lastSeen - oldLastSeen > REFRESH_TIME) {
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
         old.power = power.miner / power.total;
         old.capacity = power.miner * SECTOR_SIZE_BYTES;

@@ -12,7 +12,7 @@ export interface CacheEntry {
   expiry: number
 }
 
-export const DEFAULT_CACHE_TIME = 5 * 60 * 1000;
+export const DEFAULT_CACHE_TIME = 60 * 1000;
 
 export class MemoryCacheService implements ICacheService {
   private cache: { [k: string]: CacheEntry } = {};
