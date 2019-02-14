@@ -109,10 +109,11 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           downloadUrl={`${process.env.BACKEND_URL}/miners/csv`}
           filterPlaceholder="Search by Node Name, Peer ID, etc..."
           sortTitles={['Block Height', 'Storage Power', 'Proven Storage', '% of Blocks Mined']}
-          headers={[this.renderPeerIDHeader(), this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
+          headers={['Nickname', this.renderPeerIDHeader(), this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
           rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
             return ([
+              ellipsify(m.nickname, 20),
               this.renderPeerID(m),
               this.renderBlocksInTipset(m),
               `${new BigNumber(m.power).multipliedBy(100).toFixed(2)}%`,

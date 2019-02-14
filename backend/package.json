@@ -27,6 +27,7 @@
     "@types/request": "^2.48.1",
     "@types/split2": "2.1.6",
     "@types/winston": "2.4.4",
+    "bad-words": "3.0.0",
     "bignumber.js": "^8.0.1",
     "blake2": "2.0.1",
     "cbor": "^4.1.4",

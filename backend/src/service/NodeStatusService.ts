@@ -7,6 +7,7 @@ import IService from './Service';
 import makeLogger from '../util/logger';
 import {IMiningPowerService} from './MiningPowerService';
 import {SECTOR_SIZE_BYTES} from '../Config';
+import Filter = require('bad-words');
 
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
@@ -16,6 +17,8 @@ const FIVE_MINUTES = 5 * 60;
 const logger = makeLogger('NodeStatusService');
 
 const ZERO_ADDRESS = 'fcqqqqqqqqqqqqqqqqqqqqqyptunp';
+
+const profanityFilter = new Filter();
 
 export interface INodeStatusService extends IService {
   consumeHeartbeat (heartbeat: Heartbeat): Promise<void>
@@ -86,6 +89,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         nodeCount: this.nodeCount,
       });
 
+      const sanitizedNick = profanityFilter.clean(heartbeat.nickname);
       const loc = await this.gDao.locateIp(heartbeat.ip);
       const power = heartbeat.minerAddress ? await this.mps.getRawMinerPower(heartbeat.minerAddress) : {
         miner: 0,
@@ -96,7 +100,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
         lat: (loc && loc.lat) || null,
         long: (loc && loc.long) || null,
         height: heartbeat.height,
-        nickname: heartbeat.nickname,
+        nickname: sanitizedNick,
         peerId: heartbeat.peerId,
         minerAddress: heartbeat.minerAddress,
         power: power.miner / power.total,
