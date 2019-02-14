@@ -111,7 +111,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           sortTitles={['Block Height', 'Storage Power', 'Proven Storage', '% of Blocks Mined']}
           headers={['Nickname', this.renderPeerIDHeader(), this.renderTipsetHeader(), this.renderPowerHeader(), this.renderStorageCapacityHeader(), 'Block Height', this.renderLastBlockHeader(), this.renderLastSeenHeader(), this.renderPercentageBlocksMinedHeader()]}
           rowCount={this.props.miners.length}
-          rows={this.props.miners.slice(start, end).filter(this.filter).sort(this.sort).map((m: MinerStat) => {
+          rows={this.props.miners.filter(this.filter).sort(this.sort).slice(start, end).map((m: MinerStat) => {
             return ([
               ellipsify(m.nickname, 20),
               this.renderPeerID(m),
