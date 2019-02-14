@@ -54,7 +54,7 @@ export default class DisclaimerModal extends React.Component<{}, DisclaimerModal
           <ContentHeader title="DISCLAIMER: PLEASE READ" />
           <div className={b('content')}>
             <p>
-              Filecoin network and token data included on this dashboard are notional and for test and development
+              Filecoin network and token data included on this dashboard are for test and development
               purposes
               only. The official Filecoin token will not be released until main network launch. Any person or exchange
               that
