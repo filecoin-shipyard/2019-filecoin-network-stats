@@ -2,6 +2,8 @@
 
 `filecoin-network-stats` is a visual interface for tracking the state of the Filecoin network. This repository contains two sub projects: the dashboard itself (located in `frontend`), and a stat collection server (located in `backend`).
 
+**By default, all stats on the frontend are cached for 1 minute unless otherwise noted.** The stats collection server waits 4 blocks before considering a block to be 'finalized,' and so will appear to be behind the tip of the chain.
+
 ## frontend
 
 The `filecoin-network-stats` frontend is a React/Redux application written in Typescript. It uses [AmCharts4](https://www.amcharts.com) as its charting library. To start the frontend, run the following commands from within the `frontend` directory:
