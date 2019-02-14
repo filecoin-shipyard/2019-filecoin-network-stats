@@ -12,7 +12,7 @@ import Filter = require('bad-words');
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
 
-const REFRESH_TIME = 60;
+const REFRESH_TIME_SECONDS = 60;
 
 const logger = makeLogger('NodeStatusService');
 
@@ -32,8 +32,13 @@ export interface INodeStatusService extends IService {
   getMinerCounts (): number
 }
 
+interface NodeWithRefresh {
+  node: Node
+  lastRefreshed: number
+}
+
 export class MemoryNodeStatusService implements INodeStatusService {
-  private data: { [k: string]: Node } = {};
+  private data: { [k: string]: NodeWithRefresh } = {};
 
   private addressMap: { [k: string]: string } = {};
 
@@ -67,17 +72,33 @@ export class MemoryNodeStatusService implements INodeStatusService {
   async consumeHeartbeat (heartbeat: Heartbeat) {
     const old = this.data[heartbeat.peerId];
 
-    const lastSeen = this.tsProvider.now();
+    const now = this.tsProvider.now();
     let oldLastSeen = 0;
     if (old) {
-      oldLastSeen = old.lastSeen;
-      old.height = heartbeat.height;
-      old.lastSeen = lastSeen;
+      const lastRefreshed = old.lastRefreshed;
+      oldLastSeen = old.node.lastSeen;
+      old.node.height = heartbeat.height;
+      old.node.lastSeen = now;
 
-      if (lastSeen - oldLastSeen > REFRESH_TIME) {
+      if (now - lastRefreshed > REFRESH_TIME_SECONDS) {
+        logger.info('performing power update', {
+          lastRefreshed: lastRefreshed,
+          now: now,
+          diff: now - lastRefreshed,
+          address: old.node.minerAddress,
+          nickname: old.node.nickname,
+          peerId: old.node.peerId,
+        });
         const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
-        old.power = power.miner / power.total;
-        old.capacity = power.miner * SECTOR_SIZE_BYTES;
+        old.node.power = power.miner / power.total;
+        old.node.capacity = power.miner * SECTOR_SIZE_BYTES;
+        old.lastRefreshed = now;
+      } else {
+        logger.silly('skipping power update', {
+          lastRefreshed: lastRefreshed,
+          now: now,
+          diff: now - lastRefreshed,
+        });
       }
     } else {
       this.nodeCount++;
@@ -96,15 +117,18 @@ export class MemoryNodeStatusService implements INodeStatusService {
         total: 1,
       };
       this.data[heartbeat.peerId] = {
-        lastSeen,
-        lat: (loc && loc.lat) || null,
-        long: (loc && loc.long) || null,
-        height: heartbeat.height,
-        nickname: sanitizedNick,
-        peerId: heartbeat.peerId,
-        minerAddress: heartbeat.minerAddress,
-        power: power.miner / power.total,
-        capacity: power.miner * SECTOR_SIZE_BYTES,
+        node: {
+          lastSeen: now,
+          lat: (loc && loc.lat) || null,
+          long: (loc && loc.long) || null,
+          height: heartbeat.height,
+          nickname: sanitizedNick,
+          peerId: heartbeat.peerId,
+          minerAddress: heartbeat.minerAddress,
+          power: power.miner / power.total,
+          capacity: power.miner * SECTOR_SIZE_BYTES,
+        },
+        lastRefreshed: now,
       };
 
       if (heartbeat.minerAddress) {
@@ -112,12 +136,12 @@ export class MemoryNodeStatusService implements INodeStatusService {
       }
     }
 
-    this.lru.unshift(this.makeLRUKey(heartbeat.peerId, lastSeen));
+    this.lru.unshift(this.makeLRUKey(heartbeat.peerId, now));
 
     if (old) {
       let i = this.lru.length - 1;
 
-      const oldKey = this.makeLRUKey(old.peerId, oldLastSeen);
+      const oldKey = this.makeLRUKey(old.node.peerId, oldLastSeen);
 
       while (i >= 1) {
         if (this.lru[i] === oldKey) {
@@ -139,11 +163,11 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   async listNodes (): Promise<Node[]> {
-    return Object.keys(this.data).map((k: string) => this.data[k]);
+    return Object.keys(this.data).map((k: string) => this.data[k].node);
   }
 
   async getMinerByAddress (address: string): Promise<Node | null> {
-    const miner = this.addressMap[address] ? this.data[this.addressMap[address]] : null;
+    const miner = this.addressMap[address] ? this.data[this.addressMap[address]].node : null;
     return miner && miner.minerAddress !== ZERO_ADDRESS ? miner : null;
   }
 
