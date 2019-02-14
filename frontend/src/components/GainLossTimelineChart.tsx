@@ -48,9 +48,10 @@ export class GainLossTimelineChart extends React.Component<GainLossTimelineChart
     template.width = 16;
     template.height = 16;
 
-    chart.data = (this.props.isOverride ? this.props.overrideData : this.props.data).map((point: TimeseriesDatapoint, i: number) => {
+    const data = this.props.isOverride ? this.props.overrideData : this.props.data;
+    chart.data = data.map((point: TimeseriesDatapoint, i: number) => {
       const processed = point;
-      const prev = this.props.data[i - 1];
+      const prev = data[i - 1];
       return {
         amount: processed.amount.toString(),
         date: processed.date * 1000,
