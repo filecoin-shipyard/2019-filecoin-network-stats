@@ -53,33 +53,44 @@ export class NodeMap extends React.Component<NodeMapProps> {
       }
     }
 
+    type PointData = { lat: number, long: number, tooltipHTML: string, scale: number };
     if (!this.cityPoints) {
       this.cityPoints = chart.series.push(new am4maps.MapImageSeries());
-      this.cityPoints.mapImages.template.nonScaling = true;
-
-      const point = this.cityPoints.mapImages.template.createChild(am4core.Circle);
+      const template = this.cityPoints.mapImages.template;
+      template.propertyFields.latitude = 'lat';
+      template.propertyFields.longitude = 'long';
+      template.propertyFields.tooltipHTML = 'tooltipHTML';
+      template.propertyFields.scale = 'scale';
+      const point = template.createChild(am4core.Circle);
       point.radius = 5;
       point.fill = am4core.color('#45b9e6');
       point.strokeWidth = 0;
     }
 
-    // TODO: diff the nodes
-    this.cityPoints.mapImages.clear();
-
+    const data: PointData[] = [];
     const className = b('nick-tooltip');
-    for (const latLong of Object.keys(nodeIndex)) {
-      const idxNodes = nodeIndex[latLong];
-      const city = this.cityPoints.mapImages.create();
-      const nodeList = idxNodes.map((n: Node) => `<li>${escape(ellipsify(n.peerId, 20))}</li>`).join('');
-      (city.children.getIndex(0) as am4core.Circle).scale = 1 + 3 * ((idxNodes.length) / nodes.length);
-      city.latitude = idxNodes[0].lat;
-      city.longitude = idxNodes[0].long;
-      city.tooltipHTML = `
-        <ul class="${className}">
-        ${nodeList}
-        </ul>
-      `;
+    for (const key of Object.keys(nodeIndex)) {
+      const idxNodes = nodeIndex[key];
+      const nodeCount = idxNodes.length;
+      let nodeList = idxNodes.map((n: Node) => `<li>${escape(ellipsify(n.nickname || n.peerId, 20))}</li>`);
+      if (nodeList.length > 9) {
+        nodeList = nodeList.slice(0, 9);
+        nodeList.push(`<li>... and ${nodeCount - 9} more ...</li>`);
+      }
+      data.push({
+        lat: idxNodes[0].lat,
+        long: idxNodes[0].long,
+        scale: (1 + 3 * ((nodeCount) / nodes.length)),
+        tooltipHTML: `
+            <ul class="${className}">
+                ${nodeList.join('')}
+            </ul>
+        `,
+      });
     }
+    setTimeout(() => {
+      this.cityPoints.data = data;
+    }, 0);
   };
 }
 

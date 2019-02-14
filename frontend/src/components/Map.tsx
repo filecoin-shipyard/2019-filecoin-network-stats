@@ -20,9 +20,9 @@ export default class Map<T> extends React.Component<MapProps<T>, {}> {
 
   private ref: HTMLElement|null = null;
 
-  componentWillReceiveProps = (nextProps: MapProps<T>) => setTimeout(() => {
+  componentWillReceiveProps = (nextProps: MapProps<T>) => () => {
     this.props.onData(nextProps.data, this.chart);
-  });
+  };
 
   componentDidMount = () => setTimeout(() => {
     this.mounted = true;
