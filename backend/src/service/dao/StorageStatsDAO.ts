@@ -479,6 +479,20 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }
 
     const addresses = topMinerRes.rows.map((r: any) => r.address);
+    const seenNicks = new Set<string>();
+    const addressesToNicks: {[k: string]: string} = {};
+    for (const address of addresses) {
+      const node = await this.nss.getMinerByAddress(address);
+      if (node && node.nickname) {
+        const nick = seenNicks.has(node.nickname) ? `${node.nickname} (${address.slice(-4)})` :
+          node.nickname;
+        seenNicks.add(node.nickname);
+        addressesToNicks[address] = nick;
+      } else {
+        addressesToNicks[address] = address;
+      }
+    }
+
     const topDailyCountsRes = await client.query(`
       with totals as (select count(*), extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
                       from blocks b
@@ -497,13 +511,15 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       addresses,
     ]);
 
+
     type CategoryDatapointData = { [k: string]: number }
     const generateData = () => addresses.reduce((acc: CategoryDatapointData, curr: string) => {
-      acc[curr] = 0;
+      acc[addressesToNicks[curr]] = 0;
       return acc;
     }, {});
 
     const points: CategoryDatapoint[] = [];
+
     for (const dailyCount of topDailyCountsRes.rows) {
       if (!points.length || points[points.length - 1].category !== Number(dailyCount.date)) {
         points.push({
@@ -513,7 +529,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       }
 
       const cat = points[points.length - 1];
-      cat.data[dailyCount.address] = new BigNumber(dailyCount.percentage);
+      cat.data[addressesToNicks[dailyCount.address]] = new BigNumber(dailyCount.percentage);
     }
 
     let date = Number(points[0].category);
