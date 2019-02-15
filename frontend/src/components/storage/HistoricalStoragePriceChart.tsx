@@ -7,12 +7,10 @@ import {AppState} from '../../ducks/store';
 import DateSwitchingChart from '../DateSwitchingChart';
 import {Dispatch} from 'redux';
 import {setOverride} from '../../ducks/overrides';
-import Currency, {createCurrencyNumberFormatter} from '../../utils/Currency';
 import BigNumber from 'bignumber.js';
 import LabelledTooltip from '../LabelledTooltip';
 import AveragePriceTooltip from '../AveragePriceTooltip';
 import Tooltip from '../Tooltip';
-import Rollover from '../Rollover';
 import {currencyTimeseriesRenderOpts} from '../../utils/timeseriesUnits';
 import CurrencyWithTooltip from '../CurrencyWithTooltip';
 
@@ -37,7 +35,7 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
 
   renderContent = (isOverride: boolean) => {
     const data = isOverride ? this.props.overrideData : this.props.data;
-    const { tooltipNum, numberFormatter } = currencyTimeseriesRenderOpts(data);
+    const {tooltipNum, numberFormatter} = currencyTimeseriesRenderOpts(data);
 
     return (
       <TimelineDateChart
@@ -53,8 +51,11 @@ export class HistoricalStoragePriceChart extends React.Component<HistoricalStora
 
   renderSummaryNumber () {
     return (
-      <CurrencyWithTooltip amount={this.props.average} />
-    )
+      <React.Fragment>
+        <CurrencyWithTooltip amount={this.props.average} />{' '}
+        <small>FIL/GB/Month</small>
+      </React.Fragment>
+    );
   }
 
   render () {
