@@ -39,12 +39,6 @@ export default class MinerStatsAPI implements IAPIService {
     }
 
     stream.end();
-
-    if (hasError) {
-      res.writeHead(500);
-    } else {
-      res.writeHead(200);
-    }
   };
 
   GET = {
