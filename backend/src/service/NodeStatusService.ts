@@ -29,7 +29,7 @@ export interface INodeStatusService extends IService {
 
   getMinerByAddress (address: string): Promise<Node | null>
 
-  getMinerCounts (): number
+  getMinerCounts (): Promise<number>
 }
 
 interface NodeWithRefresh {
@@ -171,8 +171,9 @@ export class MemoryNodeStatusService implements INodeStatusService {
     return miner && miner.minerAddress !== ZERO_ADDRESS ? miner : null;
   }
 
-  getMinerCounts (): number {
-    return this.nodeCount;
+  async getMinerCounts (): Promise<number> {
+    const miners = await this.listMiners();
+    return miners.length;
   }
 
   async listMiners (): Promise<Node[]> {
