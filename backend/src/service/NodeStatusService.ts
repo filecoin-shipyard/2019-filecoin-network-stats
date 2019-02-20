@@ -13,7 +13,7 @@ import Filter = require('bad-words');
 const MAX_NODES = 10000;
 
 const REFRESH_TIME_SECONDS = 60;
-const DROP_TIME_SECONDS = 60;
+const DROP_TIME_SECONDS = 10 * 60;
 
 const logger = makeLogger('NodeStatusService');
 
