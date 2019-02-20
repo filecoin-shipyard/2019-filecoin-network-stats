@@ -117,7 +117,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
     }
 
     if (!data.Head || !data.Height) {
-      logger.info('received invalid heartbeat packet', {
+      logger.silly('received invalid heartbeat packet', {
         packet: data,
       });
       return;
