@@ -1,0 +1,1 @@
+CREATE INDEX ip_to_locations_ip_to ON ip_to_locations(ip_to);
