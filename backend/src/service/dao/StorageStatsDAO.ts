@@ -389,7 +389,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getMinerData (client: PoolClient, addresses: string[]): Promise<QueryResult> {
-    return this.cs.wrapMethod<QueryResult>('storage-stats-miner-data', 5, () => client.query(`
+    return this.cs.wrapMethod<QueryResult>('storage-stats-miner-data', 5000, () => client.query(`
       SELECT b.miner                                             AS address,
              max(b.height)                                       AS last_block_mined,
              (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
