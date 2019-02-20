@@ -7,7 +7,7 @@ import {MinerStat} from 'filecoin-network-stats-common/lib/domain/MinerStat';
 import {CostCapacityForMinerStat} from 'filecoin-network-stats-common/lib/domain/CostCapacityForMinerStat';
 import {Node} from 'filecoin-network-stats-common/lib/domain/Node';
 import PGClient from '../PGClient';
-import {PoolClient} from 'pg';
+import {PoolClient, QueryResult} from 'pg';
 import BigNumber from 'bignumber.js';
 import {INodeStatusService} from '../NodeStatusService';
 import {generateDurationSeries} from '../../util/generateDurationSeries';
@@ -15,7 +15,7 @@ import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 import {IBlocksDAO} from './BlocksDAO';
 import {Block} from '../../domain/Block';
 import makeLogger from '../../util/logger';
-import {SECTOR_SIZE_BYTES, SECTOR_SIZE_GB} from '../../Config';
+import {SECTOR_SIZE_GB} from '../../Config';
 
 const logger = makeLogger('StorageStatsDAO');
 
@@ -346,20 +346,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       blockIdx[block.height] = block;
     }
 
-    const minerDataRes = await client.query(`
-      WITH miners_blocks AS (SELECT b.miner                                             AS address,
-                                    max(b.height)                                       AS last_block_mined,
-                                    (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
-                             FROM blocks b
-                             WHERE b.miner = ANY($1::varchar[])
-                             GROUP BY b.miner)
-      SELECT mb.*, m.amount, b.parent_hashes, b.ingested_at AS last_block_time
-      FROM miners_blocks mb
-             JOIN blocks b ON b.height = mb.last_block_mined
-             JOIN miners m ON m.miner_address = mb.address;
-    `, [
-      addresses,
-    ]);
+    const minerDataRes = await this.getMinerData(client, addresses);
     const index = minerDataRes.rows.reduce((acc: BlockIndex, curr: any) => {
       acc[curr.address] = {
         blockPercentage: curr.block_percentage,
@@ -399,6 +386,19 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }
 
     return ret;
+  }
+
+  private async getMinerData (client: PoolClient, addresses: string[]): Promise<QueryResult> {
+    return this.cs.wrapMethod<QueryResult>('storage-stats-miner-data', 5, () => client.query(`
+      SELECT b.miner                                             AS address,
+             max(b.height)                                       AS last_block_mined,
+             (count(*)::decimal / (SELECT count(*) FROM blocks)) AS block_percentage
+      FROM blocks b
+      WHERE b.miner = ANY($1::varchar[])
+      GROUP BY b.miner
+    `, [
+      addresses,
+    ]));
   }
 
   private async getHistoricalUtilization (client: PoolClient, duration: ChartDuration): Promise<TimeseriesDatapoint[]> {
