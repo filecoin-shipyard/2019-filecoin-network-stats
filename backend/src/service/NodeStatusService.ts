@@ -55,11 +55,14 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
   private nodeCount: number = 0;
 
+  private lastReap: number = 0;
+
   constructor (tsProvider: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService) {
     this.tsProvider = tsProvider;
     this.gDao = gDao;
     this.blocksDao = blocksDao;
     this.mps = mps;
+    this.lastReap = this.tsProvider.now();
   }
 
   start (): Promise<void> {
@@ -166,6 +169,11 @@ export class MemoryNodeStatusService implements INodeStatusService {
       delete this.addressMap[node.minerAddress];
       this.nodeCount--;
     }
+
+    if (now - this.lastReap < 30) {
+      return;
+    }
+    this.lastReap = now;
 
     for (let i = this.lru.length - 1; i >= 0; i--) {
       const key = this.lru[i];
