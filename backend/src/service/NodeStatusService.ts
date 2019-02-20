@@ -90,7 +90,10 @@ export class MemoryNodeStatusService implements INodeStatusService {
           nickname: old.node.nickname,
           peerId: old.node.peerId,
         });
-        const power = await this.mps.getRawMinerPower(heartbeat.minerAddress);
+        const power = heartbeat.minerAddress ? await this.mps.getRawMinerPower(heartbeat.minerAddress) : {
+          miner: 0,
+          total: 1,
+        };
         old.node.power = power.miner / power.total;
         old.node.capacity = power.miner * SECTOR_SIZE_BYTES;
         old.lastRefreshed = now;
@@ -196,7 +199,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
   async getMinerByAddress (address: string): Promise<Node | null> {
     const miner = this.addressMap[address] ? this.data[this.addressMap[address]].node : null;
-    return miner && miner.minerAddress !== ZERO_ADDRESS ? miner : null;
+    return miner && miner.minerAddress && miner.minerAddress !== ZERO_ADDRESS ? miner : null;
   }
 
   async getMinerCounts (): Promise<number> {
@@ -207,7 +210,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
   async listMiners (): Promise<Node[]> {
     const nodes = await this.listNodes();
     return nodes.filter((n: Node) => {
-      return n.minerAddress !== ZERO_ADDRESS;
+      return n.minerAddress && n.minerAddress !== ZERO_ADDRESS;
     });
   }
 

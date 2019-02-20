@@ -116,7 +116,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
       return;
     }
 
-    if (!data.Head || !data.Height || !data.MinerAddress) {
+    if (!data.Head || !data.Height) {
       logger.info('received invalid heartbeat packet', {
         packet: data,
       });
