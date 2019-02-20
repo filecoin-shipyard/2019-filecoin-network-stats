@@ -120,6 +120,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
       logger.info('received invalid heartbeat packet', {
         packet: data,
       });
+      return;
     }
 
     this.consumer.handle({

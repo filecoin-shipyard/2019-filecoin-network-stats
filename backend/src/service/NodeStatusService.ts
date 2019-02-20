@@ -184,7 +184,6 @@ export class MemoryNodeStatusService implements INodeStatusService {
         delete this.addressMap[node.minerAddress];
         this.lru.pop();
         this.nodeCount--;
-        console.log(this.lru, this.data);
       } else {
         break;
       }
