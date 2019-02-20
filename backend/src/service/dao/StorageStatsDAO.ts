@@ -45,7 +45,7 @@ interface BlockIndex {
   }
 }
 
-const ONE_PB = 1000000;
+const FIVE_GB = 5;
 
 export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   private readonly client: PGClient;
@@ -77,8 +77,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         distributionOverTime: await this.cs.wrapMethod('storage-stats-distribution-over-time', DEFAULT_CACHE_TIME, () => this.getMiningDistributionOverTime(client)),
         evolution: await this.cs.wrapMethod('storage-stats-evolution', DEFAULT_CACHE_TIME, () => this.getMiningEvolution(client)),
         costCapacityBySize: [
-          await this.cs.wrapMethod('storage-stats-cost-capacity-0', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, ONE_PB, 'lt')),
-          await this.cs.wrapMethod('storage-stats-cost-capacity-1', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, ONE_PB, 'gte')),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-0', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_GB, 'lt')),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-1', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_GB, 'gte')),
         ],
       };
     });
@@ -304,7 +304,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getCapacityHistogram (client: PoolClient) {
-    const increment = 10000;
+    const increment = 5000;
     const bucketCount = 10;
 
     const points = await client.query(`
