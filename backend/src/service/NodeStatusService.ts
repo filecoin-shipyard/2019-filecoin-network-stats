@@ -170,6 +170,10 @@ export class MemoryNodeStatusService implements INodeStatusService {
       const [peerId, timeStr] = split;
       const lastSeen = Number(timeStr);
       if (now - lastSeen > DROP_TIME_SECONDS) {
+        if (!this.data[peerId]) {
+          continue;
+        }
+
         const node = this.data[peerId].node;
         logger.info('dropping unresponsive node', {
           peerId: node.peerId,
