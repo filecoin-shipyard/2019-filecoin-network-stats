@@ -13,6 +13,7 @@ import Filter = require('bad-words');
 const MAX_NODES = 10000;
 
 const REFRESH_TIME_SECONDS = 60;
+const DROP_TIME_SECONDS = 60;
 
 const logger = makeLogger('NodeStatusService');
 
@@ -157,8 +158,32 @@ export class MemoryNodeStatusService implements INodeStatusService {
       logger.info('LRU is at maximum size, removing older nodes');
       const last = this.lru.pop();
       const peerId = last.split(':')[0];
+      const node = this.data[peerId].node;
       delete this.data[peerId];
+      delete this.addressMap[node.minerAddress];
       this.nodeCount--;
+    }
+
+    for (let i = this.lru.length - 1; i >= 0; i--) {
+      const key = this.lru[i];
+      const split = key.split(':');
+      const [peerId, timeStr] = split;
+      const lastSeen = Number(timeStr);
+      if (now - lastSeen > DROP_TIME_SECONDS) {
+        const node = this.data[peerId].node;
+        logger.info('dropping unresponsive node', {
+          peerId: node.peerId,
+          nickname: node.nickname,
+          minerAddress: node.minerAddress,
+        });
+        delete this.data[peerId];
+        delete this.addressMap[node.minerAddress];
+        this.lru.pop();
+        this.nodeCount--;
+        console.log(this.lru, this.data);
+      } else {
+        break;
+      }
     }
   }
 
