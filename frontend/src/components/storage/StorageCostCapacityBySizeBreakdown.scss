@@ -41,4 +41,8 @@
     font-size: $base * 1.25;
     color: $dark-grey;
   }
+
+  &__stat-unit {
+    font-size: $base * 1.5;
+  }
 }

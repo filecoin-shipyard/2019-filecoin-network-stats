@@ -63,7 +63,7 @@ export class Home extends React.Component<HomeProps, {}> {
             <Col>
               <SingleStat
                 value={averageCost.toDisplay()}
-                unit="FIL/GB/Month"
+                unit="FIL/GB/Mo"
                 subtitle="Avg. Price of Storage"
                 rolloverValue={`${averageCost.toFullPrecision()} FIL/GB/Month`}
                 trend={PercentageNumber.create(this.props.storageStats.storageCost.trend).toNumber()}

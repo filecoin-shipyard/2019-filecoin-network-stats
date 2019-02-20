@@ -28,7 +28,7 @@ export class AverageStorageCostChart extends React.Component<AverageStorageCostC
       <React.Fragment>
        <CurrencyWithTooltip amount={this.props.average} unit="FIL/GB/Month" />
         {' '}
-        <small>FIL/GB/Month</small>
+        <small>FIL/GB/Mo</small>
       </React.Fragment>
     );
 

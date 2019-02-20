@@ -40,9 +40,9 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
         </div>
         <div className={b('split-stats')}>
           {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}
-          {this.renderStat(this.renderPrice(data), 'Avg. Storage Price')}
-          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).toUnitString(idx === 1 ? SizeUnit.PB : SizeUnit.GB), 'Avg. Storage Capacity')}
-          {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(true), 'Avg. Utilization')}
+          {this.renderStat(this.renderPrice(data), 'Avg. Storage Price', 'FIL/GB/Mo')}
+          {this.renderStat(Filesize.fromGB(data.averageCapacityGB).toUnit(SizeUnit.GB), 'Avg. Storage Capacity', 'GB')}
+          {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(false), 'Avg. Utilization', '%')}
         </div>
       </div>
     );
@@ -52,16 +52,16 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
     return (
       <React.Fragment>
         <CurrencyWithTooltip amount={data.averageStoragePrice.div('1e18')} />
-        {' '}FIL
       </React.Fragment>
     );
   }
 
-  renderStat (value: React.ReactChild, label: string) {
+  renderStat (value: React.ReactChild, label: string, unit?: string) {
     return (
       <div className={b('stat')}>
         <div className={b('stat-value')}>
-          {value}
+          {value}{' ' }
+          <small className={b('stat-unit')}>{unit ? unit : ''}</small>
         </div>
         <div className={b('stat-label')}>
           {label}

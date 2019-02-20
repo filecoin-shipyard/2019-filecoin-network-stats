@@ -64,8 +64,12 @@ export default class Filesize {
   }
 
   toUnitString(unit: SizeUnit) {
+    return `${this.toUnit(unit)} ${UNITS_TO_STRINGS[unit]}`
+  }
+
+  toUnit(unit: SizeUnit) {
     const size = this.toBigNumber(unit);
-    return `${size.toFixed(0)} ${UNITS_TO_STRINGS[unit]}`
+    return `${size.toFixed(0)}`
   }
 
   smartUnit (): { size: BigNumber, unit: SizeUnit } {
