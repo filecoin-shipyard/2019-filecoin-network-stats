@@ -1,6 +1,7 @@
 import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import {Block} from '../../domain/Block';
+import {ICacheService} from '../CacheService';
 
 export interface IBlocksDAO {
   byHeight (height: number): Promise<Block | null>
@@ -10,14 +11,24 @@ export interface IBlocksDAO {
   top (): Promise<Block | null>
 }
 
+const ONE_HOUR = 60 * 60 * 1000;
+
 export class PostgresBlocksDAO implements IBlocksDAO {
   private readonly client: PGClient;
 
-  constructor (client: PGClient) {
+  private readonly cs: ICacheService;
+
+  constructor (client: PGClient, cs: ICacheService) {
     this.client = client;
+    this.cs = cs;
   }
 
-  byHeight (height: number): Promise<Block | null> {
+  async byHeight (height: number): Promise<Block | null> {
+    const cached = this.cs.get<Block>(this.cacheKey(height));
+    if (cached) {
+      return cached;
+    }
+
     return this.client.execute(async (client: PoolClient) => {
       const res = await client.query(
         'SELECT * FROM blocks WHERE height = $1',
@@ -30,16 +41,30 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         return null;
       }
 
-      return this.inflateBlock(res.rows[0]);
+      const block = this.inflateBlock(res.rows[0]);
+      this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block);
+      return block;
     });
   }
 
   byHeights (heights: number[]): Promise<Block[]> {
     return this.client.execute(async (client: PoolClient) => {
+      const cachedBlocks: Block[] = [];
+      const uncachedBlocks: number[] = [];
+
+      for (const height of heights) {
+        const cached = this.cs.get<Block>(this.cacheKey(height));
+        if (cached) {
+          cachedBlocks.push(cached);
+        } else {
+          uncachedBlocks.push(height);
+        }
+      }
+
       const res = await client.query(
         'SELECT * FROM blocks WHERE height = ANY($1::bigint[])',
         [
-          heights,
+          uncachedBlocks,
         ],
       );
 
@@ -47,7 +72,12 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         return [];
       }
 
-      return res.rows.map(this.inflateBlock);
+      const dbBlocks = res.rows.map(this.inflateBlock);
+      for (const block of dbBlocks) {
+        this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block)
+      }
+
+      return cachedBlocks.concat(dbBlocks);
     });
   }
 
@@ -76,4 +106,8 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       parents: row.parent_hashes,
     };
   };
+
+  private cacheKey(height: number): string {
+    return `blocks-height-${height}`;
+  }
 }

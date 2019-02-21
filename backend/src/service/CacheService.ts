@@ -6,6 +6,8 @@ const logger = makeLogger('MemoryCacheService');
 
 export interface ICacheService extends IService {
   wrapMethod<T> (key: string, expiry: number, m: () => Promise<T>): Promise<T>
+  setProactiveExpiry<T>(key: string, expiry: number, value: T): void
+  get<T>(key: string): T|null
 }
 
 export interface CacheEntry {
@@ -31,6 +33,24 @@ export class MemoryCacheService implements ICacheService {
 
   stop (): Promise<void> {
     return;
+  }
+
+  public setProactiveExpiry<T>(key: string, expiry: number, value: T) {
+    this.cache[key] = {
+      value: value,
+      expiry: Date.now() + expiry
+    };
+
+    setTimeout(() => {
+      if (this.cache[key] && this.cache[key].expiry < Date.now()) {
+        delete this.cache[key];
+      }
+    }, expiry);
+  }
+
+  public get<T>(key: string): T|null {
+    const val = this.cache[key];
+    return val ? val.value : null;
   }
 
   async wrapMethod<T> (key: string, expiry: number, m: () => Promise<T>): Promise<T> {
