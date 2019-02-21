@@ -169,40 +169,13 @@ export class MemoryNodeStatusService implements INodeStatusService {
       delete this.addressMap[node.minerAddress];
       this.nodeCount--;
     }
-
-    if (now - this.lastReap < 30) {
-      return;
-    }
-    this.lastReap = now;
-
-    for (let i = this.lru.length - 1; i >= 0; i--) {
-      const key = this.lru[i];
-      const split = key.split(':');
-      const [peerId, timeStr] = split;
-      const lastSeen = Number(timeStr);
-      if (now - lastSeen > DROP_TIME_SECONDS) {
-        if (!this.data[peerId]) {
-          continue;
-        }
-
-        const node = this.data[peerId].node;
-        logger.info('dropping unresponsive node', {
-          peerId: node.peerId,
-          nickname: node.nickname,
-          minerAddress: node.minerAddress,
-        });
-        delete this.data[peerId];
-        delete this.addressMap[node.minerAddress];
-        this.lru.pop();
-        this.nodeCount--;
-      } else {
-        break;
-      }
-    }
   }
 
   async listNodes (): Promise<Node[]> {
-    return Object.keys(this.data).map((k: string) => this.data[k].node);
+    const now = this.tsProvider.now();
+    return Object.keys(this.data).map((k: string) => this.data[k].node).filter((n: Node) => {
+      return now - n.lastSeen > DROP_TIME_SECONDS;
+    });
   }
 
   async getMinerByAddress (address: string): Promise<Node | null> {
