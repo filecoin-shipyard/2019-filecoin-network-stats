@@ -1,5 +1,6 @@
 import IService from './Service';
 import makeLogger from '../util/logger';
+import KeyedMutex from './KeyedMutex';
 
 const logger = makeLogger('MemoryCacheService');
 
@@ -17,7 +18,13 @@ export const DEFAULT_CACHE_TIME = 60 * 1000;
 export class MemoryCacheService implements ICacheService {
   private cache: { [k: string]: CacheEntry } = {};
 
-  // stub these for now in case we want to add redis later
+  private mutex: KeyedMutex;
+
+  constructor () {
+    this.mutex = new KeyedMutex();
+  }
+
+// stub these for now in case we want to add redis later
   start (): Promise<void> {
     return;
   }
@@ -27,6 +34,11 @@ export class MemoryCacheService implements ICacheService {
   }
 
   async wrapMethod<T> (key: string, expiry: number, m: () => Promise<T>): Promise<T> {
+    const mtxKey = `cache-${key}`;
+    if (this.mutex.isLocked(mtxKey)) {
+      await this.mutex.block(mtxKey)
+    }
+
     const cached = this.cache[key];
 
     if (cached && cached.expiry >= Date.now()) {
@@ -34,18 +46,23 @@ export class MemoryCacheService implements ICacheService {
       return cached.value;
     }
 
-    if (!cached || cached.expiry < Date.now()) {
-      if (cached) {
-        logger.info('got expired cache entry, replacing', {key, expiry: cached.expiry});
-      } else {
-        logger.info('got cache miss', {key});
-      }
+    const release = this.mutex.lock(mtxKey);
+    try {
+      if (!cached || cached.expiry < Date.now()) {
+        if (cached) {
+          logger.info('got expired cache entry, replacing', {key, expiry: cached.expiry});
+        } else {
+          logger.info('got cache miss', {key});
+        }
 
-      const res = await m();
-      this.cache[key] = {
-        value: res,
-        expiry: Date.now() + expiry,
-      };
+        const res = await m();
+        this.cache[key] = {
+          value: res,
+          expiry: Date.now() + expiry,
+        };
+      }
+    } finally {
+      release();
     }
 
     return this.cache[key].value as T;
