@@ -174,7 +174,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
   async listNodes (): Promise<Node[]> {
     const now = this.tsProvider.now();
     return Object.keys(this.data).map((k: string) => this.data[k].node).filter((n: Node) => {
-      return now - n.lastSeen > DROP_TIME_SECONDS;
+      return now - n.lastSeen < DROP_TIME_SECONDS;
     });
   }
 
