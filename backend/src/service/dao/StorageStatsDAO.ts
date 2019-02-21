@@ -304,7 +304,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getCapacityHistogram (client: PoolClient) {
-    const increment = 5000;
+    const increment = 2000;
     const bucketCount = 10;
 
     const points = await client.query(`
