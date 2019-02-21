@@ -61,6 +61,10 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         }
       }
 
+      if (uncachedBlocks.length === 0) {
+        return cachedBlocks;
+      }
+
       const res = await client.query(
         'SELECT * FROM blocks WHERE height = ANY($1::bigint[])',
         [
@@ -68,13 +72,12 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         ],
       );
 
-      if (!res.rows.length) {
-        return [];
-      }
-
-      const dbBlocks = res.rows.map(this.inflateBlock);
-      for (const block of dbBlocks) {
-        this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block)
+      let dbBlocks: Block[] = [];
+      if (res.rows.length) {
+        dbBlocks = res.rows.map(this.inflateBlock);
+        for (const block of dbBlocks) {
+          this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block)
+        }
       }
 
       return cachedBlocks.concat(dbBlocks);
