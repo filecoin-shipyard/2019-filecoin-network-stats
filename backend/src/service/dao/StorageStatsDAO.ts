@@ -358,7 +358,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     for (const node of nodes) {
       const block = blockIdx[node.height > topBlockNumber ? topBlockNumber : node.height];
       if (!block) {
-        logger.warn('no block found for node', {
+        logger.silly('no block found for node', {
           peerId: node.peerId,
           nickname: node.nickname,
           minerAddress: node.minerAddress,
