@@ -39,7 +39,7 @@ export class StorageCostCapacityBySizeBreakdown extends React.Component<StorageC
           {idx === 0 ? '<' : '>='} 5 GB Storage Capacity
         </div>
         <div className={b('split-stats')}>
-          {this.renderStat(data.count.toString(), `Active Miner${data.count === 1 ? '' : 's'}`)}
+          {this.renderStat(data.count.toString(), `Total Miner${data.count === 1 ? '' : 's'}`)}
           {this.renderStat(this.renderPrice(data), 'Avg. Storage Price', 'FIL/GB/Mo')}
           {this.renderStat(Filesize.fromGB(data.averageCapacityGB).toUnit(SizeUnit.GB), 'Avg. Storage Capacity', 'GB')}
           {this.renderStat(PercentageNumber.create(data.utilization).toDisplay(false), 'Avg. Utilization', '%')}
