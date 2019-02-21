@@ -145,7 +145,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   materializeUtilizationStats (): Promise<void> {
     return this.client.executeTx((client: PoolClient) => client.query(`
       WITH total_sectors AS (SELECT sum(s.commitments) AS total
-                             FROM (SELECT count(DISTINCT m.params->>0) AS commitments
+                             FROM (SELECT count(m.params->>0) AS commitments
                                    FROM messages m
                                    WHERE method = 'commitSector'
                                    GROUP BY m.to_address) s),
@@ -590,7 +590,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                           WHERE m.method = 'createMiner'
                           GROUP BY m.from_address),
            commitments AS (SELECT m.from_address                     AS address,
-                                  sum(cast(m.params->>0 AS decimal)) AS committed_gb,
+                                  count(m) * ${SECTOR_SIZE_GB}       AS committed_gb,
                                   max(c.gb)                          AS pledged_gb
                            FROM messages m
                                   JOIN capacities c ON m.from_address = c.address
