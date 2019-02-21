@@ -4,7 +4,6 @@ import Chart, {BaseChartProps} from './Chart';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import bemify from '../utils/bemify';
 import * as am4core from '@amcharts/amcharts4/core';
-import GraphColors from './GraphColors';
 import ellipsify from '../utils/ellipsify';
 
 const b = bemify('percentage-line-chart');
@@ -18,7 +17,7 @@ export interface PercentageLineChartProps extends BaseChartProps {
 export default class PercentageLineChart extends React.Component<PercentageLineChartProps> {
   static defaultProps = {
     greyscale: false,
-    noTooltip: false
+    noTooltip: false,
   };
 
   createChart = (id: string) => {
@@ -38,13 +37,20 @@ export default class PercentageLineChart extends React.Component<PercentageLineC
         am4core.color('#999'),
         am4core.color('#bbb'),
         am4core.color('#ddd'),
-      ]
+      ];
     } else {
       chart.colors.list = [
-        GraphColors.BLUE,
-        GraphColors.PURPLE,
-        GraphColors.GREEN,
-        GraphColors.TURQUOISE,
+        am4core.color('#45b9e6'),
+        am4core.color('#75c4e8'),
+        am4core.color('#99cfeb'),
+        am4core.color('#b8daed'),
+        am4core.color('#d5e5ef'),
+        am4core.color('#f1f1f1'),
+        am4core.color('#dbdcf3'),
+        am4core.color('#c5c7f5'),
+        am4core.color('#adb3f7'),
+        am4core.color('#939ff8'),
+        am4core.color('#748cf9'),
       ];
     }
 
