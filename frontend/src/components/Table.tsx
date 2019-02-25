@@ -10,7 +10,7 @@ import debounce = require('lodash.debounce');
 const b = bemify('table');
 
 export interface TableProps {
-  title?: string
+  title?: string|React.ReactNode
   headers: (string | React.ReactNode)[]
   rows: React.ReactNode[][]
   keyGetter?: (i: number) => any

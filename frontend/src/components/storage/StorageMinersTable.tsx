@@ -102,7 +102,7 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
     return (
       <div className={b()}>
         <Table
-          title="Storage Mining Consensus Detail"
+          title={this.renderTitle()}
           onChangeFilter={this.onChangeQuery}
           onChangeSort={this.onChangeSort}
           onChangePage={this.onChangePage}
@@ -127,6 +127,14 @@ export class StorageMinersTable extends React.Component<StorageMinersTableProps,
           keyGetter={(i) => this.props.miners[i].peerId}
         />
       </div>
+    );
+  }
+
+  renderTitle () {
+    const explainer = `The list miners actively heartbeating to the dashboard.`;
+
+    return (
+      <LabelledTooltip tooltip={<Tooltip content={explainer} />} text="Storage Mining Consensus Detail" />
     );
   }
 

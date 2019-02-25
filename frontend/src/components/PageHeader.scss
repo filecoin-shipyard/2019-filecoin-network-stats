@@ -3,4 +3,9 @@
 .page-header {
   margin: ($base * 4) 0;
   font-size: 29px;
+  line-height: 1.25;
+
+  .tooltip {
+    margin-top: 2px;
+  }
 }
