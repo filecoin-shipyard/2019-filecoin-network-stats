@@ -8,7 +8,6 @@ import makeLogger from '../util/logger';
 import {IMiningPowerService} from './MiningPowerService';
 import {SECTOR_SIZE_BYTES} from '../Config';
 import Filter = require('bad-words');
-import KeyedMutex from './KeyedMutex';
 
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
@@ -19,8 +18,6 @@ const DROP_TIME_SECONDS = 10 * 60;
 const logger = makeLogger('NodeStatusService');
 
 const ZERO_ADDRESS = 'fcqqqqqqqqqqqqqqqqqqqqqyptunp';
-
-const MUTEX_KEY = 'node-status-service';
 
 const profanityFilter = new Filter();
 
@@ -60,15 +57,12 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
   private lastReap: number = 0;
 
-  private mutex: KeyedMutex;
-
   constructor (tsProvider: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService) {
     this.tsProvider = tsProvider;
     this.gDao = gDao;
     this.blocksDao = blocksDao;
     this.mps = mps;
     this.lastReap = this.tsProvider.now();
-    this.mutex = new KeyedMutex();
   }
 
   start (): Promise<void> {
@@ -80,21 +74,6 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   async consumeHeartbeat (heartbeat: Heartbeat) {
-    if (this.mutex.isLocked(MUTEX_KEY)) {
-      await this.mutex.block(MUTEX_KEY);
-    }
-    const release = this.mutex.lock(MUTEX_KEY);
-
-    try {
-      await this.doConsumeHeartbeat(heartbeat)
-    } catch (e) {
-
-    } finally {
-      release();
-    }
-  }
-
-  async doConsumeHeartbeat (heartbeat: Heartbeat) {
     const old = this.data[heartbeat.peerId];
 
     const now = this.tsProvider.now();
