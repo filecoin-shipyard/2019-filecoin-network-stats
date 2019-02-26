@@ -61,7 +61,7 @@ export class ChainClientImpl implements IChainClient {
     }
 
     // subtract one to allow parent
-    for (let i = 3; i < blockData.length - 1; i++) {
+    for (let i = CONFIRMATION_COUNT - 1; i < blockData.length - 1; i++) {
       const json = blockData[i][0];
 
       const height = leb128Base642Number(json.height);
