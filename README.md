@@ -21,6 +21,10 @@ BACKEND_URL=<your-backend-url> webpack-dev-server --hot
 
 The dashboard updates itself via a polling loop that hits the backend's `/sync` endpoint every 5 seconds. This was chosen over WebSockets due to simplicity, and how it allows non-browser clients to query the backend's data as well without having to open a persistent connection.
 
+### a note on the debug dependency
+
+`debug` leaks memory when new instances are called in a loop. Since numerous transitive dependencies of this project do that, the `postinstall` script replaces `debug` with a no-op version.
+
 ## backend
 
 The app's backend is a Node.js application written in Typescript. It talks to a Postgres database and a local `go-filecoin` full node. The backend will by default listen for heartbeats on port 8080, and incoming API requests on port 8081. To get started running the backend, start by installing dependencies and compiling the application:

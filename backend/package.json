@@ -8,7 +8,8 @@
     "build": "tsc --project ./tsconfig.json",
     "dev": "npm run build && source ./.env && node --inspect=5858 ./dist/src/main.js",
     "migrate:local": "DATABASE_URL='postgres://localhost:5432/filecoin-network-stats' db-migrate up",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "postinstall": "./build/stub-debug.sh"
   },
   "author": "",
   "license": "UNLICENSED",
