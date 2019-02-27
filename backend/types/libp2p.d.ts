@@ -6,7 +6,8 @@ declare module 'libp2p' {
     modules: {
       transport: any[],
       streamMuxer?: any[],
-      connEncryption?: any[]
+      connEncryption?: any[],
+      peerDiscovery?: any[]
     },
     config?: {
       EXPERIMENTAL?: {

@@ -26,6 +26,31 @@ interface RawHeartbeat {
 export interface IHeartbeatServer extends IService {
 }
 
+class HeartbeatNode extends Node {
+  constructor (peerInfo: PeerInfo) {
+    super({
+      peerInfo: peerInfo,
+      modules: {
+        transport: [
+          TCP,
+        ],
+        streamMuxer: [
+          MPLEX,
+        ],
+        connEncryption: [
+          SECIO
+        ],
+        peerDiscovery: [],
+      },
+      config: {
+        EXPERIMENTAL: {
+          pubsub: false,
+        },
+      },
+    });
+  }
+}
+
 export class HeartbeatServerImpl implements IHeartbeatServer {
   private readonly peerInfo: PeerInfo;
   private readonly consumer: IHeartbeatConsumer;
@@ -37,25 +62,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
   }
 
   async start (): Promise<void> {
-    this.node = new Node({
-      peerInfo: this.peerInfo,
-      modules: {
-        transport: [
-          TCP,
-        ],
-        streamMuxer: [
-          MPLEX,
-        ],
-        connEncryption: [
-          SECIO,
-        ],
-      },
-      config: {
-        EXPERIMENTAL: {
-          pubsub: true,
-        },
-      },
-    });
+    this.node = new HeartbeatNode(this.peerInfo);
 
     await promisify((cb) => this.node.start(cb));
     this.node.handle(PROTOCOL, this.handleProtocol);
