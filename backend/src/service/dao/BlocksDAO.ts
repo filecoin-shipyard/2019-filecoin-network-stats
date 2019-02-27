@@ -11,7 +11,7 @@ export interface IBlocksDAO {
   top (): Promise<Block | null>
 }
 
-const ONE_HOUR = 60 * 60 * 1000;
+const TEN_MINUTES = 10 * 1000;
 
 export class PostgresBlocksDAO implements IBlocksDAO {
   private readonly client: PGClient;
@@ -42,7 +42,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       }
 
       const block = this.inflateBlock(res.rows[0]);
-      this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block);
+      this.cs.setProactiveExpiry(this.cacheKey(block.height), TEN_MINUTES, block);
       return block;
     });
   }
@@ -76,7 +76,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       if (res.rows.length) {
         dbBlocks = res.rows.map(this.inflateBlock);
         for (const block of dbBlocks) {
-          this.cs.setProactiveExpiry(this.cacheKey(block.height), ONE_HOUR, block)
+          this.cs.setProactiveExpiry(this.cacheKey(block.height), TEN_MINUTES, block)
         }
       }
 

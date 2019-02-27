@@ -8,6 +8,7 @@ import makeLogger from '../util/logger';
 import {IMiningPowerService} from './MiningPowerService';
 import {SECTOR_SIZE_BYTES} from '../Config';
 import Filter = require('bad-words');
+import {synchronized} from '../util/synchronized';
 
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
@@ -73,7 +74,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
     return null;
   }
 
-  async consumeHeartbeat (heartbeat: Heartbeat) {
+  consumeHeartbeat = synchronized(async (heartbeat: Heartbeat) => {
     const old = this.data[heartbeat.peerId];
 
     const now = this.tsProvider.now();
@@ -169,7 +170,7 @@ export class MemoryNodeStatusService implements INodeStatusService {
       delete this.addressMap[node.minerAddress];
       this.nodeCount--;
     }
-  }
+  });
 
   async listNodes (): Promise<Node[]> {
     const now = this.tsProvider.now();
