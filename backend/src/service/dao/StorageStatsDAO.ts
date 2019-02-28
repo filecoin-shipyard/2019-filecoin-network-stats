@@ -464,82 +464,86 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getMiningEvolution (client: PoolClient) {
-    const topMinerRes = await client.query(`
-      SELECT b.miner AS address, (count(*)::decimal / (SELECT count(*) FROM blocks)) AS percentage
-      FROM blocks b
-      WHERE b.miner != ''
-        AND b.ingested_at > extract(EPOCH FROM current_timestamp - INTERVAL '30 day')
-      GROUP BY b.miner
-      ORDER BY percentage DESC
-      LIMIT 10;
+    const {durSeq, durBase} = generateDurationSeries(ChartDuration.MONTH);
+
+    const percentageRes = await client.query(`
+      WITH dates AS (
+        ${durSeq}
+      ),
+           miners AS (
+             SELECT b.miner, extract(EPOCH FROM date_trunc('${durBase}', to_timestamp(b.ingested_at))) AS date
+             FROM blocks b
+             WHERE b.miner IS NOT NULL
+           )
+      SELECT count(m.miner) / coalesce((sum(count(m.miner)) OVER (PARTITION BY m.date)), 1) AS percentage,
+             m.miner,
+             m.date
+      FROM dates d
+             JOIN miners m ON d.date = m.date
+      GROUP BY m.date, m.miner
+      ORDER BY m.date, percentage DESC;
     `);
 
-    if (!topMinerRes.rows.length) {
-      return [];
-    }
-
-    const addresses = topMinerRes.rows.map((r: any) => r.address);
+    type BlockPercentage = { percentage: BigNumber, miner: string, nickname: string, date: number };
+    const percentages: BlockPercentage[][] = [];
     const seenNicks = new Set<string>();
-    const addressesToNicks: {[k: string]: string} = {};
-    for (const address of addresses) {
-      const node = await this.nss.getMinerByAddress(address);
+    let percentageSum = new BigNumber(0);
+    for (const row of percentageRes.rows) {
+      let list: BlockPercentage[];
+      const date = Number(row.date);
+      const last = percentages[percentages.length - 1];
+      if (last && last[0].date === date) {
+        list = percentages[percentages.length - 1];
+      } else {
+        list = [];
+        percentages.push(list);
+      }
+
+      if (list.length === 10) {
+        continue;
+      }
+
+      let nickname = '';
+      const node = await this.nss.getMinerByAddress(row.miner);
       if (node && node.nickname) {
-        const nick = seenNicks.has(node.nickname) ? `${node.nickname} (${address.slice(-4)})` :
+        nickname = seenNicks.has(node.nickname) ? `${node.nickname} (${row.miner.slice(-4)})` :
           node.nickname;
         seenNicks.add(node.nickname);
-        addressesToNicks[address] = nick;
-      } else {
-        addressesToNicks[address] = address;
+      }
+
+      const percentage = new BigNumber(row.percentage);
+
+      list.push({
+        percentage,
+        miner: row.miner,
+        nickname,
+        date,
+      });
+
+      percentageSum = percentageSum.plus(row.percentage);
+
+      if (list.length === 9) {
+        list.push({
+          percentage: new BigNumber(1).minus(percentageSum),
+          miner: '',
+          nickname: 'Other',
+          date: date,
+        });
+        percentageSum = new BigNumber(0);
       }
     }
-
-    const topDailyCountsRes = await client.query(`
-      with totals as (select count(*), extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
-                      from blocks b
-                      group by date),
-           counts as (select b.miner                                                            as address,
-                             count(*)                                                           as count,
-                             extract(epoch from date_trunc('day', to_timestamp(b.ingested_at))) as date
-                      from blocks b
-                      where b.miner = ANY($1::varchar[])
-                      group by b.miner, date)
-      select c.address, c.count::decimal / t.count as percentage, c.date
-      from counts c
-             join totals t on c.date = t.date
-      order by c.date asc;
-    `, [
-      addresses,
-    ]);
-
-
-    type CategoryDatapointData = { [k: string]: number }
-    const generateData = () => addresses.reduce((acc: CategoryDatapointData, curr: string) => {
-      acc[addressesToNicks[curr]] = 0;
-      return acc;
-    }, {});
 
     const points: CategoryDatapoint[] = [];
 
-    for (const dailyCount of topDailyCountsRes.rows) {
-      if (!points.length || points[points.length - 1].category !== Number(dailyCount.date)) {
-        points.push({
-          category: Number(dailyCount.date),
-          data: generateData(),
-        });
-      }
+    for (const dateEntry of percentages) {
+      const point: CategoryDatapoint = {
+        category: dateEntry[0].date,
+        data: {}
+      };
+      points.push(point);
 
-      const cat = points[points.length - 1];
-      cat.data[addressesToNicks[dailyCount.address]] = new BigNumber(dailyCount.percentage);
-    }
-
-    let date = Number(points[0].category);
-    if (points.length < 2) {
-      while (points.length < 2) {
-        date = date - 86400;
-        points.unshift({
-          category: date,
-          data: generateData(),
-        });
+      for (const entry of dateEntry) {
+        point.data[entry.nickname || entry.miner] = entry.percentage
       }
     }
 
