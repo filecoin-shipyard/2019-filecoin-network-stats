@@ -19,6 +19,8 @@ import {SECTOR_SIZE_GB} from '../../Config';
 
 const logger = makeLogger('StorageStatsDAO');
 
+const MAX_DAILY_MINERS = 5;
+
 export interface IStorageStatsDAO {
   getStats (): Promise<StorageStats>
 
@@ -487,6 +489,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     type BlockPercentage = { percentage: BigNumber, miner: string, nickname: string, date: number };
     const percentages: BlockPercentage[][] = [];
     const seenNicks = new Set<string>();
+    const seenCategories = new Set<string>();
     let percentageSum = new BigNumber(0);
     for (const row of percentageRes.rows) {
       let list: BlockPercentage[];
@@ -499,7 +502,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         percentages.push(list);
       }
 
-      if (list.length === 10) {
+      if (list.length === MAX_DAILY_MINERS) {
         continue;
       }
 
@@ -520,9 +523,11 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         date,
       });
 
+      seenCategories.add(nickname || row.miner);
+
       percentageSum = percentageSum.plus(row.percentage);
 
-      if (list.length === 9) {
+      if (list.length === MAX_DAILY_MINERS - 1) {
         list.push({
           percentage: new BigNumber(1).minus(percentageSum),
           miner: '',
@@ -530,6 +535,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
           date: date,
         });
         percentageSum = new BigNumber(0);
+        seenCategories.add('Other');
       }
     }
 
@@ -544,6 +550,13 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
       for (const entry of dateEntry) {
         point.data[entry.nickname || entry.miner] = entry.percentage
+      }
+
+      const zero = new BigNumber(0);
+      for (const cat of seenCategories) {
+        if (!point.data[cat]) {
+          point.data[cat] = zero;
+        }
       }
     }
 
