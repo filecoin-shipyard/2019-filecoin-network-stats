@@ -6,6 +6,9 @@
  *
  * @returns {Function}
  */
-module.exports = function() {
-  return function() {};
+function noopDebug() {
+}
+
+module.exports = function () {
+  return noopDebug();
 };
