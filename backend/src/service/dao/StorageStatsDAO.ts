@@ -19,7 +19,7 @@ import {SECTOR_SIZE_GB} from '../../Config';
 
 const logger = makeLogger('StorageStatsDAO');
 
-const MAX_DAILY_MINERS = 2;
+const MAX_DAILY_MINERS = 3;
 
 export interface IStorageStatsDAO {
   getStats (): Promise<StorageStats>
