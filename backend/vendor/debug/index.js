@@ -10,5 +10,5 @@ function noopDebug() {
 }
 
 module.exports = function () {
-  return noopDebug();
+  return noopDebug;
 };
