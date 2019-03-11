@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js';
 import {methodDecoders} from './ABI';
 import makeLogger from '../util/logger';
 
-const CONFIRMATION_COUNT = 5;
+const CONFIRMATION_COUNT = 6;
 
 const logger = makeLogger('ChainClient');
 
