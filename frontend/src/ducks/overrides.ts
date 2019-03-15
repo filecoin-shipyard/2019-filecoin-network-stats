@@ -1,9 +1,18 @@
 import {ThunkAction} from 'redux-thunk';
-import {TimeseriesDatapoint, TimeseriesDatapointJSON, timeseriesDatapointFromJSON} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
-import {CategoryDatapoint, CategoryDatapointJSON, categoryDatapointFromJSON} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
+import {
+  TimeseriesDatapoint,
+  timeseriesDatapointFromJSON,
+  TimeseriesDatapointJSON,
+} from 'filecoin-network-stats-common/lib/domain/TimeseriesDatapoint';
+import {
+  CategoryDatapoint,
+  categoryDatapointFromJSON,
+  CategoryDatapointJSON,
+} from 'filecoin-network-stats-common/lib/domain/CategoryDatapoint';
 import {ChartDuration} from 'filecoin-network-stats-common/lib/domain/ChartDuration';
 import {getBackendJSON} from '../utils/net';
 import {Action} from './Action';
+import {AppState} from './store';
 
 export const SET_OVERRIDE = 'overrides/SET_OVERRIDE';
 
@@ -29,18 +38,19 @@ type StatName = keyof OverridesState['storage'] | keyof OverridesState['token'] 
 
 const minDelay = 500;
 
-export function setOverride (statType: keyof OverridesState, statName: StatName, duration: ChartDuration): ThunkAction<Promise<void>, OverridesState, any, any> {
-  return async (dispatch) => {
+export function setOverride (statType: keyof OverridesState, statName: StatName, duration: ChartDuration): ThunkAction<Promise<void>, AppState, any, any> {
+  return async (dispatch, getState) => {
+    const {network, customURL} = getState().stats;
     const start = Date.now();
-    const data = await getBackendJSON(`stats/${statType}/${statName}/${duration}`) as any[];
+    const data = await getBackendJSON(network, customURL, `stats/${statType}/${statName}/${duration}`) as any[];
     const elapsed = Date.now() - start;
-    let parsedData: TimeseriesDatapoint[]|CategoryDatapoint[];
+    let parsedData: TimeseriesDatapoint[] | CategoryDatapoint[];
 
     if (data.length > 0) {
       if (data[0].amount) {
-        parsedData = (data as TimeseriesDatapointJSON[]).map(timeseriesDatapointFromJSON)
+        parsedData = (data as TimeseriesDatapointJSON[]).map(timeseriesDatapointFromJSON);
       } else if (data[0].category) {
-        parsedData = (data as CategoryDatapointJSON[]).map(categoryDatapointFromJSON)
+        parsedData = (data as CategoryDatapointJSON[]).map(categoryDatapointFromJSON);
       }
     } else {
       parsedData = [];
@@ -70,15 +80,15 @@ function getInitialState (): OverridesState {
       historicalCollateral: [],
       historicalCollateralPerGB: [],
       historicalStorageAmount: [],
-      historicalUtilization: []
+      historicalUtilization: [],
     },
     token: {
       historicalBlockRewards: [],
-      historicalCoinsInCirculation: []
+      historicalCoinsInCirculation: [],
     },
     market: {
-      historicalTokenVolume: []
-    }
+      historicalTokenVolume: [],
+    },
   };
 }
 

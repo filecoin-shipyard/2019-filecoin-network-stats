@@ -3,11 +3,13 @@ import bemify from '../utils/bemify';
 import './Sidebar.scss';
 import {Link, NavLink} from 'react-router-dom';
 import c from 'classnames';
+import ChangeNetworksModal from './ChangeNetworksModal';
 
 const b = bemify('sidebar');
 
 export interface SidebarState {
   isShowingMenu: boolean
+  isShowingChangeNetworks: boolean
 }
 
 export class Sidebar extends React.Component<{}, SidebarState> {
@@ -16,14 +18,17 @@ export class Sidebar extends React.Component<{}, SidebarState> {
 
     this.state = {
       isShowingMenu: false,
+      isShowingChangeNetworks: false,
     };
   }
 
-  toggleMenu = () => {
-    this.setState({
-      isShowingMenu: !this.state.isShowingMenu,
-    });
-  };
+  toggleMenu = () => this.setState({
+    isShowingMenu: !this.state.isShowingMenu,
+  });
+
+  toggleChangeNetworks = () => this.setState({
+    isShowingChangeNetworks: !this.state.isShowingChangeNetworks,
+  });
 
   renderLinks () {
     return (
@@ -51,6 +56,9 @@ export class Sidebar extends React.Component<{}, SidebarState> {
         <NavLink to="/token-metrics" className={c(b('link'), b('link', 'macroeconomics'))}>
           Token Metrics
         </NavLink>
+        <a className={c(b('link'), b('link', 'change-networks'))} onClick={this.toggleChangeNetworks}>
+          Change Networks
+        </a>
       </div>
     );
   }
@@ -86,11 +94,18 @@ export class Sidebar extends React.Component<{}, SidebarState> {
     );
   }
 
+  renderSettings () {
+    return (
+      <ChangeNetworksModal isOpen={this.state.isShowingChangeNetworks} onRequestClose={this.toggleChangeNetworks} />
+    );
+  }
+
   render () {
     return (
       <React.Fragment>
         {this.renderFullSize()}
         {this.renderCollapsed()}
+        {this.renderSettings()}
       </React.Fragment>
     );
   }

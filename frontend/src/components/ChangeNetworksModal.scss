@@ -1,0 +1,82 @@
+@import "../variables";
+
+@import "../variables";
+
+.change-networks-modal {
+  p {
+    padding: 0 ($base * 1.5);
+    font-size: $base * 1.2;
+    line-height: 1.2;
+    margin-bottom: $base * 1.5;
+  }
+
+  label {
+    font-weight: bold;
+    color: $dark-grey;
+    display: block;
+    margin-bottom: $base / 3;
+  }
+
+  select {
+    width: 33%;
+  }
+
+  input[type=text] {
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    font-size: $base * 1.2;
+    padding: $base / 2;
+    margin-bottom: $base / 3;
+    width: 50%;
+  }
+
+  small {
+    display: block;
+  }
+
+  &__loader {
+    width: 16px;
+    height: 16px;
+  }
+
+  &__error-message {
+    display: block;
+    padding: ($base * 1.5);
+    margin: $base * 1.5;
+    color: $orange-500;
+    font-size: $base * 1.2;
+    border-radius: 3px;
+    background: rgba(#fe988a, 0.60);
+    border: 1px solid darken(#fe988a, 8%);
+  }
+
+  &__button-wrapper {
+    border-top: 1px solid $border;
+    padding: $base ($base * 1.5);
+  }
+
+  &__ok {
+    padding: ($base * 0.75) 0;
+    background: $blue;
+    border: 0;
+    color: white;
+    border-radius: 3px;
+    font-size: $base * 1.2;
+    cursor: pointer;
+    width: 80px;
+    text-align: center;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background: lighten($blue, 10%);
+    }
+
+    &--loading {
+      padding: 8px 0;
+    }
+  }
+}

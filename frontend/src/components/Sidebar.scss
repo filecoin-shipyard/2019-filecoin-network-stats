@@ -51,6 +51,7 @@
   font-size: $base * 1.2;
   color: #95a5a6;
   white-space: nowrap;
+  cursor: pointer;
 
   &.active, &:hover {
     border-left: 3px solid #42c2cb;
@@ -76,6 +77,11 @@
       background-image: url('/assets/macroeconomics-on.svg');
       background-position-x: ($base * 2) - 8px;
     }
+
+    &.sidebar__link--change-networks {
+      background-image: url('/assets/change-networks-on.svg');
+      background-position-x: ($base * 2) - 8px;
+    }
   }
 
   &--home {
@@ -98,6 +104,12 @@
   &--macroeconomics {
     background-image: url('/assets/macroeconomics-off.svg');
     background-position-x: ($base * 2) - 5px;
+  }
+
+  &--change-networks {
+    background-image: url('/assets/change-networks-off.svg');
+    background-position-x: ($base * 2) - 5px;
+    background-position-y: 6px;
   }
 }
 

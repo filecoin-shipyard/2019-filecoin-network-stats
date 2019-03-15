@@ -9,11 +9,14 @@ import Main from './components/Main';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import store from './ducks/store';
+import * as Modal from 'react-modal';
 
 const body = document.body;
 const root = document.createElement('div');
 root.id = 'root';
 body.appendChild(root);
+
+Modal.setAppElement(document.getElementById('root'));
 
 if (process.env.SENTRY_DSN) {
   (window as any).Sentry.init({ dsn: process.env.SENTRY_DSN });
