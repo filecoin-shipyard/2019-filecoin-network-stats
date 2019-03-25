@@ -26,16 +26,18 @@ export default class Backend implements IService {
   async start (): Promise<void> {
     const pg = await this.container.resolve<PGClient>('PGClient');
     await pg.start();
-    const hbServer = await this.container.resolve<IHeartbeatServer>('HeartbeatServer');
-    await hbServer.start();
     const apiServer = await this.container.resolve<IAPIServer>('APIServer');
     await apiServer.start();
     const nsd = await this.container.resolve<INodeStatusService>('NodeStatusService');
     await nsd.start();
-    const materializer = await this.container.resolve<IMaterializationService>('MaterializationService');
-    await materializer.start();
 
     if (this.config.isMaster) {
+      const hbServer = await this.container.resolve<IHeartbeatServer>('HeartbeatServer');
+      await hbServer.start();
+
+      const materializer = await this.container.resolve<IMaterializationService>('MaterializationService');
+      await materializer.start();
+
       const chainsaw = await this.container.resolve<Chainsaw>('Chainsaw');
       await chainsaw.start();
     }
