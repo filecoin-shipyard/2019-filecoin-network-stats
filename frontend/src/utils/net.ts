@@ -1,10 +1,12 @@
 export enum Network {
   STABLE = 'stable',
+  OLD_STABLE = 'old-stable',
   CUSTOM = 'custom'
 }
 
 const URLS = {
   [Network.STABLE]: process.env.BACKEND_URL,
+  [Network.OLD_STABLE]: 'https://prod-devnet-old.filecoin-stats-infra.kyokan.io'
 };
 
 function urlFor (network: Network, customURL: string) {
