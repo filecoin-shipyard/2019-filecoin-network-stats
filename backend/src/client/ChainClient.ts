@@ -30,7 +30,7 @@ export class ChainClientImpl implements IChainClient {
       [],
       {},
       (d: [BlockJSON]) => {
-        const height = leb128Base642Number(d[0].height);
+        const height = Number(d[0].height);
         if (height === toBlock) {
           return false;
         }
@@ -64,14 +64,14 @@ export class ChainClientImpl implements IChainClient {
     for (let i = CONFIRMATION_COUNT - 1; i < blockData.length - 1; i++) {
       const json = blockData[i][0];
 
-      const height = leb128Base642Number(json.height);
+      const height = Number(json.height);
       out.push({
         miner: json.miner,
         ticket: json.ticket,
         parents: json.parents,
-        parentWeight: leb128Base642Number(json.parentWeight),
+        parentWeight: Number(json.parentWeight),
         height,
-        nonce: leb128Base642Number(json.nonce),
+        nonce: Number(json.nonce),
         stateRoot: json.stateRoot,
         messageReceipts: json.messageReceipts,
         proof: json.proof,
@@ -98,7 +98,7 @@ export class ChainClientImpl implements IChainClient {
         height,
         index: i,
         gasPrice: new BigNumber(m.gasPrice),
-        gasLimit: leb128UnsignedBase642Big(m.gasLimit),
+        gasLimit: new BigNumber(m.gasLimit),
         from: m.message.from,
         to: m.message.to,
         value: m.message.value ? new BigNumber(m.message.value) : null,
