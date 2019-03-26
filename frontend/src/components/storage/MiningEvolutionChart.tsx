@@ -13,6 +13,17 @@ export interface MiningEvolutionChartProps {
 
 export class MiningEvolutionChart extends React.Component<MiningEvolutionChartProps> {
   render () {
+    if (this.props.evolution.length < 2) {
+      return (
+        <div>
+          <ContentHeader title={this.renderTitle()} />
+          <p>
+            Heads-up! We don't have enough data yet to show this chart. Check back soon.
+          </p>
+        </div>
+      );
+    }
+
     return (
       <div>
         <ContentHeader title={this.renderTitle()} />
