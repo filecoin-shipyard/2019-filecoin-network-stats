@@ -6,6 +6,7 @@ import {CategoryDatapoint} from 'filecoin-network-stats-common/lib/domain/Catego
 import PercentageLineChart from '../PercentageLineChart';
 import LabelledTooltip from '../LabelledTooltip';
 import Tooltip from '../Tooltip';
+import {ContentArea} from '../ContentArea';
 
 export interface MiningEvolutionChartProps {
   evolution: CategoryDatapoint[]
@@ -17,9 +18,9 @@ export class MiningEvolutionChart extends React.Component<MiningEvolutionChartPr
       return (
         <div>
           <ContentHeader title={this.renderTitle()} />
-          <p>
+          <ContentArea>
             Heads-up! We don't have enough data yet to show this chart. Check back soon.
-          </p>
+          </ContentArea>
         </div>
       );
     }
