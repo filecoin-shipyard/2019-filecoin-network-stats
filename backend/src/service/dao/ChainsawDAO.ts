@@ -36,30 +36,34 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
   persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
     return this.client.executeTx(async (client: PoolClient) => {
       for (const block of blocks) {
-        const parentHashes = (block.parents || []).reduce((acc: string[], curr: { [p: string]: string }) => {
-          for (const path of Object.keys(curr)) {
-            acc.push(curr[path]);
-          }
+        const count = await client.query(
+            `SELECT COUNT(*) AS count
+             FROM blocks
+             WHERE tipset_hash = $1`,
+          [block.tipsetHash],
+        );
 
-          return acc;
-        }, []);
+        if (count.rows[0].count > 0) {
+          continue
+        }
 
         await client.query(
-          'INSERT INTO blocks(height, miner, parent_weight, nonce, ingested_at, blocks_in_tipset, parent_hashes) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          'INSERT INTO blocks(height, miner, parent_weight, nonce, ingested_at, parent_tipset_hashes, tipset_hash) VALUES ($1, $2, $3, $4, $5, $6, $7)',
           [
             block.height,
             block.miner,
             block.parentWeight,
             block.nonce,
             this.tsp.now(),
-            parentHashes.length,
-            parentHashes,
+            block.parents,
+            block.tipsetHash,
           ],
         );
 
         for (const message of block.messages) {
           await client.query(
               `INSERT INTO messages (height,
+                                     tipset_hash,
                                      tx_idx,
                                      gas_price,
                                      gas_limit,
@@ -68,9 +72,10 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
                                      value,
                                      method,
                                      params)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
             [
               message.height,
+              message.tipsetHash,
               message.index,
               message.gasPrice.toFixed(0),
               message.gasLimit.toFixed(0),
@@ -89,7 +94,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
             `INSERT INTO miners (miner_address, amount, power, updated_at)
              VALUES ($1, $2, $3, $4)
              ON CONFLICT (miner_address) DO
-             UPDATE SET (amount, power, updated_at) = ($2, $3, $4)`,
+               UPDATE SET (amount, power, updated_at) = ($2, $3, $4)`,
           [
             update.address,
             update.amount.toFixed(0),

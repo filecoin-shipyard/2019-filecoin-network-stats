@@ -1,6 +1,5 @@
 import HTTPClient, {CurriedCall} from './HTTPClient';
 import {BlockJSON} from '../domain/BlockJSON';
-import {leb128Base642Number, leb128UnsignedBase642Big} from '../util/conv';
 import {BlockFromClientWithMessages} from '../domain/BlockFromClient';
 import {MessageJSON} from '../domain/MessageJSON';
 import {Message} from '../domain/Message';
@@ -8,85 +7,67 @@ import BigNumber from 'bignumber.js';
 import {methodDecoders} from './ABI';
 import makeLogger from '../util/logger';
 
-const CONFIRMATION_COUNT = 6;
 
 const logger = makeLogger('ChainClient');
+
+interface HeadJSON {
+  '/': string
+}
 
 export interface IChainClient {
   ls (toBlock: number): Promise<BlockFromClientWithMessages[]>
 }
 
 export class ChainClientImpl implements IChainClient {
-  private readonly callAPIStream: CurriedCall['callAPIStream'];
+  private client: HTTPClient;
+  private readonly callAPI: CurriedCall['callAPI'];
 
   constructor (client: HTTPClient) {
-    this.callAPIStream = client.forService('chain').callAPIStream;
+    this.client = client;
+    this.callAPI = client.forService('show/block').callAPI;
   }
 
   async ls (toBlock: number): Promise<BlockFromClientWithMessages[]> {
-    const blockData: [BlockJSON][] = [];
-    await new Promise((resolve, reject) => this.callAPIStream<[BlockJSON]>(
-      'ls',
-      [],
-      {},
-      (d: [BlockJSON]) => {
-        const height = Number(d[0].height);
-        if (height === toBlock) {
-          return false;
+    const headsRaw = await this.client.getJSON<HeadJSON[]>('chain/head');
+    const heads = headsRaw.map((h) => h['/']);
+    const unconfBlocks: BlockFromClientWithMessages[] = [];
+
+    logger.info('fetching heads', {
+      heads
+    });
+
+    const insertedParents: {[k:string]: boolean} = {};
+    const heights: number[] = [];
+    while (heads.length) {
+      const head = heads.shift();
+      const block = await this.fetchBlock(head);
+
+      if (block.height > toBlock) {
+        for (const parent of block.parents) {
+          if (!insertedParents[parent]) {
+            insertedParents[parent] = true;
+            heads.push(parent);
+          }
         }
-        if (height < toBlock) {
-          throw new Error(`block height ${height} not found!`);
+
+        unconfBlocks.push(block);
+        if (heights[0] != block.height) {
+          heights.unshift(block.height);
         }
-
-        blockData.push(d);
-        return true;
-      },
-      (e: any) => {
-        reject(e);
-      },
-      () => {
-        resolve();
-      }
-    ));
-
-    const out: BlockFromClientWithMessages[] = [];
-
-    // allow 4 blocks to confirm
-    if (blockData.length <= CONFIRMATION_COUNT) {
-      logger.info('returning no blocks until confirmations met', {
-        blocks: blockData.length,
-        confirmationCount: CONFIRMATION_COUNT,
-      });
-      return [];
-    }
-
-    // subtract one to allow parent
-    for (let i = CONFIRMATION_COUNT - 1; i < blockData.length - 1; i++) {
-      const json = blockData[i][0];
-
-      const height = Number(json.height);
-      out.push({
-        miner: json.miner,
-        ticket: json.ticket,
-        parents: json.parents,
-        parentWeight: Number(json.parentWeight),
-        height,
-        nonce: Number(json.nonce),
-        stateRoot: json.stateRoot,
-        messageReceipts: json.messageReceipts,
-        proof: json.proof,
-        messages: this.inflateMessages(json.messages, height),
-      });
-
-      const isGenesis = height === 1;
-      if (!isGenesis && !json.parents) {
-        throw new Error('block other than genesis without parents - implies bug');
       }
     }
-    return out;
+
+    const prunedHeights = heights.slice(0, -2);
+    const maxHeight = prunedHeights[prunedHeights.length - 1];
+    logger.info('pruned heads', {
+      retrievedHeight: heights[heights.length - 1],
+      maxHeight,
+      toBlock,
+    });
+    return unconfBlocks.filter((block: BlockFromClientWithMessages) => block.height <= maxHeight);
   }
 
-  private inflateMessages (messages: MessageJSON[] | null, height: number): Message[] {
+  private inflateMessages (messages: MessageJSON[] | null, height: number, tipsetHash: string): Message[] {
     if (!messages) {
       return [];
     }
@@ -96,6 +77,7 @@ export class ChainClientImpl implements IChainClient {
 
       return {
         height,
+        tipsetHash,
         index: i,
         gasPrice: new BigNumber(m.gasPrice),
         gasLimit: new BigNumber(m.gasLimit),
@@ -119,5 +101,21 @@ export class ChainClientImpl implements IChainClient {
     }
 
     return decoder(data);
+  }
+
+  private async fetchBlock (tipsetHash: string): Promise<BlockFromClientWithMessages> {
+    const json = await this.client.getJSON<BlockJSON>(`show/block/${tipsetHash}`);
+    const height = Number(json.height);
+    const parents = json.parents ? json.parents.map((p) => p['/']) : [];
+
+    return {
+      height,
+      tipsetHash,
+      parents,
+      miner: json.miner,
+      parentWeight: Number(json.parentWeight),
+      nonce: Number(json.nonce),
+      messages: this.inflateMessages(json.messages, height, tipsetHash),
+    };
   }
 }

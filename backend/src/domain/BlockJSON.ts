@@ -5,7 +5,7 @@ export interface BlockJSON {
 
   ticket: string;
 
-  parents: { [k: string]: string }[];
+  parents: { '/': string }[];
 
   parentWeight: string;
 

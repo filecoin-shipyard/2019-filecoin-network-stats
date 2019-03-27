@@ -34,6 +34,15 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
         };
       }
 
+      const blocksInTipsetRes = await client.query(
+        'SELECT COUNT(*) AS count FROM blocks WHERE height = $1',
+        [
+          data.rows[0].height,
+        ],
+      );
+
+      const blocksInTipset = Number(blocksInTipsetRes.rows[0].count);
+
       const avgRes = await client.query(`
         WITH timings AS (SELECT b.ingested_at - lag(b.ingested_at) OVER (ORDER BY b.ingested_at ASC) AS timing
                          FROM blocks b
@@ -45,7 +54,7 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
 
       let averageBlockTime = 0;
       if (avgRes.rows.length) {
-        averageBlockTime = Number(avgRes.rows[0].avg)
+        averageBlockTime = Number(avgRes.rows[0].avg);
       }
 
       const row = data.rows[0];
@@ -67,7 +76,7 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
         minerName: null,
         minerAddress,
         power,
-        blocksInTipset: row.blocks_in_tipset,
+        blocksInTipset,
         peerId,
       };
     });

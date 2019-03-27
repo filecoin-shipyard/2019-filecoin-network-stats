@@ -3,6 +3,8 @@ import BigNumber from 'bignumber.js';
 export interface Message {
   height: number
 
+  tipsetHash: string
+
   index: number
 
   gasPrice: BigNumber

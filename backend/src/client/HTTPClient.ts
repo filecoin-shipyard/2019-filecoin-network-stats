@@ -91,6 +91,16 @@ export default class HTTPClient {
     });
   };
 
+  getJSON = async <T> (path: string): Promise<T> => {
+    return new Promise<T>((resolve, reject) => request.post({url: `${this.url}/api/${path}`, json: true }, (err, res, body) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve(body);
+    }));
+  };
+
   forService = (service: string): CurriedCall => {
     return {
       callAPI: (method, args, options) => this.callAPI(service, method, args, options),

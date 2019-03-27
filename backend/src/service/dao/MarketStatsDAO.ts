@@ -54,7 +54,7 @@ export class PostgresMarketStatsDAO implements IMarketStatsDAO {
       WITH ts AS (${durSeq}),
            messages AS (SELECT m.*, extract(EPOCH FROM date_trunc('${durBase}', to_timestamp(b.ingested_at))) AS ts
                         FROM messages m
-                               INNER JOIN blocks b ON b.height = m.height
+                               INNER JOIN blocks b ON b.tipset_hash = m.tipset_hash
                         WHERE m.value > 0)
       SELECT t.date as date, coalesce(sum(m.value), 0) AS amount
       FROM ts t

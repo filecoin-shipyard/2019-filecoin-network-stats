@@ -8,7 +8,7 @@ import {IMiningPowerService} from './MiningPowerService';
 
 const logger = makeLogger('Chainsaw');
 
-const POLL_INTERVAL = 15000;
+const POLL_INTERVAL = 5000;
 
 export default class Chainsaw implements IService {
   private readonly cDao: IChainsawDAO;

@@ -106,7 +106,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       parentWeight: row.parent_weight,
       nonce: row.nonce,
       ingestedAt: row.ingested_at,
-      parents: row.parent_hashes,
+      parents: row.parent_tipset_hashes,
     };
   };
 

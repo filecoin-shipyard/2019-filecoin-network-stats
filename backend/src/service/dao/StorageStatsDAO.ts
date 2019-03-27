@@ -99,7 +99,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                           sum(cast(m.params->>0 AS bigint)) * ${SECTOR_SIZE_GB}              AS gb,
                           extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS date
                    FROM messages m
-                          JOIN blocks b ON m.height = b.height
+                          JOIN blocks b ON m.tipset_hash = b.tipset_hash
                    WHERE m.method = 'createMiner'
                    GROUP BY date),
              amounts AS (SELECT m.date,
@@ -209,7 +209,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       SELECT coalesce(avg(a.price), 0) / 1000000000000000000 AS avg
       FROM asks a
              JOIN messages m ON a.message_id = m.id
-             JOIN blocks b ON b.height = m.height
+             JOIN blocks b ON b.tipset_hash = m.tipset_hash
       WHERE b.ingested_at > extract(EPOCH FROM (date_trunc('day', current_timestamp) - INTERVAL '30 days'));
     `);
 
@@ -232,7 +232,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
            a as (select avg(a.price) as avg, extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from asks a
                         join messages m on a.message_id = m.id
-                        join blocks b on b.height = m.height
+                        join blocks b on b.tipset_hash = m.tipset_hash
                  group by date)
       select d.date, coalesce(a.avg, 0) / 1000000000000000000 as amount
       from d
@@ -251,7 +251,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
            m as (select sum(m.value)                                                       as amount,
                         extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from messages m
-                        join blocks b on m.height = b.height
+                        join blocks b on m.tipset_hash = b.tipset_hash
                  where m.method = 'createMiner'
                  group by date)
       select d.date as date, sum(coalesce(amount, 0)) over (order by d.date asc) as amount
@@ -272,7 +272,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                         sum(cast(m.params->>0 as bigint)) * ${SECTOR_SIZE_GB}                     as gb,
                         extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from messages m
-                        join blocks b on m.height = b.height
+                        join blocks b on m.tipset_hash = b.tipset_hash
                  where m.method = 'createMiner'
                  group by date)
       select d.date,

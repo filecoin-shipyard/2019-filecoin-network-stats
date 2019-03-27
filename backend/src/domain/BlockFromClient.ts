@@ -3,21 +3,15 @@ import {Message} from './Message';
 export interface BlockFromClient {
   miner: string
 
-  ticket: string
+  tipsetHash: string
 
-  parents: {[k: string]: string}[]
-
-  parentWeight: number
+  parents: string[]
 
   height: number
 
+  parentWeight: number
+
   nonce: number
-
-  stateRoot: {[k: string]: string}
-
-  messageReceipts: any[]
-
-  proof: any[]
 }
 
 export type BlockFromClientWithMessages = BlockFromClient & {
