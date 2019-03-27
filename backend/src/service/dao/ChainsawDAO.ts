@@ -44,7 +44,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         );
 
         if (count.rows[0].count > 0) {
-          continue
+          continue;
         }
 
         await client.query(
@@ -71,8 +71,9 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
                                      to_address,
                                      value,
                                      method,
-                                     params)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                                     params,
+                                     nonce)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
             [
               message.height,
               message.tipsetHash,
@@ -84,6 +85,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
               message.value ? message.value.toFixed(0) : null,
               message.method,
               message.params ? JSON.stringify(message.params) : null,
+              message.nonce,
             ],
           );
         }

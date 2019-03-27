@@ -5,6 +5,8 @@ export interface Message {
 
   tipsetHash: string
 
+  nonce: number
+
   index: number
 
   gasPrice: BigNumber

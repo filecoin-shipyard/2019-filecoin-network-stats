@@ -86,6 +86,7 @@ export class ChainClientImpl implements IChainClient {
         value: m.message.value ? new BigNumber(m.message.value) : null,
         method: m.message.method,
         params: this.decodeParams(m.message.method, m.message.params),
+        nonce: Number(m.message.nonce),
       };
     });
   }

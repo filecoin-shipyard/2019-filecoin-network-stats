@@ -43,8 +43,8 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
     return this.client.executeTx(async (client: PoolClient) => {
       const uniqueAddressRes = await client.query(`
         SELECT COUNT(DISTINCT m.address) AS unique_addresses
-        FROM (SELECT m.to_address AS address FROM messages m
-              UNION SELECT m.from_address AS address FROM messages m) AS m;
+        FROM (SELECT m.to_address AS address FROM unique_messages m
+              UNION SELECT m.from_address AS address FROM unique_messages m) AS m;
       `);
       const uniqueAddressCount = uniqueAddressRes.rows[0].unique_addresses;
 
@@ -56,7 +56,7 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
 
       const collateralizedCoinsRes = await client.query(`
         SELECT sum(m.value) AS total
-        FROM messages m
+        FROM unique_messages m
         WHERE m.method = 'createMiner';
       `);
       const collateralizedCoins = new BigNumber(collateralizedCoinsRes.rows[0].total);
@@ -95,10 +95,10 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
       WITH series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
                       FROM generate_series(1, ${bucketCount - 1}, 1) g (n)),
            value_transfers AS (SELECT m.to_address AS address, m.value AS value
-                               FROM messages m
+                               FROM unique_messages m
                                WHERE value > 0
           UNION ALL SELECT m.from_address AS address, -1 * m.value AS value
-                    FROM messages m
+                    FROM unique_messages m
                     WHERE value > 0
           UNION ALL
           SELECT b.miner AS address, 1000 AS value
@@ -156,7 +156,7 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
   }
 
   private async getHistoricalBlockRewards (client: PoolClient, duration: ChartDuration): Promise<TimeseriesDatapoint[]> {
-    const {durSeq, durBase} = generateDurationSeries(duration)
+    const {durSeq, durBase} = generateDurationSeries(duration);
 
     const res = await client.query(`
       WITH d AS (${durSeq})
