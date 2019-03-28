@@ -614,10 +614,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                            FROM unique_messages m
                                   JOIN capacities c ON m.from_address = c.address
                            WHERE m.method = 'commitSector'
-                             AND c.gb ${op === 'lt' ? '<' : '>='} $1
                            GROUP BY m.from_address)
       SELECT coalesce(avg(c.committed_gb / c.pledged_gb), 0) AS utilization
-      FROM commitments c WHERE c.pledged_gb > 0;
+      FROM commitments c WHERE c.pledged_gb ${op === 'lt' ? '<' : '>='} $1 AND c.committed_gb < c.pledged_gb;
     `, [
       size,
     ]);
