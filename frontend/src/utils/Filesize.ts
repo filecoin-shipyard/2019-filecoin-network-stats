@@ -72,13 +72,14 @@ export default class Filesize {
     return `${size.toFixed(0)}`
   }
 
-  smartUnit (): { size: BigNumber, unit: SizeUnit } {
+  smartUnit (): { size: BigNumber, unit: SizeUnit, unitString: string } {
     for (const unit of UNITS_IN_ORDER) {
       const size = this.toBigNumber(unit);
       if (size.gte(1)) {
         return {
           size,
           unit,
+          unitString: UNITS_TO_STRINGS[unit],
         };
       }
     }
@@ -86,6 +87,7 @@ export default class Filesize {
     return {
       size: this.toBigNumber(SizeUnit.MB),
       unit: SizeUnit.MB,
+      unitString: UNITS_TO_STRINGS[SizeUnit.MB],
     };
   }
 

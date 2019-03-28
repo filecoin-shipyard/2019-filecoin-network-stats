@@ -42,7 +42,7 @@ export type HomeProps = HomeStateProps & HomeDispatchProps
 
 export class Home extends React.Component<HomeProps, {}> {
   render () {
-    const totalStorage = Filesize.fromGB(this.props.storageStats.storageAmount.total);
+    const totalStorage = Filesize.fromGB(this.props.storageStats.storageAmount.total).smartUnit();
     const averageCost = new Currency(this.props.storageStats.storageCost.average);
     const utilization = this.props.storageStats.networkUtilization;
     const currentUtilization = utilization[utilization.length - 1].amount;
@@ -73,8 +73,8 @@ export class Home extends React.Component<HomeProps, {}> {
             </Col>
             <Col>
               <SingleStat
-                value={totalStorage.smartUnitString()}
-                unit="GB"
+                value={totalStorage.size.toFixed(0)}
+                unit={totalStorage.unitString}
                 subtitle="Current Network Storage Capacity"
                 tooltip={<CapacityTooltip />}
                 trend={PercentageNumber.create(this.props.storageStats.storageAmount.trend).toNumber()}
