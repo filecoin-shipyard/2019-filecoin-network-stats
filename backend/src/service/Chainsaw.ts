@@ -88,13 +88,14 @@ export default class Chainsaw implements IService {
     const pledgeUpdater = new MinerUpdater(this.client.miner());
     for (const block of blocks) {
       for (const message of block.messages) {
-        if (message.method === 'addAsk') {
+        // Some addAsk messages have 'empty' as the to_address
+        if (message.method === 'addAsk' || message.method === 'commitSector' && message.to !== 'empty') {
           pledgeUpdater.addAddress(message.to);
         }
       }
 
       // genesis doesn't have a miner
-      if (block.miner) {
+      if (block.miner && block.miner !== 'empty') {
         pledgeUpdater.addAddress(block.miner);
       } else {
         block.miner = 'bootstrap';

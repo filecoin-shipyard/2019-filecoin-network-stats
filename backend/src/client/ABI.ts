@@ -1,10 +1,7 @@
 import {leb128Unsigned2String} from '../util/conv';
 import BigNumber from 'bignumber.js';
-import fromPubkey from '../util/address';
 import CBOR = require('cbor');
 import PeerID = require('peer-id');
-
-const ZERO_ADDRESS = 'fcqqqqqqqqqqqqqqqqqqqqqyptunp';
 
 export interface TypeDecoder<T> {
   decode (buf: Buffer): T
@@ -18,7 +15,7 @@ export const AttoFilDecoder: TypeDecoder<string> = {
 
 export const BigIntDecoder: TypeDecoder<string> = {
   decode (buf: Buffer): string {
-    return leb128Unsigned2String(buf);
+    return new BigNumber(`0x${buf.toString('hex')}`).toFixed(0);
   },
 };
 
@@ -42,15 +39,9 @@ export const SectorIDDecoder: TypeDecoder<string> = {
 
 export const AddressDecoder: TypeDecoder<string> = {
   decode (buf: Buffer): string {
-    // WARNING: in some cases, the buffer above is null.
-    // An issue will be filed against go-filecoin. This may
-    // be related to https://github.com/filecoin-project/go-filecoin/pull/1795.
-    // In the meantime, use the zero address if it's null.
-    if (!(buf instanceof Buffer)) {
-      return ZERO_ADDRESS;
-    }
-
-    return fromPubkey(buf);
+    // Stub this out for now to avoid confusion since
+    // the address generation algorithm changed.
+    return BytesDecoder.decode(buf);
   },
 };
 
