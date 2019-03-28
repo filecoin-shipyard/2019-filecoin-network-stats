@@ -73,7 +73,7 @@ export class Home extends React.Component<HomeProps, {}> {
             </Col>
             <Col>
               <SingleStat
-                value={totalStorage.toString(SizeUnit.GB)}
+                value={totalStorage.smartUnitString()}
                 unit="GB"
                 subtitle="Current Network Storage Capacity"
                 tooltip={<CapacityTooltip />}
