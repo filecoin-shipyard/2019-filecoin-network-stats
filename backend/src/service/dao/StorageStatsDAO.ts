@@ -306,15 +306,17 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private async getCapacityHistogram (client: PoolClient) {
-    const increment = 2000;
+    const increment = 500;
     const bucketCount = 10;
 
     const points = await client.query(`
-      WITH series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
+      WITH sizes AS (
+        SELECT sum(cast(m.params->>0 AS integer)) * 0.268435456 AS amount FROM messages m WHERE m.method = 'createMiner' GROUP BY m.from_address
+      ), series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
                       FROM generate_series(1, ${bucketCount - 1}, 1) g (n)),
-           miners AS (SELECT p.*, bucket
-                      FROM miners p,
-                           width_bucket(p.amount, 1, ${increment * (bucketCount - 1)}, ${bucketCount - 1}) AS bucket)
+        miners AS (SELECT s.*, bucket
+                      FROM sizes s,
+                           width_bucket(s.amount, 1, ${increment * (bucketCount - 1)}, ${bucketCount - 1}) AS bucket)
       SELECT s.n, s.bucket_start, s.bucket_end, count(p)
       FROM series s
              LEFT OUTER JOIN miners p ON p.bucket = s.n
