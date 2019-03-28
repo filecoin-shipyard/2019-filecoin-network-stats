@@ -93,7 +93,13 @@ export default class Filesize {
 
   smartUnitString () {
     const smartUnit = this.smartUnit();
-    return `${smartUnit.size.toFixed(0)} ${UNITS_TO_STRINGS[smartUnit.unit]}`;
+
+    const diff = smartUnit.size.minus(smartUnit.size.toFormat(0, BigNumber.ROUND_FLOOR));
+    console.log(smartUnit.size.toString(), smartUnit.size.toFormat(0, BigNumber.ROUND_FLOOR));
+    console.log(diff.toString());
+    const places = diff.gte('0.1') ? 1 : 0;
+
+    return `${smartUnit.size.toFixed(places)} ${UNITS_TO_STRINGS[smartUnit.unit]}`;
   }
 
   static fromBytes(bytes: number|BigNumber) {

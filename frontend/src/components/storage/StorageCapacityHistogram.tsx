@@ -31,10 +31,10 @@ export class StorageCapacityHistogram extends React.Component<MinerCountChartPro
   }
 
   dataTransformer (point: HistogramDatapoint) {
-    const start = new Filesize(point.bucketStart).smartUnit();
-    let end = '+ TB';
+    const start = new Filesize(point.bucketStart).smartUnitString();
+    let end = '+';
     if (point.bucketEnd.gt(0)) {
-      end = `${start.unit} - ${new Filesize(point.bucketEnd).smartUnitString()}`;
+      end = ` - ${new Filesize(point.bucketEnd).smartUnitString()}`;
     }
 
     return {
