@@ -328,7 +328,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       ORDER BY n ASC;
     `);
 
-    return this.inflateHistogramDatapoint(points.rows);
+    return this.inflateHistogramDatapointToMB(points.rows);
   }
 
   private async getMiners (client: PoolClient) {
@@ -632,11 +632,11 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     };
   }
 
-  private inflateHistogramDatapoint (rows: any[]): HistogramDatapoint[] {
+  private inflateHistogramDatapointToMB (rows: any[]): HistogramDatapoint[] {
     return rows.map((r: any) => ({
       n: Number(r.n),
-      bucketStart: new BigNumber(r.bucket_start),
-      bucketEnd: new BigNumber(r.bucket_end),
+      bucketStart: new BigNumber(r.bucket_start).multipliedBy(1000),
+      bucketEnd: new BigNumber(r.bucket_end).multipliedBy(1000),
       count: Number(r.count),
     }));
   }
