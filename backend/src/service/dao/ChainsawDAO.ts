@@ -105,6 +105,8 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
           ],
         );
       }
+
+      await client.query('REFRESH MATERIALIZED VIEW CONCURRENTLY unique_messages');
     });
   }
 }
