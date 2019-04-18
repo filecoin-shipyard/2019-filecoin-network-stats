@@ -32,4 +32,4 @@ CREATE MATERIALIZED VIEW unique_messages AS (
            JOIN messages m ON m.id = t.id
 ) WITH DATA;
 
-SELECT current_timestamp AS ts;
+CREATE UNIQUE INDEX unique_messages_id on unique_messages(id);
