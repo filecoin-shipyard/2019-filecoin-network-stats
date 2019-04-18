@@ -1,1 +1,0 @@
-CREATE INDEX block_miner_idx ON blocks(miner);
