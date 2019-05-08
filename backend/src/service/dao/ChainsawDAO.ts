@@ -35,6 +35,8 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
 
   persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
     return this.client.executeTx(async (client: PoolClient) => {
+      const lastId = await client.query('SELECT COALESCE(MAX(id), 0) FROM messages');
+
       for (const block of blocks) {
         const count = await client.query(
             `SELECT COUNT(*) AS count
@@ -106,7 +108,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         );
       }
 
-      await client.query('REFRESH MATERIALIZED VIEW CONCURRENTLY unique_messages');
+      await client.query('SELECT populate_unique_messages($1)', lastId.rows[0].id);
     });
   }
 }
