@@ -35,7 +35,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
 
   persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
     return this.client.executeTx(async (client: PoolClient) => {
-      const lastId = await client.query('SELECT COALESCE(MAX(id), 0) FROM messages');
+      const lastId = await client.query('SELECT COALESCE(MAX(id), 0) as id FROM messages');
 
       for (const block of blocks) {
         const count = await client.query(
