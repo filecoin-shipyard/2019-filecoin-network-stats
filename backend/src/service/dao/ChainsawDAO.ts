@@ -108,7 +108,9 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         );
       }
 
-      await client.query('SELECT populate_unique_messages($1)', lastId.rows[0].id);
+      await client.query('SELECT populate_unique_messages($1)', [
+        lastId.rows[0].id
+      ]);
     });
   }
 }
