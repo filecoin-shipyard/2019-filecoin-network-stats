@@ -19,7 +19,7 @@ CREATE INDEX unique_messages_from_address ON unique_messages (from_address);
 CREATE INDEX unique_messages_to_address ON unique_messages (to_address);
 CREATE INDEX unique_messages_committed_sector_id ON unique_messages USING btree (((params ->> 0))) WHERE ((method)::text = 'commitSector'::text);
 
-CREATE FUNCTION populate_unique_messages(last_id BIGINT) RETURNS int AS
+CREATE OR REPLACE FUNCTION populate_unique_messages(last_id BIGINT) RETURNS int AS
 $$
 BEGIN
   WITH t AS (
@@ -35,7 +35,8 @@ BEGIN
                 JOIN messages m ON m.id = t.id
        )
   INSERT
-  INTO unique_messages(height,
+  INTO unique_messages(id,
+                       height,
                        tx_idx,
                        gas_price,
                        gas_limit,
@@ -46,7 +47,8 @@ BEGIN
                        params,
                        tipset_hash,
                        nonce)
-  SELECT m.height,
+  SELECT m.id,
+         m.height,
          m.tx_idx,
          m.gas_price,
          m.gas_limit,
