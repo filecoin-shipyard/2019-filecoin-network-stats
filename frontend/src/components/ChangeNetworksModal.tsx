@@ -101,7 +101,8 @@ export class ChangeNetworksModal extends React.Component<ChangeNetworksModalProp
               </label>
               <select value={this.state.network} onChange={this.updateField('network')}>
                 <option value={Network.STABLE}>Devnet</option>
-                <option value={Network.OLD_STABLE}>Old Devnet</option>
+                <option value={Network.OLD_STABLE_2}>Old Devnet 2</option>
+                <option value={Network.OLD_STABLE_1}>Old Devnet 1</option>
                 <option value={Network.CUSTOM}>Custom</option>
               </select>
             </p>
