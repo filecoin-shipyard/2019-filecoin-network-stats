@@ -17,7 +17,7 @@ CREATE INDEX unique_messages_height ON unique_messages (height);
 CREATE INDEX unique_messages_method ON unique_messages (method);
 CREATE INDEX unique_messages_from_address ON unique_messages (from_address);
 CREATE INDEX unique_messages_to_address ON unique_messages (to_address);
-CREATE INDEX messages_committed_sector_id ON unique_messages USING btree (((params ->> 0))) WHERE ((method)::text = 'commitSector'::text);
+CREATE INDEX unique_messages_committed_sector_id ON unique_messages USING btree (((params ->> 0))) WHERE ((method)::text = 'commitSector'::text);
 
 CREATE FUNCTION populate_unique_messages(last_id BIGINT) RETURNS int AS
 $$
