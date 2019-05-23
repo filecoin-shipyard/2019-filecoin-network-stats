@@ -47,7 +47,7 @@ interface BlockIndex {
   }
 }
 
-const FIVE_GB = 5;
+const FIVE_TB = 5000;
 
 export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   private readonly client: PGClient;
@@ -79,8 +79,8 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         distributionOverTime: await this.cs.wrapMethod('storage-stats-distribution-over-time', DEFAULT_CACHE_TIME, () => this.getMiningDistributionOverTime(client)),
         evolution: await this.cs.wrapMethod('storage-stats-evolution', DEFAULT_CACHE_TIME, () => this.getMiningEvolution(client)),
         costCapacityBySize: [
-          await this.cs.wrapMethod('storage-stats-cost-capacity-0', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_GB, 'lt')),
-          await this.cs.wrapMethod('storage-stats-cost-capacity-1', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_GB, 'gte')),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-0', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_TB, 'lt')),
+          await this.cs.wrapMethod('storage-stats-cost-capacity-1', DEFAULT_CACHE_TIME, () => this.getCostCapacityBySize(client, FIVE_TB, 'gte')),
         ],
       };
     });
