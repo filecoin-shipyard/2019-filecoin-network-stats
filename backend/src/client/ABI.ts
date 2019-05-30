@@ -21,6 +21,10 @@ export const BigIntDecoder: TypeDecoder<string> = {
 
 export const BytesDecoder: TypeDecoder<string> = {
   decode (buf: Buffer): string {
+    if (buf === null) {
+      return '';
+    }
+
     return buf.toString('hex');
   },
 };
