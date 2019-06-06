@@ -1,0 +1,1 @@
+CREATE INDEX block_height_idx ON blocks USING btree(height);
