@@ -1,0 +1,1 @@
+ALTER TABLE asks ALTER COLUMN expiry_length SET DATA TYPE bigint;
