@@ -3,6 +3,7 @@ import {PoolClient} from 'pg';
 import {Block} from '../../domain/Block';
 import {ICacheService} from '../CacheService';
 import {synchronized} from '../../util/synchronized';
+import makeLogger from '../../util/logger';
 
 export interface IBlocksDAO {
   byHeight (height: number): Promise<Block | null>
@@ -11,6 +12,8 @@ export interface IBlocksDAO {
 
   top (forceRefresh?: boolean): Promise<Block | null>
 }
+
+const logger = makeLogger('PostgresBlocksDAO');
 
 const TEN_MINUTES = 10 * 1000;
 
@@ -68,6 +71,11 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       if (uncachedBlocks.length === 0) {
         return cachedBlocks;
       }
+
+      logger.info('populating uncached blocks', {
+        count: uncachedBlocks.length,
+        uncachedBlocks: uncachedBlocks,
+      });
 
       const res = await client.query(
         'SELECT * FROM blocks WHERE height = ANY($1::bigint[])',
