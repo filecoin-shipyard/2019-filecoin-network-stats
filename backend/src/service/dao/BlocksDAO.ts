@@ -2,21 +2,30 @@ import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import {Block} from '../../domain/Block';
 import {ICacheService} from '../CacheService';
+import {synchronized} from '../../util/synchronized';
+import makeLogger from '../../util/logger';
 
 export interface IBlocksDAO {
   byHeight (height: number): Promise<Block | null>
 
   byHeights (heights: number[]): Promise<Block[]>
 
-  top (): Promise<Block | null>
+  top (forceRefresh?: boolean): Promise<Block | null>
 }
 
+const logger = makeLogger('PostgresBlocksDAO');
+
 const TEN_MINUTES = 10 * 1000;
+
+type NullSigil = 'NULL';
+const NULL_SIGIL = 'NULL';
 
 export class PostgresBlocksDAO implements IBlocksDAO {
   private readonly client: PGClient;
 
   private readonly cs: ICacheService;
+
+  private topBlock: Block | null = null;
 
   constructor (client: PGClient, cs: ICacheService) {
     this.client = client;
@@ -24,9 +33,10 @@ export class PostgresBlocksDAO implements IBlocksDAO {
   }
 
   async byHeight (height: number): Promise<Block | null> {
-    const cached = this.cs.get<Block>(this.cacheKey(height));
+    const cached = this.cs.get<Block | NullSigil>(this.cacheKey(height));
     if (cached) {
-      return cached;
+      this.cs.setProactiveExpiry(this.cacheKey(height), TEN_MINUTES, cached);
+      return cached === NULL_SIGIL ? null : cached;
     }
 
     return this.client.execute(async (client: PoolClient) => {
@@ -38,6 +48,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       );
 
       if (!res.rows.length) {
+        this.cs.setProactiveExpiry(this.cacheKey(height), TEN_MINUTES, NULL_SIGIL);
         return null;
       }
 
@@ -47,45 +58,46 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     });
   }
 
-  byHeights (heights: number[]): Promise<Block[]> {
-    return this.client.execute(async (client: PoolClient) => {
-      const cachedBlocks: Block[] = [];
-      const uncachedBlocks: number[] = [];
+  byHeights = synchronized(async (heights: number[]): Promise<Block[]> => {
+    const cachedBlocks: Block[] = [];
+    const uncachedBlocks: number[] = [];
 
-      for (const height of heights) {
-        const cached = this.cs.get<Block>(this.cacheKey(height));
-        if (cached) {
-          cachedBlocks.push(cached);
-        } else {
-          uncachedBlocks.push(height);
-        }
+    for (const height of heights) {
+      const cached = this.cs.get<Block>(this.cacheKey(height));
+      if (cached) {
+        cachedBlocks.push(cached);
+      } else {
+        uncachedBlocks.push(height);
       }
+    }
 
-      if (uncachedBlocks.length === 0) {
-        return cachedBlocks;
-      }
+    if (uncachedBlocks.length === 0) {
+      return cachedBlocks;
+    }
 
-      const res = await client.query(
-        'SELECT * FROM blocks WHERE height = ANY($1::bigint[])',
-        [
-          uncachedBlocks,
-        ],
-      );
-
-      let dbBlocks: Block[] = [];
-      if (res.rows.length) {
-        dbBlocks = res.rows.map(this.inflateBlock);
-        for (const block of dbBlocks) {
-          this.cs.setProactiveExpiry(this.cacheKey(block.height), TEN_MINUTES, block)
-        }
-      }
-
-      return cachedBlocks.concat(dbBlocks);
+    logger.info('populating uncached blocks', {
+      count: uncachedBlocks.length,
+      uncachedBlocks: uncachedBlocks,
     });
-  }
 
-  top (): Promise<Block | null> {
-    return this.client.execute(async (client: PoolClient) => {
+    let dbBlocks: Block[] = [];
+    for (const height of uncachedBlocks) {
+      const dbBlock = await this.byHeight(height);
+      if (!dbBlock) {
+        continue;
+      }
+      dbBlocks.push(dbBlock);
+    }
+
+    return cachedBlocks.concat(dbBlocks);
+  });
+
+  top = synchronized(async (forceRefresh: boolean = false): Promise<Block | null> => {
+    if (this.topBlock && !forceRefresh) {
+      return this.topBlock;
+    }
+
+    await this.client.execute(async (client: PoolClient) => {
       const res = await client.query(
         'SELECT * FROM blocks ORDER BY height DESC LIMIT 1',
       );
@@ -94,9 +106,12 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         return null;
       }
 
-      return this.inflateBlock(res.rows[0]);
+      this.topBlock = this.inflateBlock(res.rows[0]);
     });
-  }
+
+
+    return this.topBlock;
+  });
 
 
   inflateBlock = (row: any): Block => {
@@ -110,7 +125,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     };
   };
 
-  private cacheKey(height: number): string {
-    return `blocks-height-${height}`;
+  private cacheKey (key: number | string): string {
+    return `blocks-height-${key}`;
   }
 }
