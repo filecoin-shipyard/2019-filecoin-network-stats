@@ -13,7 +13,7 @@ export default class PGClient implements IService {
   async start (): Promise<void> {
     this.pool = new Pool({
       connectionString: this.config.dbUrl,
-      max: 20,
+      max: 10,
       idleTimeoutMillis: 30000,
     });
 
