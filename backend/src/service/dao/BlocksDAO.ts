@@ -88,7 +88,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
   }
 
   top = synchronized(async (forceRefresh: boolean = false): Promise<Block | null> => {
-    if (this.topBlock || !forceRefresh) {
+    if (this.topBlock && !forceRefresh) {
       return this.topBlock;
     }
 
