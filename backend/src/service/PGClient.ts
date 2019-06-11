@@ -13,6 +13,9 @@ export default class PGClient implements IService {
   async start (): Promise<void> {
     this.pool = new Pool({
       connectionString: this.config.dbUrl,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 1000,
     });
 
     await this.pool.connect();
