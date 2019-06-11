@@ -31,8 +31,8 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
     return Number(res.height);
   }
 
-  persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
-    return this.client.executeTx(async (client: PoolClient) => {
+  async persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {
+    await this.client.executeTx(async (client: PoolClient) => {
       const lastId = await client.query('SELECT COALESCE(MAX(id), 0) as id FROM messages');
 
       for (const block of blocks) {
@@ -110,5 +110,7 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         lastId.rows[0].id
       ]);
     });
+
+    await this.bDao.top(true);
   }
 }

@@ -9,9 +9,7 @@ export interface IBlocksDAO {
 
   byHeights (heights: number[]): Promise<Block[]>
 
-  top (): Promise<Block | null>
-
-  refreshTop: Promise<void>
+  top (forceRefresh?: boolean): Promise<Block | null>
 }
 
 const TEN_MINUTES = 10 * 1000;
@@ -89,8 +87,8 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     });
   }
 
-  top = synchronized(async (): Promise<Block | null> => {
-    if (this.topBlock) {
+  top = synchronized(async (forceRefresh: boolean = false): Promise<Block | null> => {
+    if (this.topBlock || !forceRefresh) {
       return this.topBlock;
     }
 
