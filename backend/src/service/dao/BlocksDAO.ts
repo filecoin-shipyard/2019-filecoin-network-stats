@@ -29,6 +29,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
   async byHeight (height: number): Promise<Block | null> {
     const cached = this.cs.get<Block>(this.cacheKey(height));
     if (cached) {
+      this.cs.setProactiveExpiry(this.cacheKey(cached.height), TEN_MINUTES, cached);
       return cached;
     }
 

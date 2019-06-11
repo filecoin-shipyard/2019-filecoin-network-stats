@@ -22,6 +22,8 @@ export const DEFAULT_CACHE_TIME = 60 * 1000;
 export class MemoryCacheService implements ICacheService {
   private cache: { [k: string]: CacheEntry } = {};
 
+  private proactiveExpiries: {[key: string]: NodeJS.Timeout} = {};
+
 // stub these for now in case we want to add redis later
   start (): Promise<void> {
     return;
@@ -37,11 +39,16 @@ export class MemoryCacheService implements ICacheService {
       expiry: Date.now() + expiry,
     };
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (this.cache[key] && this.cache[key].expiry < Date.now()) {
         delete this.cache[key];
+        delete this.proactiveExpiries[key];
       }
     }, expiry);
+    if (this.proactiveExpiries[key]) {
+      clearTimeout(this.proactiveExpiries[key]);
+    }
+    this.proactiveExpiries[key] = timeout;
   }
 
   public get<T> (key: string): T | null {
