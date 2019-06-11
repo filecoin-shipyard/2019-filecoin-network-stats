@@ -83,6 +83,9 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     let dbBlocks: Block[] = [];
     for (const height of uncachedBlocks) {
       const dbBlock = await this.byHeight(height);
+      if (!dbBlock) {
+        continue;
+      }
       dbBlocks.push(dbBlock);
     }
 
