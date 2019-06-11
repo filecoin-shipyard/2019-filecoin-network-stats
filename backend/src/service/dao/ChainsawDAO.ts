@@ -3,6 +3,7 @@ import {PoolClient} from 'pg';
 import {ITimestampProvider} from '../TimestampProvider';
 import {BlockFromClientWithMessages} from '../../domain/BlockFromClient';
 import {MinerUpdate} from '../../domain/MinerUpdate';
+import {IBlocksDAO} from './BlocksDAO';
 
 export interface IChainsawDAO {
   lastBlock (): Promise<number>
@@ -13,24 +14,21 @@ export interface IChainsawDAO {
 export default class PostgresChainsawDAO implements IChainsawDAO {
   private readonly client: PGClient;
   private readonly tsp: ITimestampProvider;
+  private readonly bDao: IBlocksDAO;
 
-  constructor (client: PGClient, tsp: ITimestampProvider) {
+  constructor (client: PGClient, bDao: IBlocksDAO, tsp: ITimestampProvider) {
     this.client = client;
     this.tsp = tsp;
+    this.bDao = bDao;
   }
 
-  lastBlock (): Promise<number> {
-    return this.client.execute(async (client: PoolClient) => {
-      const res = await client.query(
-        'SELECT * FROM blocks ORDER BY height DESC LIMIT 1',
-      );
+  async lastBlock (): Promise<number> {
+    const res = await this.bDao.top();
+    if (!res) {
+      return 0;
+    }
 
-      if (!res.rows.length) {
-        return 0;
-      }
-
-      return Number(res.rows[0].height);
-    });
+    return Number(res.height);
   }
 
   persistPoll (blocks: BlockFromClientWithMessages[], minerUpdates: MinerUpdate[]): Promise<void> {

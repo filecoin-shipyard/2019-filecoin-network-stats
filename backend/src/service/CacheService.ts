@@ -10,6 +10,8 @@ export interface ICacheService extends IService {
   setProactiveExpiry<T> (key: string, expiry: number, value: T): void
 
   get<T> (key: string): T | null
+
+  set<T>(key: string, expiry: number, value: T)
 }
 
 export interface CacheEntry {
@@ -49,6 +51,13 @@ export class MemoryCacheService implements ICacheService {
     return val ? val.value : null;
   }
 
+  public set<T>(key: string, expiry: number, value: T) {
+    this.cache[key] = {
+      value,
+      expiry: Date.now() + expiry,
+    };
+  }
+
   async wrapMethod<T> (key: string, expiry: number, m: () => Promise<T>): Promise<T> {
     const mtxKey = `cache-${key}`;
     return this.executeWrappedMethod(mtxKey, key, expiry, m);
@@ -70,10 +79,7 @@ export class MemoryCacheService implements ICacheService {
       }
 
       const res = await m();
-      this.cache[key] = {
-        value: res,
-        expiry: Date.now() + expiry,
-      };
+      this.set(key, res);
     }
 
     return this.cache[key].value as T;

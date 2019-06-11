@@ -21,6 +21,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
   constructor (client: PGClient, cs: ICacheService) {
     this.client = client;
     this.cs = cs;
+    this.top = this.cs.wrapMethod('top-block', TEN_MINUTES, this.top);
   }
 
   async byHeight (height: number): Promise<Block | null> {
@@ -76,7 +77,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       if (res.rows.length) {
         dbBlocks = res.rows.map(this.inflateBlock);
         for (const block of dbBlocks) {
-          this.cs.setProactiveExpiry(this.cacheKey(block.height), TEN_MINUTES, block)
+          this.cs.setProactiveExpiry(this.cacheKey(block.height), TEN_MINUTES, block);
         }
       }
 
@@ -84,8 +85,17 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     });
   }
 
-  top (): Promise<Block | null> {
-    return this.client.execute(async (client: PoolClient) => {
+  async top (): Promise<Block | null> {
+    const top = this.cs.get<Block>(this.cacheKey('top'));
+    if (top) {
+      return top;
+    }
+
+    
+  }
+
+  async refreshTop (): Promise<void> {
+    await this.client.execute(async (client: PoolClient) => {
       const res = await client.query(
         'SELECT * FROM blocks ORDER BY height DESC LIMIT 1',
       );
@@ -94,7 +104,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
         return null;
       }
 
-      return this.inflateBlock(res.rows[0]);
+      this.cs.setProactiveExpiry(this.cacheKey('top'), TEN_MINUTES, this.inflateBlock(res.rows[0]));
     });
   }
 
@@ -110,7 +120,7 @@ export class PostgresBlocksDAO implements IBlocksDAO {
     };
   };
 
-  private cacheKey(height: number): string {
-    return `blocks-height-${height}`;
+  private cacheKey (key: number | string): string {
+    return `blocks-height-${key}`;
   }
 }
