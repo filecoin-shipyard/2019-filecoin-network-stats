@@ -2,6 +2,7 @@ import {MiningStats} from 'filecoin-network-stats-common/lib/domain/Stats';
 import PGClient from '../PGClient';
 import {PoolClient} from 'pg';
 import {INodeStatusService} from '../NodeStatusService';
+import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 
 export interface IMiningStatsDAO {
   getStats (): Promise<MiningStats>
@@ -12,9 +13,13 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
 
   private readonly nss: INodeStatusService;
 
-  constructor (client: PGClient, nss: INodeStatusService) {
+  private readonly cs: ICacheService;
+
+  constructor (client: PGClient, nss: INodeStatusService, cs: ICacheService) {
     this.client = client;
     this.nss = nss;
+    this.cs = cs;
+
   }
 
   async getStats (): Promise<MiningStats> {
@@ -42,20 +47,7 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
       );
 
       const blocksInTipset = Number(blocksInTipsetRes.rows[0].count);
-
-      const avgRes = await client.query(`
-        WITH timings AS (SELECT b.ingested_at - lag(b.ingested_at) OVER (ORDER BY b.ingested_at ASC) AS timing
-                         FROM blocks b
-                         ORDER BY b.height DESC
-                         LIMIT 100)
-        SELECT avg(timings.timing)
-        FROM timings;
-      `);
-
-      let averageBlockTime = 0;
-      if (avgRes.rows.length) {
-        averageBlockTime = Number(avgRes.rows[0].avg);
-      }
+      const averageBlockTime = await this.getAvgBlockTime();
 
       const row = data.rows[0];
       const minerAddress = row.miner;
@@ -80,5 +72,26 @@ export class PostgresMiningStatsDAO implements IMiningStatsDAO {
         peerId,
       };
     });
+  }
+
+  async getAvgBlockTime (): Promise<number> {
+    return this.cs.wrapMethod('mining-stats-average-block-time', DEFAULT_CACHE_TIME, () => this.client.execute(async (client: PoolClient) => {
+      const avgRes = await client.query(`
+        WITH lim_blocks as (
+	        SELECT * FROM blocks b ORDER BY b.height DESC LIMIT 100
+        ),
+        timings AS (SELECT b.ingested_at - lag(b.ingested_at) OVER (ORDER BY b.ingested_at ASC) AS timing
+                         FROM lim_blocks b)
+        SELECT avg(timings.timing)
+        FROM timings;
+      `);
+
+      let averageBlockTime = 0;
+      if (avgRes.rows.length) {
+        averageBlockTime = Number(avgRes.rows[0].avg);
+      }
+
+      return averageBlockTime;
+    }));
   }
 }
