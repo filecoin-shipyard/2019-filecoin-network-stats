@@ -56,9 +56,6 @@ export class Sidebar extends React.Component<{}, SidebarState> {
         <NavLink to="/token-metrics" className={c(b('link'), b('link', 'macroeconomics'))}>
           Token Metrics
         </NavLink>
-        <a className={c(b('link'), b('link', 'change-networks'))} onClick={this.toggleChangeNetworks}>
-          Change Networks
-        </a>
       </div>
     );
   }
