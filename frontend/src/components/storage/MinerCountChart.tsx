@@ -14,6 +14,7 @@ import MinerCountTooltip from '../MinerCountTooltip';
 export interface MinerCountChartStateProps {
   data: TimeseriesDatapoint[]
   overrideData: TimeseriesDatapoint[]
+  count: number
 }
 
 export interface MinerCountChartDispatchProps {
@@ -57,6 +58,7 @@ export function mapStateToProps (state: AppState): MinerCountChartStateProps {
   return {
     data: state.stats.stats.storage.historicalMinerCounts,
     overrideData: state.overrides.storage.historicalMinerCounts,
+    count: state.stats.stats.nodes.length,
   };
 }
 
