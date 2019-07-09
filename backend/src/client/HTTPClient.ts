@@ -22,6 +22,10 @@ export default class HTTPClient {
   }
 
   callAPIStream = <T> (service: string, method: string, args: string[] = [], options: StringMap = {}, onData: (d: T) => boolean, onError: (e: any) => void, onComplete: () => void) => {
+    logger.info('calling API stream', {
+      service,
+      method,
+    });
     const argsQ = args.reduce((acc: string, curr: string) => {
       acc += `arg=${encodeURIComponent(curr)}`;
       return acc;
