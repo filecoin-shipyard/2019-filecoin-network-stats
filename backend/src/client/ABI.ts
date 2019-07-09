@@ -85,5 +85,6 @@ export class ABIDecoder {
 export const methodDecoders: { [k: string]: (data: string) => any } = {
   addAsk: (data: string) => ABIDecoder.decodeBase64([AttoFilDecoder, BigIntDecoder], data),
   createMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, AddressDecoder, PeerIDDecoder], data),
+  createStorageMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, PeerIDDecoder], data),
   commitSector: (data: string) => ABIDecoder.decodeBase64([SectorIDDecoder, BytesDecoder, BytesDecoder, BytesDecoder, BytesDecoder], data),
 };
