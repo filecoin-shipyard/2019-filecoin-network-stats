@@ -79,6 +79,9 @@ export default class HTTPClient {
   };
 
   callAPI = async <T> (service: string, method: string, args: string[] = [], options: StringMap = {}): Promise<T> => {
+    logger.info('calling API', {
+      method,
+    });
     const out: unknown[] = [];
 
     return new Promise<T>((resolve, reject) => {
@@ -92,6 +95,10 @@ export default class HTTPClient {
   };
 
   getJSON = async <T> (path: string): Promise<T> => {
+    logger.info('getting JSON', {
+      path,
+    });
+
     return new Promise<T>((resolve, reject) => request.post({url: `${this.url}/api/${path}`, json: true }, (err, res, body) => {
       if (err) {
         reject(err);
