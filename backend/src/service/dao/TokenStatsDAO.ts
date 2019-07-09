@@ -57,7 +57,7 @@ export class PostgresTokenStatsDAO implements ITokenStatsDAO {
       const collateralizedCoinsRes = await client.query(`
         SELECT sum(m.value) AS total
         FROM unique_messages m
-        WHERE m.method = 'createMiner';
+        WHERE m.method = 'createStorageMiner';
       `);
       const collateralizedCoins = new BigNumber(collateralizedCoinsRes.rows[0].total);
 

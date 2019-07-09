@@ -15,7 +15,7 @@ import {DEFAULT_CACHE_TIME, ICacheService} from '../CacheService';
 import {IBlocksDAO} from './BlocksDAO';
 import {Block} from '../../domain/Block';
 import makeLogger from '../../util/logger';
-import {SECTOR_SIZE_GB} from '../../Config';
+import {SECTOR_SIZE_GB, VALUE_SECTOR_DIVISOR} from '../../Config';
 
 const logger = makeLogger('StorageStatsDAO');
 
@@ -100,7 +100,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                           extract(EPOCH FROM date_trunc('day', to_timestamp(b.ingested_at))) AS date
                    FROM unique_messages m
                           JOIN blocks b ON m.tipset_hash = b.tipset_hash
-                   WHERE m.method = 'createMiner'
+                   WHERE m.method = 'createStorageMiner'
                    GROUP BY date),
              amounts AS (SELECT m.date,
                                 coalesce(m.collateral, 0) AS collateral,
@@ -151,9 +151,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                                    FROM unique_messages m
                                    WHERE method = 'commitSector'
                                    GROUP BY m.to_address) s),
-           total_pledges AS (SELECT sum(cast(m.params->>0 AS integer)) AS total
+           total_pledges AS (SELECT sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB} AS total
                              FROM unique_messages m
-                             WHERE method = 'createMiner'),
+                             WHERE method = 'createStorageMiner'),
            vals AS (SELECT coalesce(s.total * ${SECTOR_SIZE_GB}, 0) AS total_committed_gb,
                            coalesce(p.total * ${SECTOR_SIZE_GB}, 0) AS total_pledges_gb,
                            extract(EPOCH FROM current_timestamp)
@@ -252,7 +252,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
                         extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from unique_messages m
                         join blocks b on m.tipset_hash = b.tipset_hash
-                 where m.method = 'createMiner'
+                 where m.method = 'createStorageMiner'
                  group by date)
       select d.date as date, sum(coalesce(amount, 0)) over (order by d.date asc) as amount
       from d
@@ -269,11 +269,11 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const dailyPoints = await client.query(`
       with d as (${durSeq}),
            m as (select sum(m.value)                                                              as collateral,
-                        sum(cast(m.params->>0 as bigint)) * ${SECTOR_SIZE_GB}                     as gb,
+                        sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB}                as gb,
                         extract(epoch from date_trunc('${durBase}', to_timestamp(b.ingested_at))) as date
                  from unique_messages m
                         join blocks b on m.tipset_hash = b.tipset_hash
-                 where m.method = 'createMiner'
+                 where m.method = 'createStorageMiner'
                  group by date)
       select d.date,
              coalesce(m.collateral, 0) as collateral,
@@ -311,7 +311,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
     const points = await client.query(`
       WITH sizes AS (
-        SELECT sum(cast(m.params->>0 AS integer)) * 0.268435456 AS amount FROM messages m WHERE m.method = 'createMiner' GROUP BY m.from_address
+        SELECT sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB} AS amount FROM messages m WHERE m.method = 'createStorageMiner' GROUP BY m.from_address
       ), series AS (SELECT g.n, 1 + (${increment} * (g.n - 1)) AS bucket_start, (${increment} * (g.n - 1)) + ${increment} AS bucket_end
                       FROM generate_series(1, ${bucketCount - 1}, 1) g (n)),
         miners AS (SELECT s.*, bucket
@@ -567,9 +567,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
 
   private async getCostCapacityBySize (client: PoolClient, size: number, op: 'lt' | 'gte'): Promise<CostCapacityForMinerStat> {
     const countCapRes = await client.query(`
-      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) * ${SECTOR_SIZE_GB} as gb
+      with capacities as (select m.from_address as address, sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB} as gb
                           from unique_messages m
-                          where m.method = 'createMiner'
+                          where m.method = 'createStorageMiner'
                           group by m.from_address)
       select count(c) as count, avg(c.gb) as capacity
       from capacities c
@@ -588,9 +588,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     }
 
     const priceRes = await client.query(`
-      with capacities as (select m.from_address as address, sum(cast(m.params->>0 as decimal)) * ${SECTOR_SIZE_GB} as gb
+      with capacities as (select m.from_address as address, sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB} as gb
                           from unique_messages m
-                          where m.method = 'createMiner'
+                          where m.method = 'createStorageMiner'
                           group by m.from_address)
       select coalesce(avg(price), 0) as price
       from asks a
@@ -604,9 +604,9 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     ]);
 
     const utilizationRes = await client.query(`
-      WITH capacities AS (SELECT m.from_address AS address, sum(cast(m.params->>0 AS decimal)) * ${SECTOR_SIZE_GB} AS gb
+      WITH capacities AS (SELECT m.from_address AS address, sum(m.value / ${VALUE_SECTOR_DIVISOR}) * ${SECTOR_SIZE_GB} AS gb
                           FROM unique_messages m
-                          WHERE m.method = 'createMiner'
+                          WHERE m.method = 'createStorageMiner'
                           GROUP BY m.from_address),
            commitments AS (SELECT m.from_address                     AS address,
                                   count(m) * ${SECTOR_SIZE_GB}       AS committed_gb,

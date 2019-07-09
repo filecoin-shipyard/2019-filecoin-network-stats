@@ -13,6 +13,12 @@ export const AttoFilDecoder: TypeDecoder<string> = {
   },
 };
 
+export const BytesAmountDecoder: TypeDecoder<string> = {
+  decode(buf: Buffer): string {
+    return leb128Unsigned2String(buf);
+  }
+};
+
 export const BigIntDecoder: TypeDecoder<string> = {
   decode (buf: Buffer): string {
     return new BigNumber(`0x${buf.toString('hex')}`).toFixed(0);
@@ -84,7 +90,6 @@ export class ABIDecoder {
 
 export const methodDecoders: { [k: string]: (data: string) => any } = {
   addAsk: (data: string) => ABIDecoder.decodeBase64([AttoFilDecoder, BigIntDecoder], data),
-  createMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, AddressDecoder, PeerIDDecoder], data),
-  createStorageMiner: (data: string) => ABIDecoder.decodeBase64([BigIntDecoder, PeerIDDecoder], data),
+  createStorageMiner: (data: string) => ABIDecoder.decodeBase64([BytesAmountDecoder, PeerIDDecoder], data),
   commitSector: (data: string) => ABIDecoder.decodeBase64([SectorIDDecoder, BytesDecoder, BytesDecoder, BytesDecoder, BytesDecoder], data),
 };

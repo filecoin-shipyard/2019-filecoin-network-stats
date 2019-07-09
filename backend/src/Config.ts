@@ -1,3 +1,4 @@
+export const VALUE_SECTOR_DIVISOR = 0.001;
 export const SECTOR_SIZE_BYTES = 256 * 1048576;
 export const SECTOR_SIZE_GB = SECTOR_SIZE_BYTES * 1e-9;
 
