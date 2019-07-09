@@ -20,7 +20,7 @@ export class MinerClientImpl implements IMinerClient {
   }
 
   async pledge (address: string): Promise<BigNumber> {
-    return new BigNumber(0);
+    return new BigNumber(1).multipliedBy(SECTOR_SIZE_GB);
 
     const amount = await this.callAPI<string>('pledge', [address]);
     logger.info('got pledge response', {
