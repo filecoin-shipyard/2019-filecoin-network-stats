@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import HTTPClient, {CurriedCall} from './HTTPClient';
 import {MiningPower} from '../domain/MiningPower';
 import makeLogger from '../util/logger';
-import {SECTOR_SIZE_GB} from '../Config';
+import {SECTOR_SIZE_BYTES, SECTOR_SIZE_GB} from '../Config';
 
 const logger = makeLogger('MinerClient');
 
@@ -51,8 +51,8 @@ export class MinerClientImpl implements IMinerClient {
 
     const splits = power.split('/').map((s) => s.trim());
     return {
-      miner: Number(splits[0]),
-      total: Number(splits[1]),
+      miner: Number(splits[0]) / SECTOR_SIZE_BYTES,
+      total: Number(splits[1]) / SECTOR_SIZE_BYTES,
     };
   }
 }
