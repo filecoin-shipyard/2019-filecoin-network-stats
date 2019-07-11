@@ -61,6 +61,11 @@ export class Home extends React.Component<HomeProps, {}> {
           <PageHeader title="Network Overview" />
           <Grid>
             <Col>
+              <MiningSummary />
+            </Col>
+          </Grid>
+          <Grid>
+            <Col>
               <SingleStat
                 value={averageCost.toDisplay()}
                 unit="FIL/GB/Mo"
@@ -116,11 +121,6 @@ export class Home extends React.Component<HomeProps, {}> {
                 onChangeDuration={this.onChangeDuration}
                 renderContent={this.renderSwitchingCharts}
               />
-            </Col>
-          </Grid>
-          <Grid>
-            <Col>
-              <MiningSummary />
             </Col>
           </Grid>
         </ContentArea>
