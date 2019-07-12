@@ -47,14 +47,6 @@ export class MiningSummary extends React.Component<MiningSummaryProps> {
             <Grid>
               <Col transparent>
                 <div className={b('sub-stat')}>
-                  {this.renderPeerID()}
-                </div>
-                <div className={b('label')}>
-                  Peer ID
-                </div>
-              </Col>
-              <Col transparent>
-                <div className={b('sub-stat')}>
                   {this.renderMinerAddress()}
                 </div>
                 <div className={b('label')}>
