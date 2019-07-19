@@ -32,6 +32,7 @@ export default class Map<T> extends React.Component<MapProps<T>, {}> {
     this.chart.projection = new am4maps.projections.Miller();
     this.chart.homeZoomLevel = 1.4;
     this.chart.mouseWheelBehavior = 'none';
+    this.chart.zoomControl = new am4maps.ZoomControl();
 
     const polygonSeries = this.chart.series.push(new am4maps.MapPolygonSeries());
     polygonSeries.useGeodata = true;
