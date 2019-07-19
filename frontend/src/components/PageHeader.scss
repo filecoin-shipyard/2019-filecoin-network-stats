@@ -1,9 +1,12 @@
 @import "../variables";
 
 .page-header {
-  margin: ($base * 4) 0;
-  font-size: 29px;
+  margin: ($base * 3) 0;
+  font-size: 20px;
   line-height: 1.25;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: lighten(#3FC1CB, 5%);
 
   .tooltip {
     margin-top: 2px;

@@ -65,6 +65,7 @@ export class NodeMap extends React.Component<NodeMapProps> {
       point.radius = 5;
       point.fill = am4core.color('#45b9e6');
       point.strokeWidth = 0;
+      point.nonScaling = true;
     }
 
     const data: PointData[] = [];

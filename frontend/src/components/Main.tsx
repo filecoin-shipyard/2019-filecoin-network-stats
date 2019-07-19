@@ -2,6 +2,7 @@ import * as React from 'react';
 import './Main.scss';
 import bemify from '../utils/bemify';
 import {Sidebar} from './Sidebar';
+import GlobalNav from './GlobalNav';
 import {Redirect, Route, Switch, withRouter} from 'react-router';
 import Home from './Home';
 import {ContentArea} from './ContentArea';
@@ -45,6 +46,7 @@ export class Main extends React.Component<MainProps> {
           <Sidebar />
         </div>
         <div className={b('main')}>
+          <GlobalNav />
           <Switch>
             <Route exact path="/storage" render={() => <Redirect to="/storage/mining" />} />
             <Route exact path="/storage/mining" render={this.wrapWithContentArea(StorageMining, false)} />
