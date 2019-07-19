@@ -1,0 +1,137 @@
+@import "../variables";
+
+.globalnav--full-size {
+  background: #fff;
+  border-bottom: 1px solid #e8eef9;
+  top: 0;
+  left: 64px;
+  right: 0;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+
+  .globalnav--inner {
+    max-width: 1200px;
+    display: flex;
+    height: 100%;
+    flex: 1 1 100%;
+
+    .globalnav--logo {
+      font-family: $logo-font;
+      display: flex;
+      flex: 1;
+      justify-content: flex-start;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+      margin-left: $base * 1.5;
+      margin-right: $base;
+      font-weight: 600;
+      font-size: 28px;
+      color: #333;
+    }
+  
+    .globalnav--info-group {
+      height: 100%;
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .globalnav--info {
+      font-size: .9em;
+      display: flex;
+      flex-direction: column;
+      &:not(:first-child) {
+        margin-left: $base * 2;
+      }
+  
+      .label {
+        text-transform: uppercase;
+        color: #aaa;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 1px;
+      }
+  
+      .name {
+        padding-top: 6px;
+        color: #333;
+        text-align: center;
+      }
+    }
+  
+    .globalnav--links {
+      height: 100%;
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: .9em;
+      margin-right: $base * 8;
+  
+      .dropdown {
+        font-weight: normal;
+  
+        .dropdown__box {
+          z-index: 1000;
+          width: max-content;
+          padding: 0;
+  
+          ul {
+            list-style: none;
+            margin: 0;
+            padding: .5em 0;
+  
+            li {
+              font-weight: normal;
+              line-height: 1.4em;
+              padding: .5em 1em;
+
+              a, a:visited {
+                color: gray;
+              }
+
+              &:hover {
+                background-color: #3FC1CB;
+                a, a:focus { color: #FFF; }
+              }
+            }
+          }
+        }
+      }
+    } // end .links
+  }
+  .github-corner:hover .octo-arm {
+      animation: octocat-wave 560ms ease-in-out
+  }
+
+  @keyframes octocat-wave {
+      0%, 100% {
+          transform: rotate(0)
+      }
+      20%, 60% {
+          transform: rotate(-25deg)
+      }
+      40%, 80% {
+          transform: rotate(10deg)
+      }
+  }
+
+  @media (max-width: 500px) {
+      .github-corner:hover .octo-arm {
+          animation: none
+      }
+
+      .github-corner .octo-arm {
+          animation: octocat-wave 560ms ease-in-out
+      }
+  }
+}
+
+@include smartphones() {
+  .globalnav--full-size {
+    display: none;
+  }
+}
