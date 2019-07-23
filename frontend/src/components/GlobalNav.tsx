@@ -40,6 +40,7 @@ const HeaderStateProps = class GlobalNav extends React.Component<HeaderStateProp
       <div className={c(b(), b(null, 'full-size'))} style={style}>
         <div className={b(null, 'inner')}>
           <Link to="/" className={b(null, 'logo')}>
+            <img src="/assets/logo-nopadding.svg" alt="FileCoin" />
             Filecoin
           </Link>
           {this.renderNetworkInfo()}
