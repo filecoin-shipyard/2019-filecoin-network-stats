@@ -9,6 +9,7 @@ import * as am4maps from '@amcharts/amcharts4/maps';
 import * as am4core from '@amcharts/amcharts4/core';
 import ContentHeader from './ContentHeader';
 import ellipsify from '../utils/ellipsify';
+import {dashcopy} from './ClickCopyable';
 
 const b = bemify('node-map');
 
@@ -56,6 +57,10 @@ export class NodeMap extends React.Component<NodeMapProps> {
     type PointData = { lat: number, long: number, tooltipHTML: string, scale: number };
     if (!this.cityPoints) {
       this.cityPoints = chart.series.push(new am4maps.MapImageSeries());
+
+      this.cityPoints.tooltip.label.interactionsEnabled = true;
+      this.cityPoints.tooltip.keepTargetHover = true;
+
       const template = this.cityPoints.mapImages.template;
       template.propertyFields.latitude = 'lat';
       template.propertyFields.longitude = 'long';
@@ -70,10 +75,11 @@ export class NodeMap extends React.Component<NodeMapProps> {
 
     const data: PointData[] = [];
     const className = b('nick-tooltip');
+
     for (const key of Object.keys(nodeIndex)) {
       const idxNodes = nodeIndex[key];
       const nodeCount = idxNodes.length;
-      let nodeList = idxNodes.map((n: Node) => `<li>${escape(ellipsify(n.nickname || n.peerId, 20))}</li>`);
+      let nodeList = idxNodes.map((n: Node) => `<li onclick="makecopy(this.id);" id=${n.nickname || n.peerId}>${escape(ellipsify(n.nickname || n.peerId, 20))}<span class="copied">copied</span></li>`);
       if (nodeList.length > 9) {
         nodeList = nodeList.slice(0, 9);
         nodeList.push(`<li>... and ${nodeCount - 9} more ...</li>`);
@@ -101,6 +107,25 @@ function escape (data: string) {
   escapeDiv.textContent = data;
   return escapeDiv.innerHTML;
 }
+
+function resetElemDisplay(elem: HTMLElement) {
+  elem.style.display = "none";
+}
+
+function makecopy(_id: string) {
+  dashcopy(_id);
+  var x = document.getElementById(_id);
+  var copynode = x.children[0] as HTMLElement;
+  copynode.style.display = "inline-block";
+
+  // 'copied' shows for 1 second
+  setTimeout(
+    () => {
+      resetElemDisplay(copynode);
+    }, 1000);
+}
+// called when tooltipHTML item clicked
+(window as any).makecopy = makecopy;
 
 function mapStateToProps (state: AppState) {
   return {

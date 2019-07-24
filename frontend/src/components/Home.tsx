@@ -10,7 +10,8 @@ import {MarketStats, StorageStats} from 'filecoin-network-stats-common/lib/domai
 import Filesize, {SizeUnit} from '../utils/Filesize';
 import NodeMap from './NodeMap';
 import PageHeader from './PageHeader';
-import AverageStorageCostChart from './storage/AverageStorageCostChart';
+//import AverageStorageCostChart from './storage/AverageStorageCostChart';
+import StorageMinersTable from './storage/StorageMinersTable';
 import Currency from '../utils/Currency';
 import PercentageNumber from '../utils/PercentageNumber';
 import GainLossTimelineChart from './GainLossTimelineChart';
@@ -112,33 +113,13 @@ export class Home extends React.Component<HomeProps, {}> {
           </Grid>
           <Grid>
             <Col>
-              <SwitchableDateSwitchingChart
-                titles={[
-                  <LabelledTooltip tooltip={<Tooltip content="Average value of all outstanding storage asks for the selected time frame." />} text="Avg. Price of Storage" />,
-                  <LabelledTooltip tooltip={<VolumeTransactedTooltip />} text="Volume of FIL Transacted On-Chain" />,
-                ]}
-                linkTitles={['Storage Price', 'Token Volume']}
-                onChangeDuration={this.onChangeDuration}
-                renderContent={this.renderSwitchingCharts}
-              />
+              <StorageMinersTable />
             </Col>
           </Grid>
         </ContentArea>
       </div>
     );
   }
-
-  renderSwitchingCharts = (chartIndex: number, isOverride: boolean) => {
-    if (chartIndex === 0) {
-      return (
-        <AverageStorageCostChart isOverride={isOverride} />
-      );
-    }
-
-    return (
-      <GainLossTimelineChart isOverride={isOverride} />
-    );
-  };
 
   onChangeDuration = async (chartIndex: number, duration: ChartDuration) => {
     if (chartIndex === 0) {

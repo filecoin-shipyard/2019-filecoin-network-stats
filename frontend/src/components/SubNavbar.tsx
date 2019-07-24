@@ -37,7 +37,7 @@ export class SubNavbar extends React.Component<{}, SubNavState> {
           Network Overview
         </NavLink>
         <NavLink to="/storage" className={c(b('link'), b('link', 'storage'))}>
-          Storage Menu
+          Storage Market
           <div className={b('sub-nav')}>
             <NavLink to="/storage/mining" className={b('sub-link')}>
               Mining
