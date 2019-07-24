@@ -56,3 +56,7 @@ export default class ClickCopyable extends React.Component<ClickCopyableProps, C
     );
   }
 }
+
+export function dashcopy(text: string) {
+  copy(text);
+}
