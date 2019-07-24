@@ -1,6 +1,6 @@
 import * as React from 'react';
 import bemify from '../utils/bemify';
-import './SubNavBar.scss';
+import './SubNavbar.scss';
 import {Link, NavLink} from 'react-router-dom';
 import c from 'classnames';
 import ChangeNetworksModal from './ChangeNetworksModal';
