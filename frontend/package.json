@@ -28,8 +28,8 @@
     "webpack-dev-server": "3.5.0"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "4.1.2",
-    "@amcharts/amcharts4-geodata": "4.0.24",
+    "@amcharts/amcharts4": "4.5.8",
+    "@amcharts/amcharts4-geodata": "4.1.6",
     "@types/c3": "0.6.2",
     "@types/classnames": "2.2.6",
     "@types/lodash.after": "4.0.4",
