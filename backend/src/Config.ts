@@ -10,6 +10,7 @@ export interface Config {
   peerInfoFile: string
   heartbeatPort: string
   apiPort: string
+  genesisCID?: string
 }
 
 export function fromEnv (): Config {
@@ -20,6 +21,7 @@ export function fromEnv (): Config {
     isMaster: process.env.IS_MASTER === 'true',
     peerInfoFile: process.env.PEER_INFO_FILE!,
     heartbeatPort: process.env.HEARTBEAT_PORT!,
-    apiPort: process.env.API_PORT!
+    apiPort: process.env.API_PORT!,
+    genesisCID: process.env.GENESIS_CID
   };
 }
