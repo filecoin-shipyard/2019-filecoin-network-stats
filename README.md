@@ -108,3 +108,7 @@ npm link filecoin-network-stats-common
 ```
 
 Then, run `npm run build` from the `common` directory whenever you make changes to common dependencies. This prevents you from having to re-run `npm install` every time you change something in `common`.
+
+# handoff
+
+You can find additional notes on the Kyokan/Filecoin handoff in the [handoff](./docs/handoff) folder.
