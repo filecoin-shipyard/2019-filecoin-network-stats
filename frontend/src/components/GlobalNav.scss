@@ -17,6 +17,11 @@
     flex: 1 1 100%;
 
     .globalnav--logo {
+      img {
+        height: 40px;
+        width: 40px;
+        margin-right: $base;
+      }
       font-family: $logo-font;
       display: flex;
       flex: 1;
@@ -26,7 +31,7 @@
       height: 100%;
       margin-left: $base * 1.5;
       margin-right: $base;
-      font-weight: 600;
+      font-weight: normal;
       font-size: 28px;
       color: #333;
     }
@@ -73,6 +78,11 @@
   
       .dropdown {
         font-weight: normal;
+        color: gray;
+
+        &:before {
+          opacity: .5;
+        }
   
         .dropdown__box {
           z-index: 1000;
@@ -102,31 +112,6 @@
         }
       }
     } // end .links
-  }
-  .github-corner:hover .octo-arm {
-      animation: octocat-wave 560ms ease-in-out
-  }
-
-  @keyframes octocat-wave {
-      0%, 100% {
-          transform: rotate(0)
-      }
-      20%, 60% {
-          transform: rotate(-25deg)
-      }
-      40%, 80% {
-          transform: rotate(10deg)
-      }
-  }
-
-  @media (max-width: 500px) {
-      .github-corner:hover .octo-arm {
-          animation: none
-      }
-
-      .github-corner .octo-arm {
-          animation: octocat-wave 560ms ease-in-out
-      }
   }
 }
 

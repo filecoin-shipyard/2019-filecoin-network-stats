@@ -45,9 +45,27 @@
   padding: 0;
 
   li {
+    color: white;
     display: block;
     margin: 0;
     padding: $base / 2;
+    padding-bottom: $base;
     border-bottom: 1px solid rgba(white, 0.25);
+    white-space: nowrap;
+    &:hover {
+      color: #3FC1CB;
+    }
+
+    .copied {
+      font-size: 0.65em;
+      display: none;
+      padding-top: 1px;
+      margin-left: 4px;
+      background-color: #333;
+      text-align: right;
+      color: yellow;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 }

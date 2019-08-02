@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './Main.scss';
 import bemify from '../utils/bemify';
-import {Sidebar} from './Sidebar';
 import GlobalNav from './GlobalNav';
 import {Redirect, Route, Switch, withRouter} from 'react-router';
 import Home from './Home';
@@ -17,6 +16,7 @@ import Warning from './Warning';
 import StorageDeals from './storage/StorageDeals';
 import StorageCostCapacity from './storage/StorageCostCapacity';
 import DisclaimerModal from './DisclaimerModal';
+import { SubNavbar } from './SubNavbar';
 
 const b = bemify('main');
 
@@ -42,11 +42,9 @@ export class Main extends React.Component<MainProps> {
 
     return (
       <div className={b()}>
-        <div className={b('sidebar')}>
-          <Sidebar />
-        </div>
         <div className={b('main')}>
           <GlobalNav />
+          <SubNavbar />
           <Switch>
             <Route exact path="/storage" render={() => <Redirect to="/storage/mining" />} />
             <Route exact path="/storage/mining" render={this.wrapWithContentArea(StorageMining, false)} />

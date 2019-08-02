@@ -40,6 +40,7 @@ const HeaderStateProps = class GlobalNav extends React.Component<HeaderStateProp
       <div className={c(b(), b(null, 'full-size'))} style={style}>
         <div className={b(null, 'inner')}>
           <Link to="/" className={b(null, 'logo')}>
+            <img src="/assets/logo-nopadding.svg" alt="FileCoin" />
             Filecoin
           </Link>
           {this.renderNetworkInfo()}
@@ -48,7 +49,7 @@ const HeaderStateProps = class GlobalNav extends React.Component<HeaderStateProp
               <ul>
                 <li><a href="http://user.kittyhawk.wtf:8000/" target="_blank">Block Explorer</a></li>
                 <li><a href="http://user.kittyhawk.wtf:9797/" target="_blank">Faucet</a></li>
-                <li><a href="https://github.com/filecoin-project/go-filecoin/blob/master/KNOWN_ISSUES.md" target="_blank">Known Issues</a></li>
+                <li><a href="https://github.com/filecoin-project/go-filecoin/wiki/Troubleshooting-&-FAQ#known-issues" target="_blank">Known Issues</a></li>
                 <li><a href="https://discuss.filecoin.io/" target="_blank">Forums</a></li>
                 <li><a href="https://filecoin.io/faqs/" target="_blank">FAQs</a></li>
               </ul>
