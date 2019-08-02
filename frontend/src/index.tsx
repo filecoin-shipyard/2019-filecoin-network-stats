@@ -18,7 +18,7 @@ body.appendChild(root);
 
 Modal.setAppElement(document.getElementById('root'));
 
-if (process.env.SENTRY_DSN) {
+if (process.env.SENTRY_DSN && 'Sentry' in window) {
   (window as any).Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
