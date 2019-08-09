@@ -1,6 +1,14 @@
 import {MessageJSON} from './MessageJSON';
 
-export interface BlockJSON {
+export interface RawBlockJSON {
+    Header: RawHeader;
+
+    Messages: MessageJSON[]|null;
+
+    Receipts: any[]
+}
+
+export interface RawHeader {
   miner: string;
 
   ticket: string;
@@ -12,12 +20,12 @@ export interface BlockJSON {
   height: string;
 
   nonce: string;
-
-  messages: MessageJSON[]|null;
-
+    
   stateRoot: { [k: string]: string };
 
-  messageReceipts: any[];
+  messageReceipts: any;
 
-  proof: any[];
+  messages: any;
+
+  proof: any[];    
 }
