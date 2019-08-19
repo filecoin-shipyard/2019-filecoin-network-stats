@@ -59,6 +59,8 @@ The above steps only need to be performed on fresh installations. Next, you'll n
 DATABASE_URL=<your database url> db-migrate up
 ```
 
+Note that the migration command might take a while; it needs to import ~2MM IP-to-location records. See the IP data [README file](./backend/migrations/ip_data/README.md) for more information.
+
 Now you're ready to start your node:
 
 ```bash
