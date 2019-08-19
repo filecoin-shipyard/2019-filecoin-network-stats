@@ -647,7 +647,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private calculateTrend (points: TimeseriesDatapoint[]): number {
-    if (!points) {
+    if (!points.length) {
       return 0;
     }
 
