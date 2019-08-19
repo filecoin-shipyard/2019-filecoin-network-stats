@@ -213,16 +213,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
         WHERE b.ingested_at > extract(EPOCH FROM (date_trunc('day', current_timestamp) - INTERVAL '30 days'));
     `);
 
-    if (!avgRes.rows.length) {
-      return {
-        average: new BigNumber(0),
-        trend: 0,
-        data: [],
-      };
-    }
-
     const average = new BigNumber(avgRes.rows[0].avg);
-
     const trend = this.calculateTrend(data);
 
     return {
@@ -656,6 +647,10 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private calculateTrend (points: TimeseriesDatapoint[]): number {
+    if (!points) {
+      return 0;
+    }
+
     let trend;
     const ultimate = points[points.length - 1];
     const penultimate = points[points.length - 2];
