@@ -416,6 +416,7 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
       FROM seq
              LEFT OUTER JOIN network_usage_stats n
                ON seq.date = extract(EPOCH FROM date_trunc('${durBase}', to_timestamp(n.calculated_at)))
+      WHERE n.total_pledges_gb > 0
       GROUP BY seq.date
       ORDER BY date ASC;
     `);
