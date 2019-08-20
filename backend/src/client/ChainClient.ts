@@ -1,5 +1,5 @@
 import HTTPClient, {CurriedCall} from './HTTPClient';
-import {BlockJSON} from '../domain/BlockJSON';
+import {RawBlockJSON} from '../domain/BlockJSON';
 import {BlockFromClientWithMessages} from '../domain/BlockFromClient';
 import {MessageJSON} from '../domain/MessageJSON';
 import {Message} from '../domain/Message';
@@ -105,18 +105,18 @@ export class ChainClientImpl implements IChainClient {
   }
 
   private async fetchBlock (tipsetHash: string): Promise<BlockFromClientWithMessages> {
-    const json = await this.client.getJSON<BlockJSON>(`show/block/${tipsetHash}`);
-    const height = Number(json.height);
-    const parents = json.parents ? json.parents.map((p) => p['/']) : [];
+    const json = await this.client.getJSON<RawBlockJSON>(`show/block/${tipsetHash}`);
+    const height = Number(json.Header.height);
+    const parents = json.Header.parents ? json.Header.parents.map((p) => p['/']) : [];
 
     return {
       height,
       tipsetHash,
       parents,
-      miner: json.miner,
-      parentWeight: Number(json.parentWeight),
-      nonce: Number(json.nonce),
-      messages: this.inflateMessages(json.messages, height, tipsetHash),
+      miner: json.Header.miner,
+      parentWeight: Number(json.Header.parentWeight),
+      nonce: Number(json.Header.nonce),
+      messages: this.inflateMessages(json.Messages, height, tipsetHash),
     };
   }
 }
