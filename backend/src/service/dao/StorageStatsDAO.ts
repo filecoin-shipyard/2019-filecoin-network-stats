@@ -206,15 +206,14 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
     const data = await this.getHistoricalStoragePrice(client, ChartDuration.MONTH);
 
     const avgRes = await client.query(`
-      SELECT coalesce(avg(a.price), 0) / 1000000000000000000 AS avg
-      FROM asks a
-             JOIN messages m ON a.message_id = m.id
-             JOIN blocks b ON b.tipset_hash = m.tipset_hash
-      WHERE b.ingested_at > extract(EPOCH FROM (date_trunc('day', current_timestamp) - INTERVAL '30 days'));
+        SELECT coalesce(avg(a.price), 0) / 1000000000000000000 AS avg
+        FROM asks a
+                 JOIN messages m ON a.message_id = m.id
+                 JOIN blocks b ON b.tipset_hash = m.tipset_hash
+        WHERE b.ingested_at > extract(EPOCH FROM (date_trunc('day', current_timestamp) - INTERVAL '30 days'));
     `);
 
     const average = new BigNumber(avgRes.rows[0].avg);
-
     const trend = this.calculateTrend(data);
 
     return {
@@ -648,6 +647,10 @@ export class PostgresStorageStatsDAO implements IStorageStatsDAO {
   }
 
   private calculateTrend (points: TimeseriesDatapoint[]): number {
+    if (!points.length) {
+      return 0;
+    }
+
     let trend;
     const ultimate = points[points.length - 1];
     const penultimate = points[points.length - 2];
