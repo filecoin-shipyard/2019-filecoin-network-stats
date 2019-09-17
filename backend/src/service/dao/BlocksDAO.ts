@@ -119,7 +119,6 @@ export class PostgresBlocksDAO implements IBlocksDAO {
       height: row.height,
       miner: row.miner,
       parentWeight: row.parent_weight,
-      nonce: row.nonce,
       ingestedAt: row.ingested_at,
       parents: row.parent_tipset_hashes,
     };

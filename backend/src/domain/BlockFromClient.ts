@@ -11,7 +11,6 @@ export interface BlockFromClient {
 
   parentWeight: number
 
-  nonce: number
 }
 
 export type BlockFromClientWithMessages = BlockFromClient & {
