@@ -6,9 +6,9 @@ import {IBlocksDAO} from './dao/BlocksDAO';
 import IService from './Service';
 import makeLogger from '../util/logger';
 import {IMiningPowerService} from './MiningPowerService';
-import {SECTOR_SIZE_BYTES} from '../Config';
-import Filter = require('bad-words');
+import {Config, SECTOR_SIZE_BYTES} from '../Config';
 import {synchronized} from '../util/synchronized';
+import Filter = require('bad-words');
 
 // this should be a reasonable number for the time being
 const MAX_NODES = 10000;
@@ -54,15 +54,18 @@ export class MemoryNodeStatusService implements INodeStatusService {
 
   private mps: IMiningPowerService;
 
+  private config: Config;
+
   private nodeCount: number = 0;
 
   private lastReap: number = 0;
 
-  constructor (tsProvider: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService) {
+  constructor (tsProvider: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService, config: Config) {
     this.tsProvider = tsProvider;
     this.gDao = gDao;
     this.blocksDao = blocksDao;
     this.mps = mps;
+    this.config = config;
     this.lastReap = this.tsProvider.now();
   }
 
@@ -75,6 +78,13 @@ export class MemoryNodeStatusService implements INodeStatusService {
   }
 
   consumeHeartbeat = synchronized(async (heartbeat: Heartbeat) => {
+    if (this.config.genesisCID !== heartbeat.genesisCid) {
+      logger.info('received heartbeat from invalid genesis CID', {
+        peerID: heartbeat.peerId
+      });
+      return;
+    }
+
     const old = this.data[heartbeat.peerId];
 
     const now = this.tsProvider.now();

@@ -24,15 +24,15 @@ import MinerStatsAPI from './service/api/MinerStatsAPI';
 import {ITokenStatsDAO, PostgresTokenStatsDAO} from './service/dao/TokenStatsDAO';
 import {MaterializationServiceImpl} from './service/MaterializationService';
 import StatsAPI from './service/api/StatsAPI';
-import PeerInfo = require('peer-info');
 import {ICacheService, MemoryCacheService} from './service/CacheService';
+import PeerInfo = require('peer-info');
 
 export default function registry (other: Registry = new Registry()): Registry {
   const registry = new Registry(other);
   registry.bind('PeerInfo', (config: Config) => providePeerInfo(config), ['Config']);
   registry.bind('HeartbeatServer', (peerInfo: PeerInfo, consumer: IHeartbeatConsumer) => new HeartbeatServerImpl(peerInfo, consumer), ['PeerInfo', 'HeartbeatConsumer']);
   registry.bind('HeartbeatConsumer', (nsd: INodeStatusService) => new HeartbeatConsumerImpl(nsd), ['NodeStatusService']);
-  registry.bind('NodeStatusService', (tsp: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService) => new MemoryNodeStatusService(tsp, gDao, blocksDao, mps), ['TimestampProvider', 'GeolocationDAO', 'BlocksDAO', 'MiningPowerService']);
+  registry.bind('NodeStatusService', (tsp: ITimestampProvider, gDao: IGeolocationDAO, blocksDao: IBlocksDAO, mps: IMiningPowerService, config: Config) => new MemoryNodeStatusService(tsp, gDao, blocksDao, mps, config), ['TimestampProvider', 'GeolocationDAO', 'BlocksDAO', 'MiningPowerService', 'Config']);
   registry.bind('TimestampProvider', () => new SystemTimestampProvider(), []);
   registry.bind('GeolocationDAO', (client: PGClient) => new PostgresGeolocationDAO(client), ['PGClient']);
   registry.bind('BlocksDAO', (client: PGClient, cs: ICacheService) => new PostgresBlocksDAO(client, cs), ['PGClient', 'CacheService']);

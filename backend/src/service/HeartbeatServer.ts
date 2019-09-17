@@ -21,6 +21,7 @@ interface RawHeartbeat {
   Height: number
   Nickname: string
   MinerAddress: string
+  GenesisCID?: string
 }
 
 export interface IHeartbeatServer extends IService {
@@ -130,6 +131,21 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
       return;
     }
 
+    if (!data.GenesisCID) {
+      return;
+    }
+
+    // cid comes in as {"/":"Qmd52WKRSwrBK5gUaJKawryZQ5by6UbNB8KVW2Zy6JtbyW"}, so parse it
+    let genesisCidParsed: { '/': string };
+    try {
+      genesisCidParsed = JSON.parse(data.GenesisCID);
+    } catch (e) {
+      logger.error('failed to parse genesis CID', {
+        receivedCid: data.GenesisCID,
+      });
+      return;
+    }
+
     this.consumer.handle({
       head: data.Head,
       height: data.Height,
@@ -137,6 +153,7 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
       peerId: peerInfo.id.toB58String(),
       ip: addr.nodeAddress().address,
       minerAddress: data.MinerAddress,
+      genesisCid: genesisCidParsed['/'],
     });
   }
 }

@@ -5,4 +5,5 @@ export interface Heartbeat {
   peerId: string
   ip: string
   minerAddress: string
+  genesisCid: string
 }
