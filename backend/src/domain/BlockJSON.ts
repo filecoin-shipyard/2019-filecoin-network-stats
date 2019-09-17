@@ -11,15 +11,13 @@ export interface RawBlockJSON {
 export interface RawHeader {
   miner: string;
 
-  ticket: string;
+  tickets: any[];
 
   parents: { '/': string }[];
 
   parentWeight: string;
 
   height: string;
-
-  nonce: string;
     
   stateRoot: { [k: string]: string };
 

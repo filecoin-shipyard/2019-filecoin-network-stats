@@ -4,6 +4,7 @@ import {ITimestampProvider} from '../TimestampProvider';
 import {BlockFromClientWithMessages} from '../../domain/BlockFromClient';
 import {MinerUpdate} from '../../domain/MinerUpdate';
 import {IBlocksDAO} from './BlocksDAO';
+import { loggers } from 'winston';
 
 export interface IChainsawDAO {
   lastBlock (): Promise<number>
@@ -48,12 +49,11 @@ export default class PostgresChainsawDAO implements IChainsawDAO {
         }
 
         await client.query(
-          'INSERT INTO blocks(height, miner, parent_weight, nonce, ingested_at, parent_tipset_hashes, tipset_hash) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          'INSERT INTO blocks(height, miner, parent_weight, ingested_at, parent_tipset_hashes, tipset_hash) VALUES ($1, $2, $3, $4, $5, $6)',
           [
             block.height,
             block.miner,
             block.parentWeight,
-            block.nonce,
             this.tsp.now(),
             block.parents,
             block.tipsetHash,

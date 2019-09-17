@@ -115,7 +115,6 @@ export class ChainClientImpl implements IChainClient {
       parents,
       miner: json.Header.miner,
       parentWeight: Number(json.Header.parentWeight),
-      nonce: Number(json.Header.nonce),
       messages: this.inflateMessages(json.Messages, height, tipsetHash),
     };
   }

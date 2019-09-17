@@ -59,7 +59,6 @@ CREATE TABLE blocks (
   height bigint NOT NULL,
   miner character varying(41) NOT NULL,
   parent_weight bigint NOT NULL,
-  nonce bigint NOT NULL,
   ingested_at bigint NOT NULL,
   parent_tipset_hashes character varying[],
   tipset_hash character varying NOT NULL
