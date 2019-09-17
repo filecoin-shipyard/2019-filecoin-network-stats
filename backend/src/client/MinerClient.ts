@@ -32,13 +32,13 @@ export class MinerClientImpl implements IMinerClient {
   }
 
   async power (address: string): Promise<MiningPower> {
-    const [power] = await this.callAPI<[string]>('power', [address]);
+    const [power] = await this.callAPI<[{'Power': string, 'Total': string}]>('power', [address]);
     logger.info('got power response', {
       power,
       address,
     });
 
-    if (typeof power === 'object') {
+    if (!power.Power || !power.Total) {
       logger.warn('failed to query miner power', {
         address,
         message: (power as any).Message
@@ -49,10 +49,9 @@ export class MinerClientImpl implements IMinerClient {
       };
     }
 
-    const splits = power.split('/').map((s) => s.trim());
     return {
-      miner: Number(splits[0]) / SECTOR_SIZE_BYTES,
-      total: Number(splits[1]) / SECTOR_SIZE_BYTES,
+      miner: Number(power.Power) / SECTOR_SIZE_BYTES,
+      total: Number(power.Total) / SECTOR_SIZE_BYTES,
     };
   }
 }
