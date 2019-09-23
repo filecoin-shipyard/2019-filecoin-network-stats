@@ -138,7 +138,8 @@ export class HeartbeatServerImpl implements IHeartbeatServer {
     // cid comes in as {"/":"Qmd52WKRSwrBK5gUaJKawryZQ5by6UbNB8KVW2Zy6JtbyW"}, so parse it
     let genesisCidParsed: { '/': string };
     try {
-      genesisCidParsed = JSON.parse(data.GenesisCID);
+      var isItParsed:string = JSON.stringify(data.GenesisCID);
+      genesisCidParsed = JSON.parse(isItParsed);
     } catch (e) {
       logger.error('failed to parse genesis CID', {
         receivedCid: data.GenesisCID,
